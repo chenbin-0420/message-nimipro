@@ -1,0 +1,92 @@
+﻿server:
+  port: 443
+  #Address: 192.168.1.99
+
+info:
+  app.name: message-nimipro
+  company.name: www.dhcc.com
+  build.artifactId: $project.artifactId$
+  build.version: $project.version$
+
+spring:
+  redis:
+    database: 15
+    host: 106.52.219.63
+    port: 8379
+    password: dhcc_123456
+    jedis:
+      pool:
+        max-active: 20  #最大连接数
+        max-wait: 1000  #线程池最大阻塞时间
+        max-idle: 50 #最大空闲连接数
+        min-idle: 5 #最小空闲连接数
+  application:
+    name: message-nimipro
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    #UTC:全球时间,Asia/Shanghai:上海时间,GMT%2B8:北京时间
+    url: jdbc:mysql://106.53.77.17:3306/dhcplat?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false
+    username: root
+    password: dh888888
+    sqlSchema:
+      plat: dhcplat
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLInnoDBDialect
+    show-sql: true
+    properties:
+      hibernate:
+#        hbm2ddl.auto: update
+#        dialect: org.hibernate.dialect.MySQL5Dialect
+        cache:
+          use_second_level_cache: false
+#          region.factory_class: org.hibernate.cache.redis.hibernate5.SingletonRedisRegionFactory
+#          provider_configuration_file_resource_path : hibernate-redis.properties
+#          region_prefix: hibernate
+#          use_structured_entries: true
+#        generate_statistics: true
+#      redisson-config: classpath:redisson.yaml
+#      redis:
+#        expiryInSeconds:
+#          default: 120
+#          hibernate:
+#            common: 0
+#            account: 1200
+logging:
+  level: debug
+
+#开发环境开启swagger ，注意生成环境设置为false ，不然可以直接通过api更改环境数据
+swagger:
+  enable: true
+
+flyway:
+  enabled: false
+
+#启用shutdown
+#禁用密码验证
+endpoints:
+  shutdown:
+    enabled: true
+    sensitive: false
+
+cors:
+  origins: http://192.168.0.141:8113
+
+devMode: true
+
+token:
+#  whitelist: /sysdev/gencode/.*;/weixin/.*
+  whitelist: /.*
+
+smb:
+  ip: 192.168.100.79
+  user: admin
+  password: 123456
+  path: smb://192.168.100.79
+
+
+wechat:
+  wechatToken: wechatToken
+  app_id: wx419a354d9fd6dd2f
+  secret: 4dfc3f5beb9155fdd128b50d29183330
+  test_app_id: wxa399b6b31a16fcaa
+  test_secret: e4c1334a75e0afb0075af1886e6d0c6f

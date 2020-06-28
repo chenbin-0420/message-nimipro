@@ -1,0 +1,9 @@
+spring:
+  profiles:
+    active: dev
+  datasource:
+    sqlSchema:
+      plat: dhcplat
+
+logging:
+  config: classpath:logback-spring.xml
