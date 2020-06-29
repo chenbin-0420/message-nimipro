@@ -6,7 +6,7 @@ package com.dhcc.nimiprogram.dto;
  * description：小程序登录请求类
  *              登录凭证校验
  */
-public class DtoNimiproLoginReq {
+public class DtoNpLoginReq {
     /**
      * appid 小程序appId
      */

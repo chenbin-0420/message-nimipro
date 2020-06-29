@@ -5,7 +5,7 @@ package com.dhcc.nimiprogram.dto;
  * @date 2020/6/11
  * 基础响应类
  */
-public class DtoBasicResult {
+public class DtoBasicRst {
     /**
      * errcode ：错误码
      */
@@ -15,7 +15,7 @@ public class DtoBasicResult {
      */
     private String errmsg;
 
-    public DtoBasicResult() {
+    public DtoBasicRst() {
     }
 
     public Long getErrcode() {

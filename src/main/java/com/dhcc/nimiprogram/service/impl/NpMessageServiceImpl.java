@@ -3,17 +3,20 @@ package com.dhcc.nimiprogram.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.dhcc.basic.dao.query.SimpleCondition;
 import com.dhcc.basic.exception.BusinessException;
+import com.dhcc.basic.service.BaseServiceImpl;
 import com.dhcc.basic.util.HttpClientUtil;
 import com.dhcc.nimiprogram.config.NimiproUrlConfig;
 import com.dhcc.nimiprogram.config.WechatConfig;
+import com.dhcc.nimiprogram.dao.NpMessageDao;
 import com.dhcc.nimiprogram.dto.*;
-import com.dhcc.nimiprogram.model.TestUser;
-import com.dhcc.nimiprogram.service.NimiproMessageService;
-import com.dhcc.nimiprogram.service.TestUserService;
-import com.dhcc.nimiprogram.util.AccTkUtil;
-import com.dhcc.nimiprogram.util.CheckInParamUtil;
-import com.dhcc.nimiprogram.util.GrantTypeEnum;
-import com.dhcc.nimiprogram.util.SimpleAlgorUtil;
+import com.dhcc.nimiprogram.model.NpAppInfo;
+import com.dhcc.nimiprogram.model.NpMessage;
+import com.dhcc.nimiprogram.model.NpUser;
+import com.dhcc.nimiprogram.service.NpAppInfoService;
+import com.dhcc.nimiprogram.service.NpMessageService;
+import com.dhcc.nimiprogram.service.NpUserService;
+import com.dhcc.nimiprogram.util.*;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,10 +25,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,12 +34,12 @@ import java.util.Map;
  * description：小程序消息业务实现类
  */
 @Service
-public class NimiproMessageServiceImpl implements NimiproMessageService {
+public class NpMessageServiceImpl extends BaseServiceImpl<NpMessageDao,NpMessage,String> implements NpMessageService {
 
-    private static final Logger log = LoggerFactory.getLogger(NimiproMessageServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(NpMessageServiceImpl.class);
 
     @Autowired
-    private TestUserService testUserService;
+    private NpUserService NpUserService;
 
     @Autowired
     private WechatConfig wechatConfig;
@@ -49,6 +48,13 @@ public class NimiproMessageServiceImpl implements NimiproMessageService {
     @Autowired
     private AccTkUtil accTkUtil;
 
+    @Autowired
+    private NpAppInfoService npAppInfoService;
+
+    /**
+     * 成功标识
+     */
+    private static final Long SUCCESS = 0L;
 
     @Override
     public String verifyMsgFromWechat(HttpServletRequest request) {
@@ -101,6 +107,25 @@ public class NimiproMessageServiceImpl implements NimiproMessageService {
             log.info("接口参数：" + paramMap);
             // 发送Get请求，并接收字符串的结果
             String result = HttpClientUtil.doGet(httpClient, NimiproUrlConfig.GET_ACCESS_TOKEN_URL.getUrl(), paramMap, headerMap);
+            //
+            SimpleCondition sc = new SimpleCondition()
+                    .addParm("appId",wechatConfig.getAppId())
+                    .addParm("appSecret", appSecret);
+            NpAppInfo appInfo = npAppInfoService.findOne(sc);
+            // 第一次进来，配置 wechatConfig 中应用信息
+            if( appInfo == null ){
+                NpAppInfo info = new NpAppInfo();
+                info.setAppId(wechatConfig.getAppId());
+                info.setAppSecret(wechatConfig.getSecret());
+                info.setCreateTime(DateUtil.getCurrentDate());
+                info.setCreateUser("admin");
+            } else if( !appInfo.getAppSecret().equals(appSecret) ){
+                NpAppInfo info = new NpAppInfo();
+                info.setAppId(wechatConfig.getAppId());
+                info.setAppSecret(appSecret);
+                info.setCreateTime(DateUtil.getCurrentDate());
+            }
+
             // 解析字符串并返回结果
             return JSON.parseObject(result, DtoAccTkRst.class);
 
@@ -113,7 +138,7 @@ public class NimiproMessageServiceImpl implements NimiproMessageService {
     }
 
     @Override
-    public DtoNimiproIdInfoRst login(DtoNimiproLoginReq login) {
+    public DtoNpIdenInfoRst login(DtoNpLoginReq login) {
         // 检查入参
         CheckInParamUtil.checkInParam(login);
         // 获取 httpClient
@@ -133,21 +158,23 @@ public class NimiproMessageServiceImpl implements NimiproMessageService {
             log.info("接口参数：" + paramMap);
             // 发送Get请求，并接收字符串的结果
             String jsonObj = HttpClientUtil.doGet(httpClient, NimiproUrlConfig.GET_CODE2SESSION_URL.getUrl(), paramMap, headerMap);
-            DtoNimiproIdInfoRst dtoNimiProIdInfoRst = JSON.parseObject(jsonObj, DtoNimiproIdInfoRst.class);
+            DtoNpIdenInfoRst dtoNimiProIdInfoRst = JSON.parseObject(jsonObj, DtoNpIdenInfoRst.class);
             // 根据openId查询用户是否存在
             SimpleCondition sc = new SimpleCondition().addParm("openId",dtoNimiProIdInfoRst.getOpenid());
-            TestUser user = testUserService.findOne(sc);
+            NpUser user = NpUserService.findOne(sc);
             // 不存在添加用户
             if(user == null){
-                TestUser testUser = DtoNimiproIdInfoRst.toPO(dtoNimiProIdInfoRst);
-                testUser.setAppId(login.getAppid());
-                /* testUser.setCreateUser(); */
-                testUserService.save(testUser);
+                NpUser NpUser = DtoNpIdenInfoRst.toPO(dtoNimiProIdInfoRst);
+                NpUser.setAppId(login.getAppid());
+                /* NpUser.setCreateUser(); */
+                NpUserService.save(NpUser);
             }else{
-                // 修改sessionKey
-                user.setSessionKey(dtoNimiProIdInfoRst.getSession_key());
-                user.setModifyTime(new Date(System.currentTimeMillis()));
-                testUserService.update(user);
+                if(StringUtils.isNotEmpty(dtoNimiProIdInfoRst.getSession_key())){
+                    // 修改sessionKey
+                    user.setSessionKey(dtoNimiProIdInfoRst.getSession_key());
+                }
+                user.setModifyTime(DateUtil.getCurrentDate());
+                NpUserService.update(user);
             }
             // 解析字符串并返回结果
             return dtoNimiProIdInfoRst;
@@ -159,7 +186,9 @@ public class NimiproMessageServiceImpl implements NimiproMessageService {
     }
 
     @Override
-    public DtoBasicResult sendNimiProSubMsg(String accessToken, DtoNimiproSubMsgReq request) {
+    public DtoBasicRst sendNimiProSubMsg(DtoNpSubMsgReq request) {
+        // 获取 accessToken
+        String accessToken = accTkUtil.getAccessToken();
         // 检查入参
         CheckInParamUtil.checkInParam(accessToken, request);
 
@@ -170,23 +199,45 @@ public class NimiproMessageServiceImpl implements NimiproMessageService {
         // 设置请求体参数
         HashMap<String, String> headerMap = new HashMap<>(1);
 
+        // DtoNpSubMsgReq 转 NpMessage
+        // 默认 sendStatus 是 CLZ-处理中
+        NpMessage npMessage = DtoNpSubMsgReq.toPO(request);
+        // 设置小程序ID
+        npMessage.setAppId(wechatConfig.getAppId());
+        // 保存
+        dao.save(npMessage);
+
         // 发送 http-post 请求
         try {
             log.info("接口名称：" + NimiproUrlConfig.SEND_SUBSCRIBE_MESSAGE.getName());
             log.info("接口参数：" + NimiproUrlConfig.SEND_SUBSCRIBE_MESSAGE.getUrl());
-            log.info("接口路径参数：?access_token=" + URLDecoder.decode(accessToken, StandardCharsets.UTF_8.name()));
+            log.info("接口路径参数：access_token=" + accessToken);
             log.info("接口JSON参数：" + reqData);
             // 设置 Url 带参
-            String reqUrl = NimiproUrlConfig.SEND_SUBSCRIBE_MESSAGE.getUrl() + "?access_token=" + URLDecoder.decode(accessToken, StandardCharsets.UTF_8.name());
+            String reqUrl = NimiproUrlConfig.SEND_SUBSCRIBE_MESSAGE.getUrl() + "?access_token=" + accessToken ;
             // 发送Post请求并接收字符串结果
             String result = HttpClientUtil.doPost(httpClient, reqUrl, reqData, headerMap);
-            // 解析字符串并转为对象返回
-            return JSON.parseObject(result, DtoBasicResult.class);
+            log.info("小程序发送订阅消息结果："+ result);
+            // 解析字符串并转为 DtoBasicRst 对象
+            DtoBasicRst dtoBasicRst = JSON.parseObject(result, DtoBasicRst.class);
+            // errCode是 null | 0L 为成功，否则为失败
+            if(dtoBasicRst.getErrcode() == null || dtoBasicRst.getErrcode().equals(SUCCESS)){
+                // 记录成功
+                npMessage.setSendStatus(NpSendMsgStatusEnum.CG.getCode());
+            } else {
+                // 记录失败
+                npMessage.setSendStatus(NpSendMsgStatusEnum.SB.getCode());
+            }
+            // 记录发送时间
+            npMessage.setSendTmplTime(DateUtil.getCurrentDate());
+            // 修改对象
+            dao.update(npMessage);
+            // 返回对象
+            return dtoBasicRst;
         } catch (Exception e) {
             // 记录日志和抛异常
-            log.debug("小程序发送订阅消息异常\n", e);
+            log.debug("小程序发送订阅消息异常", e);
             throw new BusinessException("小程序发送订阅消息异常");
         }
     }
-
 }

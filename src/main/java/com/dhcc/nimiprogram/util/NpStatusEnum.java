@@ -5,7 +5,7 @@ package com.dhcc.nimiprogram.util;
  * @date 2020/6/24
  * description：
  */
-public enum NimiProStatusEnum {
+public enum NpStatusEnum {
     /**
      * DEVELOPER : 开发版
      * TRIAL : 体验版
@@ -18,7 +18,7 @@ public enum NimiProStatusEnum {
     private String name;
     private String code;
 
-    private NimiProStatusEnum(String name,String code){
+    private NpStatusEnum(String name, String code){
         this.name = name;
         this.code = code;
     }

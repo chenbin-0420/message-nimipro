@@ -1,9 +1,9 @@
 package com.dhcc.nimiprogram.service.impl;
 
 import com.dhcc.basic.service.BaseServiceImpl;
-import com.dhcc.nimiprogram.dao.TestUserDao;
-import com.dhcc.nimiprogram.model.TestUser;
-import com.dhcc.nimiprogram.service.TestUserService;
+import com.dhcc.nimiprogram.dao.NpAppInfoDao;
+import com.dhcc.nimiprogram.model.NpAppInfo;
+import com.dhcc.nimiprogram.service.NpAppInfoService;
 import org.springframework.stereotype.Service;
 /*
 service层一般情况下与model/dao是一对一的关系！【主要负责】这一个model的增删改查，保持原子性以提高复用度。
@@ -27,34 +27,34 @@ service关键方法上应该有@Transactional注解。
 */
 
 /**
- * test_user-Service实现
+ * 小程序应用信息-Service实现
  * @author cb
- * @since 2020-06-23
+ * @since 2020-06-28
  */
 @Service
-public class TestUserServiceImpl extends BaseServiceImpl<TestUserDao, TestUser, String> implements TestUserService {
+public class NpAppInfoServiceImpl extends BaseServiceImpl<NpAppInfoDao, NpAppInfo, String> implements NpAppInfoService {
 	@Override
-	protected void beforeSave(TestUser object) {
+	protected void beforeSave(NpAppInfo object) {
 		//新增前
 	}
 	@Override
-	protected void afterSave(TestUser object, TestUser savedObject) {
+	protected void afterSave(NpAppInfo object, NpAppInfo savedObject) {
 		//新增后
 	}
 	@Override
-	protected void beforeUpdate(TestUser object) {
+	protected void beforeUpdate(NpAppInfo object) {
 		//修改前
 	}
 	@Override
-	protected void afterUpdate(TestUser object, TestUser savedObject) {
+	protected void afterUpdate(NpAppInfo object, NpAppInfo savedObject) {
 		//修改后
 	}
 	@Override
-	protected void beforeDelete(TestUser object) {
+	protected void beforeDelete(NpAppInfo object) {
 		//删除前
 	}
 	@Override
-	protected void afterDelete(TestUser object) {
+	protected void afterDelete(NpAppInfo object) {
 		//删除后
 	}
 }

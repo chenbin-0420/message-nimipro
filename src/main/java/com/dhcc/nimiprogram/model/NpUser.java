@@ -26,9 +26,9 @@ import com.dhcc.basic.model.IdentifiedPo;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicUpdate(true)
 @Proxy(lazy = false)
-@Table(name = "test_user", schema="dhcplat", catalog="dhcplat")
-@TableDefine(title = "测试用户")
-public class TestUser extends AuditedPo implements Serializable {
+@Table(name = "np_user", schema="dhcplat", catalog="dhcplat")
+@TableDefine(title = "小程序用户")
+public class NpUser extends AuditedPo implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@FieldDefine(title = "小程序ID", number = 2)
@@ -47,7 +47,7 @@ public class TestUser extends AuditedPo implements Serializable {
 	@Column(name = "unionid", length = 255, unique = false, nullable = true)
 	private String unionid;
 	
-	public TestUser() {
+	public NpUser() {
 		
 	}
 	

@@ -1,9 +1,10 @@
 package com.dhcc.nimiprogram.dao.impl;
 
-import com.dhcc.basic.dao.hibernate.BaseDaoHibImpl;
-import com.dhcc.nimiprogram.dao.TestUserDao;
-import com.dhcc.nimiprogram.model.TestUser;
 import org.springframework.stereotype.Repository;
+
+import com.dhcc.nimiprogram.dao.NpMessageDao;
+import com.dhcc.nimiprogram.model.NpMessage;
+import com.dhcc.basic.dao.hibernate.BaseDaoHibImpl;
 /*
 dao层一般情况下与model是一对一的关系！【只负责】这一个model的增删改查，保持原子性以提高复用度。
 所以要求此dao的【增删改的输入对象】和【查的输出对象】必需是此model。
@@ -16,11 +17,11 @@ dao层一般情况下与model是一对一的关系！【只负责】这一个mod
 */
 
 /**
- * test_user-DAO实现
+ * 小程序订阅消息-DAO实现
  * @author cb
- * @since 2020-06-23
+ * @since 2020-06-28
  */
 @Repository
-public class TestUserDaoImpl extends BaseDaoHibImpl<TestUser, String> implements TestUserDao {
+public class NpMessageDaoImpl extends BaseDaoHibImpl<NpMessage, String> implements NpMessageDao {
 	
 }

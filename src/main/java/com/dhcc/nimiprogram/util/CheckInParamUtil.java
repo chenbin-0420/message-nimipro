@@ -1,8 +1,8 @@
 package com.dhcc.nimiprogram.util;
 
 import com.dhcc.basic.exception.BusinessException;
-import com.dhcc.nimiprogram.dto.DtoNimiproSubMsgReq;
-import com.dhcc.nimiprogram.dto.DtoNimiproLoginReq;
+import com.dhcc.nimiprogram.dto.DtoNpSubMsgReq;
+import com.dhcc.nimiprogram.dto.DtoNpLoginReq;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -17,7 +17,7 @@ public class CheckInParamUtil {
      * @param token 访问token
      * @param request 小程序订阅消息请求体
      */
-    public static void checkInParam(String token, DtoNimiproSubMsgReq request) {
+    public static void checkInParam(String token, DtoNpSubMsgReq request) {
         String reason = "";
         if (StringUtils.isEmpty(token)) {
             reason += "access_token为空，";
@@ -31,7 +31,14 @@ public class CheckInParamUtil {
         if (request.getData() == null) {
             reason += "data为空，";
         }
-
+        if(StringUtils.isEmpty(request.getLang())){
+            // 默认 zh_CN 中文简体
+            request.setLang("zh_CN");
+        }
+        if(StringUtils.isEmpty(request.getMiniprogram_state())){
+            // 默认 formal 正式版
+            request.setMiniprogram_state(NpStatusEnum.FORMAL.getCode());
+        }
 
         if (StringUtils.isNotEmpty(reason)) {
             reason = "订阅消息参数 " + reason;
@@ -63,7 +70,7 @@ public class CheckInParamUtil {
      * 检查小程序登录凭证校验业务入参
      * @param login 登录凭证类
      */
-    public static void checkInParam(DtoNimiproLoginReq login) {
+    public static void checkInParam(DtoNpLoginReq login) {
         String reason = "";
         if (StringUtils.isEmpty(login.getAppid())) {
             reason += "appid为空，";

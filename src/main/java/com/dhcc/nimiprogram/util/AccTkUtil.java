@@ -1,7 +1,7 @@
 package com.dhcc.nimiprogram.util;
 
 import com.dhcc.nimiprogram.config.WechatConfig;
-import com.dhcc.nimiprogram.service.NimiproMessageService;
+import com.dhcc.nimiprogram.service.NpMessageService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -21,7 +21,7 @@ public class AccTkUtil {
 
     @Lazy
     @Autowired
-    private NimiproMessageService nimiproMessageService;
+    private NpMessageService npMessageService;
 
     private static final int MAX_COUNT = 3;
 
@@ -42,9 +42,10 @@ public class AccTkUtil {
             // 循环3次
             for (int i = 0; i < MAX_COUNT; i++) {
                 // 获取accessToken
-                String accessTokenLasted = nimiproMessageService.getAccessToken(wechatConfig.getAppId(), wechatConfig.getSecret()).getAccess_token();
+                String accessTokenLasted = npMessageService.getAccessToken(wechatConfig.getAppId(), wechatConfig.getSecret()).getAccess_token();
                 // 不为 null , 返回 accessToken
                 if (StringUtils.isNotEmpty(accessTokenLasted)) {
+                    setAccessToken( accessTokenLasted );
                     return accessTokenLasted;
                 }
             }
@@ -52,11 +53,16 @@ public class AccTkUtil {
         return accessToken;
     }
 
+    private static void setAccessToken(String accessToken) {
+        AccTkUtil.accessToken = accessToken;
+    }
+
     /**
      * 定时器，每隔1个半小时自动刷新 accessToken
      */
     @Scheduled(fixedRate = 5400000)
     public void refreshAccessToken() {
-        AccTkUtil.accessToken = nimiproMessageService.getAccessToken(wechatConfig.getAppId(), wechatConfig.getSecret()).getAccess_token();
+        // 获取 accessToken
+        setAccessToken( npMessageService.getAccessToken(wechatConfig.getAppId(), wechatConfig.getSecret()).getAccess_token() );
     }
 }

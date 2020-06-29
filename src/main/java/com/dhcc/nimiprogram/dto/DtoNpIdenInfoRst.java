@@ -1,15 +1,14 @@
 package com.dhcc.nimiprogram.dto;
 
-import com.dhcc.nimiprogram.model.TestUser;
-
-import java.util.Date;
+import com.dhcc.nimiprogram.model.NpUser;
+import com.dhcc.nimiprogram.util.DateUtil;
 
 /**
  * @author cb
  * @date 2020/6/17
  * description：
  */
-public class DtoNimiproIdInfoRst extends DtoBasicResult {
+public class DtoNpIdenInfoRst extends DtoBasicRst {
     /**
      * openid ：用户唯一标识
      */
@@ -80,12 +79,12 @@ public class DtoNimiproIdInfoRst extends DtoBasicResult {
         return "{openid="+openid+", session_key="+session_key+", unionid="+unionid+", errcode=" + errcode + ", errmsg=" + errmsg+"}";
     }
 
-    public static TestUser toPO(DtoNimiproIdInfoRst nimiProIdInfoRst){
-        TestUser user = new TestUser();
+    public static NpUser toPO(DtoNpIdenInfoRst nimiProIdInfoRst){
+        NpUser user = new NpUser();
         user.setOpenId(nimiProIdInfoRst.getOpenid());
         user.setSessionKey(nimiProIdInfoRst.getSession_key());
         user.setUnionid(nimiProIdInfoRst.unionid);
-        user.setCreateTime(new Date(System.currentTimeMillis()));
+        user.setCreateTime(DateUtil.getCurrentDate());
         return user;
     }
 
