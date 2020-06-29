@@ -2,8 +2,8 @@ package com.dhcc.nimiprogram.dao.impl;
 
 import org.springframework.stereotype.Repository;
 
-import com.dhcc.nimiprogram.dao.NpAppInfoDao;
-import com.dhcc.nimiprogram.model.NpAppInfo;
+import com.dhcc.nimiprogram.dao.NpAccessTokenDao;
+import com.dhcc.nimiprogram.model.NpAccessToken;
 import com.dhcc.basic.dao.hibernate.BaseDaoHibImpl;
 /*
 dao层一般情况下与model是一对一的关系！【只负责】这一个model的增删改查，保持原子性以提高复用度。
@@ -17,11 +17,11 @@ dao层一般情况下与model是一对一的关系！【只负责】这一个mod
 */
 
 /**
- * 小程序应用信息-DAO实现
+ * 小程序访问令牌-DAO实现
  * @author cb
- * @since 2020-06-28
+ * @since 2020-06-29
  */
 @Repository
-public class NpAppInfoDaoImpl extends BaseDaoHibImpl<NpAppInfo, String> implements NpAppInfoDao {
+public class NpAccessTokenDaoImpl extends BaseDaoHibImpl<NpAccessToken, String> implements NpAccessTokenDao {
 	
 }

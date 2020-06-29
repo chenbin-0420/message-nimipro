@@ -1,5 +1,7 @@
 package com.dhcc.nimiprogram.dto;
 
+import com.dhcc.nimiprogram.model.NpAccessToken;
+
 /**
  * @author cb
  * @date 2020/6/19
@@ -17,7 +19,7 @@ public class DtoAccTkRst {
     /**
      * errcode 错误码
      */
-    private Long errcode;
+    private Integer errcode;
     /**
      * errmsg 错误信息
      */
@@ -39,11 +41,11 @@ public class DtoAccTkRst {
         this.expires_in = expires_in;
     }
 
-    public Long getErrcode() {
+    public Integer getErrcode() {
         return errcode;
     }
 
-    public void setErrcode(Long errcode) {
+    public void setErrcode(Integer errcode) {
         this.errcode = errcode;
     }
 
@@ -53,5 +55,19 @@ public class DtoAccTkRst {
 
     public void setErrmsg(String errmsg) {
         this.errmsg = errmsg;
+    }
+
+    /**
+     * DtoAccTkRst 转 NpAccessToken
+     * @param dtoAccTkRst 获取访问令牌结果
+     * @return 小程序访问令牌
+     */
+    public static NpAccessToken toPO(DtoAccTkRst dtoAccTkRst){
+        NpAccessToken npAccessToken = new NpAccessToken();
+        npAccessToken.setAccessToken(dtoAccTkRst.getAccess_token());
+        npAccessToken.setExpiresIn(dtoAccTkRst.getExpires_in());
+        npAccessToken.setErrcode(dtoAccTkRst.getErrcode());
+        npAccessToken.setErrmsg(dtoAccTkRst.getErrmsg());
+        return npAccessToken;
     }
 }

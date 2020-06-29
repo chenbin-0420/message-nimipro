@@ -1,9 +1,9 @@
 package com.dhcc.nimiprogram.service.impl;
 
 import com.dhcc.basic.service.BaseServiceImpl;
-import com.dhcc.nimiprogram.dao.NpAppInfoDao;
-import com.dhcc.nimiprogram.model.NpAppInfo;
-import com.dhcc.nimiprogram.service.NpAppInfoService;
+import com.dhcc.nimiprogram.dao.NpAccessTokenDao;
+import com.dhcc.nimiprogram.model.NpAccessToken;
+import com.dhcc.nimiprogram.service.NpAccessTokenService;
 import org.springframework.stereotype.Service;
 /*
 service层一般情况下与model/dao是一对一的关系！【主要负责】这一个model的增删改查，保持原子性以提高复用度。
@@ -27,34 +27,34 @@ service关键方法上应该有@Transactional注解。
 */
 
 /**
- * 小程序应用信息-Service实现
+ * 小程序访问令牌-Service实现
  * @author cb
- * @since 2020-06-28
+ * @since 2020-06-29
  */
 @Service
-public class NpAppInfoServiceImpl extends BaseServiceImpl<NpAppInfoDao, NpAppInfo, String> implements NpAppInfoService {
+public class NpAccessTokenServiceImpl extends BaseServiceImpl<NpAccessTokenDao, NpAccessToken, String> implements NpAccessTokenService {
 	@Override
-	protected void beforeSave(NpAppInfo object) {
+	protected void beforeSave(NpAccessToken object) {
 		//新增前
 	}
 	@Override
-	protected void afterSave(NpAppInfo object, NpAppInfo savedObject) {
+	protected void afterSave(NpAccessToken object, NpAccessToken savedObject) {
 		//新增后
 	}
 	@Override
-	protected void beforeUpdate(NpAppInfo object) {
+	protected void beforeUpdate(NpAccessToken object) {
 		//修改前
 	}
 	@Override
-	protected void afterUpdate(NpAppInfo object, NpAppInfo savedObject) {
+	protected void afterUpdate(NpAccessToken object, NpAccessToken savedObject) {
 		//修改后
 	}
 	@Override
-	protected void beforeDelete(NpAppInfo object) {
+	protected void beforeDelete(NpAccessToken object) {
 		//删除前
 	}
 	@Override
-	protected void afterDelete(NpAppInfo object) {
+	protected void afterDelete(NpAccessToken object) {
 		//删除后
 	}
 }

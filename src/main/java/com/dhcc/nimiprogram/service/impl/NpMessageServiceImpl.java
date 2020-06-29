@@ -9,10 +9,10 @@ import com.dhcc.nimiprogram.config.NimiproUrlConfig;
 import com.dhcc.nimiprogram.config.WechatConfig;
 import com.dhcc.nimiprogram.dao.NpMessageDao;
 import com.dhcc.nimiprogram.dto.*;
-import com.dhcc.nimiprogram.model.NpAppInfo;
+import com.dhcc.nimiprogram.model.NpAccessToken;
 import com.dhcc.nimiprogram.model.NpMessage;
 import com.dhcc.nimiprogram.model.NpUser;
-import com.dhcc.nimiprogram.service.NpAppInfoService;
+import com.dhcc.nimiprogram.service.NpAccessTokenService;
 import com.dhcc.nimiprogram.service.NpMessageService;
 import com.dhcc.nimiprogram.service.NpUserService;
 import com.dhcc.nimiprogram.util.*;
@@ -49,7 +49,7 @@ public class NpMessageServiceImpl extends BaseServiceImpl<NpMessageDao,NpMessage
     private AccTkUtil accTkUtil;
 
     @Autowired
-    private NpAppInfoService npAppInfoService;
+    private NpAccessTokenService npAccessTokenService;
 
     /**
      * 成功标识
@@ -107,27 +107,23 @@ public class NpMessageServiceImpl extends BaseServiceImpl<NpMessageDao,NpMessage
             log.info("接口参数：" + paramMap);
             // 发送Get请求，并接收字符串的结果
             String result = HttpClientUtil.doGet(httpClient, NimiproUrlConfig.GET_ACCESS_TOKEN_URL.getUrl(), paramMap, headerMap);
-            //
-            SimpleCondition sc = new SimpleCondition()
-                    .addParm("appId",wechatConfig.getAppId())
-                    .addParm("appSecret", appSecret);
-            NpAppInfo appInfo = npAppInfoService.findOne(sc);
-            // 第一次进来，配置 wechatConfig 中应用信息
-            if( appInfo == null ){
-                NpAppInfo info = new NpAppInfo();
-                info.setAppId(wechatConfig.getAppId());
-                info.setAppSecret(wechatConfig.getSecret());
-                info.setCreateTime(DateUtil.getCurrentDate());
-                info.setCreateUser("admin");
-            } else if( !appInfo.getAppSecret().equals(appSecret) ){
-                NpAppInfo info = new NpAppInfo();
-                info.setAppId(wechatConfig.getAppId());
-                info.setAppSecret(appSecret);
-                info.setCreateTime(DateUtil.getCurrentDate());
-            }
+            // 解析字符串为 DtoAccTkRst 对象
+            DtoAccTkRst dtoAccTkRst = JSON.parseObject(result, DtoAccTkRst.class);
+            // 访问令牌
+            NpAccessToken npAccessToken = DtoAccTkRst.toPO(dtoAccTkRst);
+            // 小程序ID
+            npAccessToken.setAppid(wechatConfig.getAppId());
+            // 秘钥
+            npAccessToken.setSecret(wechatConfig.getSecret());
+            // 创建时间
+            npAccessToken.setCreateTime(DateUtil.getCurrentDate());
+            // 是否删除 默认是F
+            npAccessToken.setIsDel("F");
+            // 添加 npAccessToken
+            npAccessTokenService.save(npAccessToken);
 
             // 解析字符串并返回结果
-            return JSON.parseObject(result, DtoAccTkRst.class);
+            return dtoAccTkRst;
 
         } catch (Exception e) {
             // 记录日志和抛异常
