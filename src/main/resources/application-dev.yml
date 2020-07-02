@@ -69,7 +69,9 @@ endpoints:
     sensitive: false
 
 cors:
-  origins: http://192.168.0.141:8113
+#  origins: http://192.168.0.141:8113
+# 允许所有域使用
+  origins: '*'
 
 devMode: true
 
@@ -88,5 +90,5 @@ wechat:
   wechatToken: wechatToken
   app_id: wxcedd2cc8ed79ac85
   secret: 74fadc1dc8d2a7954d035a72e73239a3
-  test_app_id: wxa399b6b31a16fcaa
-  test_secret: e4c1334a75e0afb0075af1886e6d0c6f
+#  app_id: wx419a354d9fd6dd2f
+#  secret: 4dfc3f5beb9155fdd128b50d29183330
