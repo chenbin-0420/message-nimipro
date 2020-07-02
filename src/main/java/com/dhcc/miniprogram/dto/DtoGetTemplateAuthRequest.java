@@ -1,6 +1,8 @@
 package com.dhcc.miniprogram.dto;
 
-import java.util.List;
+import com.dhcc.miniprogram.enums.IsSubEnum;
+import com.dhcc.miniprogram.model.MpTemplateAuth;
+import com.dhcc.miniprogram.util.DateUtil;
 
 /**
  * @author cb
@@ -13,16 +15,13 @@ public class DtoGetTemplateAuthRequest {
      */
     private String phone;
     /**
-     * 模板ID
+     * 小程序用户ID
+     */
+    private String openId;
+    /**
+     * 小程序模板ID
      */
     private String templateId;
-    /**
-     * 模板ID数组
-     */
-    private List<String> templateIdList;
-
-    public DtoGetTemplateAuthRequest() {
-    }
 
     public String getPhone() {
         return phone;
@@ -30,6 +29,14 @@ public class DtoGetTemplateAuthRequest {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getOpenId() {
+        return openId;
+    }
+
+    public void setOpenId(String openId) {
+        this.openId = openId;
     }
 
     public String getTemplateId() {
@@ -40,11 +47,18 @@ public class DtoGetTemplateAuthRequest {
         this.templateId = templateId;
     }
 
-    public List<String> getTemplateIdList() {
-        return templateIdList;
-    }
-
-    public void setTemplateIdList(List<String> templateIdList) {
-        this.templateIdList = templateIdList;
+    /**
+     * DtoGetTemplateAuthRequest 转 MpTemplateAuth
+     * @param templateAuthRequest 模板授权请求
+     * @return 模板授权
+     */
+    public static MpTemplateAuth toPO(DtoGetTemplateAuthRequest templateAuthRequest){
+        MpTemplateAuth templateAuth = new MpTemplateAuth();
+        templateAuth.setPhone(templateAuthRequest.getPhone());
+        templateAuth.setTemplateId(templateAuthRequest.templateId);
+        templateAuth.setCreateUser(templateAuthRequest.getOpenId());
+        templateAuth.setIsSub(IsSubEnum.TRUE.getCode());
+        templateAuth.setCreateTime(DateUtil.getCurrentDate());
+        return templateAuth;
     }
 }

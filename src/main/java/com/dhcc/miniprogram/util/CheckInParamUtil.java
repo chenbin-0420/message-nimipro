@@ -4,6 +4,7 @@ import com.dhcc.basic.exception.BusinessException;
 import com.dhcc.miniprogram.dto.DtoGetPhoneNumRequest;
 import com.dhcc.miniprogram.dto.DtoGetSubMsgRequest;
 import com.dhcc.miniprogram.dto.DtoGetLoginRequest;
+import com.dhcc.miniprogram.dto.DtoGetTemplateAuthRequest;
 import com.dhcc.miniprogram.enums.MpStatusEnum;
 import org.apache.commons.lang.StringUtils;
 
@@ -67,7 +68,7 @@ public class CheckInParamUtil {
         }
 
         if (StringUtils.isNotEmpty(reason)) {
-            reason = "后台接口调用凭据参数 " + reason;
+            reason = "获取AccessToken " + reason;
             throw new BusinessException(reason.substring(0, reason.length() - 1));
         }
     }
@@ -78,14 +79,8 @@ public class CheckInParamUtil {
      */
     public static void checkInParam(DtoGetLoginRequest login) {
         String reason = "";
-        if (StringUtils.isEmpty(login.getAppid())) {
-            reason += "appid为空，";
-        }
-        if (StringUtils.isEmpty(login.getSecret())) {
-            reason += "secret为空，";
-        }
         if (StringUtils.isEmpty(login.getCode())) {
-            reason += "js_code为空，";
+            reason += "code为空，";
         }
 
         if (StringUtils.isNotEmpty(reason)) {
@@ -177,5 +172,25 @@ public class CheckInParamUtil {
         return map;
     }
 
+    /**
+     * 检查模板授权请求体入参
+     * @param dtoGetTemplateAuthRequest 模板授权请求体
+     */
+    public static void checkInParam(DtoGetTemplateAuthRequest dtoGetTemplateAuthRequest){
+        String reason = "";
+        if(StringUtils.isEmpty(dtoGetTemplateAuthRequest.getPhone())){
+            reason += "phone为空,";
+        }
+        if(StringUtils.isEmpty(dtoGetTemplateAuthRequest.getOpenId())){
+            reason += "openId为空,";
+        }
+        if(StringUtils.isEmpty(dtoGetTemplateAuthRequest.getTemplateId())){
+            reason += "templateId为空,";
+        }
+        if(StringUtils.isNotEmpty(reason)){
+            reason = "模板授权请求参数 "+reason;
+            throw new BusinessException(reason.substring(0,reason.length()-1));
+        }
+    }
 
 }

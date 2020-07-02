@@ -22,21 +22,21 @@ public interface MpMessageService {
      * 获取小程序全局唯一后台接口调用凭据（access_token）
      * @param appid 小程序唯一凭证，即 AppID
      * @param appSecret 小程序唯一凭证密钥，即 AppSecret
-     * @return DtoAccessTokenResult
+     * @return DtoReturnTokenResult
      */
-    DtoAccessTokenResult getAccessToken(String appid, String appSecret);
+    DtoReturnTokenResult getAccessToken(String appid, String appSecret);
 
     /**
      * 登录凭证校验
      * @param login 登录请求类
-     * @return DtoGetIdenInfoResult
+     * @return DtoReturnIdenInfoResult
      */
-    DtoGetIdenInfoResult login(DtoGetLoginRequest login);
+    DtoReturnIdenInfoResult login(DtoGetLoginRequest login);
 
     /**
      * 发送订阅消息
      * @param request 小程序订阅消息请求类
-     * @return DtoBasicResult
+     * @return DtoReturnBasicResult
      */
-    DtoBasicResult sendMiniproSubMsg(DtoGetSubMsgRequest request);
+    DtoReturnBasicResult sendMiniproSubMsg(DtoGetSubMsgRequest request);
 }

@@ -5,7 +5,7 @@ package com.dhcc.miniprogram.dto;
  * @date 2020/6/11
  * 基础响应类
  */
-public class DtoBasicResult {
+public class DtoReturnBasicResult {
     /**
      * errcode ：错误码
      */
@@ -15,10 +15,10 @@ public class DtoBasicResult {
      */
     private String errmsg;
 
-    public DtoBasicResult() {
+    public DtoReturnBasicResult() {
     }
 
-    public DtoBasicResult(Long errcode, String errmsg) {
+    public DtoReturnBasicResult(Long errcode, String errmsg) {
         this.errcode = errcode;
         this.errmsg = errmsg;
     }

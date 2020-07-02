@@ -17,8 +17,12 @@ import com.dhcc.miniprogram.model.MpMessage;
 import com.dhcc.miniprogram.model.MpUser;
 import com.dhcc.miniprogram.service.MpAccessTokenService;
 import com.dhcc.miniprogram.service.MpMessageService;
+import com.dhcc.miniprogram.service.MpTemplateAuthService;
 import com.dhcc.miniprogram.service.MpUserService;
-import com.dhcc.miniprogram.util.*;
+import com.dhcc.miniprogram.util.AccessTokenUtil;
+import com.dhcc.miniprogram.util.CheckInParamUtil;
+import com.dhcc.miniprogram.util.DateUtil;
+import com.dhcc.miniprogram.util.SimpleAlgorithmUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.slf4j.Logger;
@@ -53,6 +57,10 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
 
     @Autowired
     private MpAccessTokenService accessTokenService;
+
+    @Lazy
+    @Autowired
+    private MpTemplateAuthService templateAuthService;
 
     /**
      * MP_RECEIVE_SUCCESS ：成功标识
@@ -101,7 +109,8 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
     }
 
     @Override
-    public DtoAccessTokenResult getAccessToken(String appid, String appSecret) {
+    public DtoReturnTokenResult getAccessToken(String appid, String appSecret) {
+        log.info("获取AccessToken：{ appid="+appid+",secret="+appSecret+"}");
         // 检查入参
         CheckInParamUtil.checkInParam(appid,appSecret);
 
@@ -121,10 +130,10 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
             log.info("接口参数：" + paramMap);
             // 发送Get请求，并接收字符串的结果
             String result = HttpClientUtil.doGet(httpClient, MiniproUrlConfig.GET_ACCESS_TOKEN_URL.getUrl(), paramMap, headerMap);
-            // 解析字符串为 DtoAccessTokenResult 对象
-            DtoAccessTokenResult dtoAccessTokenResult = JSON.parseObject(result, DtoAccessTokenResult.class);
+            // 解析字符串为 DtoReturnTokenResult 对象
+            DtoReturnTokenResult dtoReturnTokenResult = JSON.parseObject(result, DtoReturnTokenResult.class);
             // 访问令牌
-            MpAccessToken mpAccessToken = DtoAccessTokenResult.toPO(dtoAccessTokenResult);
+            MpAccessToken mpAccessToken = DtoReturnTokenResult.toPO(dtoReturnTokenResult);
             // 小程序ID
             mpAccessToken.setAppid(wechatConfig.getAppId());
             // 秘钥
@@ -137,25 +146,28 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
             accessTokenService.save(mpAccessToken);
 
             // 解析字符串并返回结果
-            return dtoAccessTokenResult;
+            return dtoReturnTokenResult;
 
         } catch (Exception e) {
             // 记录日志和抛异常
-            log.debug("获取微信Token异常\n", e);
+            log.debug("获取AccessToken异常", e);
             throw new BusinessException("获取微信Token异常");
 
         }
     }
 
     @Override
-    public DtoGetIdenInfoResult login(DtoGetLoginRequest login) {
+    public DtoReturnIdenInfoResult login(DtoGetLoginRequest login) {
+        log.info("登录凭证校验入参："+JSON.toJSONString(login));
         // 检查入参
         CheckInParamUtil.checkInParam(login);
         // 获取 httpClient
         CloseableHttpClient httpClient = HttpClientUtil.getHttpClient();
+        // 小程序ID
+        String appId = wechatConfig.getAppId();
         // 设置 Url 带参
         Map<String, String> paramMap = new HashMap<>(3);
-        paramMap.put("appid", wechatConfig.getAppId());
+        paramMap.put("appid", appId);
         paramMap.put("secret", wechatConfig.getSecret());
         paramMap.put("js_code", login.getCode());
         paramMap.put("grant_type", GrantTypeEnum.AUTHORIZATION_CODE.getCode());
@@ -168,16 +180,16 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
             log.info("接口参数：" + paramMap);
             // 发送Get请求，并接收字符串的结果
             String jsonObj = HttpClientUtil.doGet(httpClient, MiniproUrlConfig.GET_CODE2SESSION_URL.getUrl(), paramMap, headerMap);
-            DtoGetIdenInfoResult dtoNimiProIdInfoRst = JSON.parseObject(jsonObj, DtoGetIdenInfoResult.class);
+            DtoReturnIdenInfoResult dtoNimiProIdInfoRst = JSON.parseObject(jsonObj, DtoReturnIdenInfoResult.class);
             // 根据openId查询用户是否存在
             SimpleCondition sc = new SimpleCondition().addParm("openId",dtoNimiProIdInfoRst.getOpenid());
             MpUser user = userService.findOne(sc);
             // 不存在添加用户
             if(user == null){
-                MpUser MpUser = DtoGetIdenInfoResult.toPO(dtoNimiProIdInfoRst);
-                MpUser.setAppId(login.getAppid());
-                /* MpUser.setCreateUser(); */
-                userService.save(MpUser);
+                MpUser mpUser = DtoReturnIdenInfoResult.toPO(dtoNimiProIdInfoRst);
+                mpUser.setAppId(appId);
+                /*mpUser.setCreateUser();*/
+                userService.save(mpUser);
             }else{
                 if(StringUtils.isNotEmpty(dtoNimiProIdInfoRst.getSession_key())){
                     // 修改sessionKey
@@ -186,6 +198,8 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
                 user.setModifyTime(DateUtil.getCurrentDate());
                 userService.update(user);
             }
+            // session_key 不要传到前端
+            dtoNimiProIdInfoRst.setSession_key(null);
             // 解析字符串并返回结果
             return dtoNimiProIdInfoRst;
         } catch (Exception e) {
@@ -196,8 +210,9 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
     }
 
     @Override
-    public DtoBasicResult sendMiniproSubMsg(DtoGetSubMsgRequest request) {
-        DtoBasicResult dtoBasicResult;
+    public DtoReturnBasicResult sendMiniproSubMsg(DtoGetSubMsgRequest request) {
+        log.info("小程序发送订阅消息入参："+JSON.toJSONString(request));
+        DtoReturnBasicResult dtoReturnBasicResult;
         // 获取 accessToken
         String accessToken = accessTokenUtil.getAccessToken();
         // 检查入参
@@ -210,20 +225,20 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
         // 用户不存在返回信息
         if(user == null){
             // 返回用户不存在结果
-            dtoBasicResult = new DtoBasicResult(RESPONSE_NOT_EXISTS_USER, phoneNumber + " 的用户不存在");
+            dtoReturnBasicResult = new DtoReturnBasicResult(RESPONSE_NOT_EXISTS_USER, phoneNumber + " 的用户不存在");
             // 记录日志
-            log.info("小程序发送订阅消息失败结果：" + JSON.toJSONString(dtoBasicResult));
-            return dtoBasicResult;
+            log.info("小程序发送订阅消息失败结果：" + JSON.toJSONString(dtoReturnBasicResult));
+            return dtoReturnBasicResult;
         } else {
             // 获取用户手机号
             String phoneNum = user.getPhoneNum();
             // 手机号为空
             if(StringUtils.isEmpty(phoneNum)){
                 // 返回用户没有手机号结果
-                dtoBasicResult = new DtoBasicResult(RESPONSE_NOT_EXISTS_PHONE, phoneNumber + " 的用户，手机号不存在");
+                dtoReturnBasicResult = new DtoReturnBasicResult(RESPONSE_NOT_EXISTS_PHONE, phoneNumber + " 的用户，手机号不存在");
                 // 记录日志
-                log.info("小程序发送订阅消息失败结果：" + JSON.toJSONString(dtoBasicResult));
-                return dtoBasicResult;
+                log.info("小程序发送订阅消息失败结果：" + JSON.toJSONString(dtoReturnBasicResult));
+                return dtoReturnBasicResult;
             } else {
                 // 手机号，不为空、用户有此手机号，订阅消息绑定OpenId
                 request.setTouser(user.getOpenId());
@@ -256,26 +271,31 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
             // 发送Post请求并接收字符串结果
             String result = HttpClientUtil.doPost(httpClient, reqUrl, reqData, headerMap);
             log.info("小程序发送订阅消息结果："+ result);
-            // 解析字符串并转为 DtoBasicResult 对象
-            dtoBasicResult = JSON.parseObject(result, DtoBasicResult.class);
+            // 解析字符串并转为 DtoReturnBasicResult 对象
+            dtoReturnBasicResult = JSON.parseObject(result, DtoReturnBasicResult.class);
             // errCode是 null | 0L 为成功，否则为失败
-            if(dtoBasicResult.getErrcode() == null || dtoBasicResult.getErrcode().equals(MP_RECEIVE_SUCCESS)){
-                // 记录成功
+            if(dtoReturnBasicResult.getErrcode() == null || dtoReturnBasicResult.getErrcode().equals(MP_RECEIVE_SUCCESS)){
+                // 1、mpMessage 发送状态：成功标识
                 mpMessage.setSendStatus(MpSendMsgStatusEnum.CG.getCode());
-                // 设置成功标识
-                dtoBasicResult.setErrcode(RESPONSE_SEND_SUCCESS);
+                // 2、dtoReturnBasicResult errcode：成功标识
+                dtoReturnBasicResult.setErrcode(RESPONSE_SEND_SUCCESS);
+                // 3、auth 修改是否订阅:未订阅、更新修改时间、修改人
+//                MpTemplateAuth auth = templateAuthService.findByPhone(request.getPhoneNumber());
+//                auth.setIsSub(IsSubEnum.FALSE.getCode());
+//                auth.setModifyUser(request.getTouser());
+//                auth.setModifyTime(DateUtil.getCurrentDate());
             } else {
                 // 记录失败
                 mpMessage.setSendStatus(MpSendMsgStatusEnum.SB.getCode());
                 // 设置成功标识
-                dtoBasicResult.setErrcode(RESPONSE_SEND_FAIL);
+                dtoReturnBasicResult.setErrcode(RESPONSE_SEND_FAIL);
             }
             // 记录发送时间
             mpMessage.setSendTmplTime(DateUtil.getCurrentDate());
             // 修改对象
             dao.update(mpMessage);
             // 返回对象
-            return dtoBasicResult;
+            return dtoReturnBasicResult;
         } catch (Exception e) {
             // 记录日志和抛异常
             log.debug("小程序发送订阅消息异常", e);

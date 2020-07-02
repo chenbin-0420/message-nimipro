@@ -19,9 +19,17 @@ public class DtoGetTemplateAuthResult {
      */
     private String desc;
     /**
+     * 类别
+     */
+    private Integer type;
+    /**
+     * 排序
+     */
+    private Integer order;
+    /**
      * 是否订阅
      */
-    private String isSub;
+    private Integer isSub;
 
     public DtoGetTemplateAuthResult() {
     }
@@ -50,11 +58,27 @@ public class DtoGetTemplateAuthResult {
         this.desc = desc;
     }
 
-    public String getIsSub() {
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
+    public Integer getOrder() {
+        return order;
+    }
+
+    public void setOrder(Integer order) {
+        this.order = order;
+    }
+
+    public Integer getIsSub() {
         return isSub;
     }
 
-    public void setIsSub(String isSub) {
+    public void setIsSub(Integer isSub) {
         this.isSub = isSub;
     }
 }

@@ -18,35 +18,42 @@ public interface MpMessageApi {
      * 获取小程序全局唯一后台接口调用凭据（access_token）
      * @param appid 小程序唯一凭证，即 AppID
      * @param appSecret 小程序唯一凭证密钥，即 AppSecret
-     * @return DtoAccessTokenResult
+     * @return token返回类
      */
-    DtoAccessTokenResult getAccessToken(String appid, String appSecret);
+    DtoReturnTokenResult getAccessToken(String appid, String appSecret);
 
     /**
      * 登录凭证校验
-     * @param login 登录请求类
-     * @return DtoGetIdenInfoResult
+     * @param dtoGetLoginRequest 登录请求类
+     * @return 用户唯一信息返回类
      */
-    DtoGetIdenInfoResult login(DtoGetLoginRequest login);
+    DtoReturnIdenInfoResult login(DtoGetLoginRequest dtoGetLoginRequest);
 
     /**
      * 发送订阅消息
-     * @param request 小程序订阅消息请求类
-     * @return DtoBasicResult
+     * @param dtoGetSubMsgRequest 小程序订阅消息请求类
+     * @return 基础返回结果类
      */
-    DtoBasicResult sendMiniproSubMsg(DtoGetSubMsgRequest request);
+    DtoReturnBasicResult sendMiniproSubMsg(DtoGetSubMsgRequest dtoGetSubMsgRequest);
 
     /**
      * 小程序获取手机号
      * @param dtoGetPhoneNumRequest 小程序获取手机号类
-     * @return DtoBasicResult
+     * @return 手机号返回结果类
      */
-    DtoBasicResult getPhoneNum(DtoGetPhoneNumRequest dtoGetPhoneNumRequest);
+    DtoReturnPhoneResult getPhoneNum(DtoGetPhoneNumRequest dtoGetPhoneNumRequest);
 
     /**
      * 小程序模板授权
-     * @param dtoGetTemplateAuthResult 模板授权结果
-     * @return DtoBasicResult
+     * @param getTemplateAuthRequest 模板授权请求
+     * @return 模板授权返回结果类
      */
-    String getTemplateAuthResult(DtoGetTemplateAuthResult dtoGetTemplateAuthResult);
+    DtoReturnTemplateAuthResult getTemplateAuthResult(DtoGetTemplateAuthRequest getTemplateAuthRequest);
+
+    /**
+     * 添加模板授权给用户
+     * @param dtoGetTemplateAuthRequest 模板授权请求体
+     * @return 模板授权返回结果类
+     */
+    DtoReturnTemplateAuthResult insertTemplateAuth(DtoGetTemplateAuthRequest dtoGetTemplateAuthRequest);
 }

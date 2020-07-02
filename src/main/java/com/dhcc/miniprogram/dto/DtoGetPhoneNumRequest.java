@@ -18,7 +18,6 @@ public class DtoGetPhoneNumRequest {
      * 敏感数据对应的云 ID，开通云开发的小程序才会返回，可通过云调用直接获取开放数据
      */
     private String cloudID;
-
     /**
      * 微信小程序ID
      */

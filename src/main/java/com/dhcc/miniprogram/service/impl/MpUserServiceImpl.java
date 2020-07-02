@@ -6,8 +6,8 @@ import com.dhcc.basic.exception.BusinessException;
 import com.dhcc.basic.service.BaseServiceImpl;
 import com.dhcc.miniprogram.config.WechatConfig;
 import com.dhcc.miniprogram.dao.MpUserDao;
-import com.dhcc.miniprogram.dto.DtoBasicResult;
 import com.dhcc.miniprogram.dto.DtoGetPhoneNumRequest;
+import com.dhcc.miniprogram.dto.DtoReturnPhoneResult;
 import com.dhcc.miniprogram.model.MpUser;
 import com.dhcc.miniprogram.service.MpUserService;
 import com.dhcc.miniprogram.util.AESUtil;
@@ -96,12 +96,12 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
     private WechatConfig wechatConfig;
 
 	@Override
-	public DtoBasicResult getPhoneNum(DtoGetPhoneNumRequest dtoGetPhoneNumRequest) {
-
+	public DtoReturnPhoneResult getPhoneNum(DtoGetPhoneNumRequest phoneNumRequest) {
+        log.info("获取手机号入参："+JSON.toJSONString(phoneNumRequest));
 		// 检查获取手机号入参
-		CheckInParamUtil.checkInParam(dtoGetPhoneNumRequest);
+		CheckInParamUtil.checkInParam(phoneNumRequest);
 		// 根据 openId 查询 MpUser
-		MpUser user = dao.findOne("a.openId = ? and a.appId = ?", new Object[]{dtoGetPhoneNumRequest.getOpenId(),wechatConfig.getAppId()});
+		MpUser user = dao.findOne("a.openId = ?", new Object[]{ phoneNumRequest.getOpenId() });
 		// 检查 sessionKey 为空
         String sessionKey = user.getSessionKey();
         if(StringUtils.isEmpty(sessionKey)){
@@ -111,8 +111,8 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
         String decrypt = null;
         try {
             log.info("接口名称：小程序获取手机号");
-            log.info("接口参数："+JSON.toJSONString(new String[]{sessionKey, dtoGetPhoneNumRequest.getIv(), dtoGetPhoneNumRequest.getEncryptedData()}));
-            decrypt = AESUtil.pkcs7PaddingDecrypt(sessionKey, dtoGetPhoneNumRequest.getIv(), dtoGetPhoneNumRequest.getEncryptedData());
+            log.info("接口参数："+JSON.toJSONString(new String[]{sessionKey, phoneNumRequest.getIv(), phoneNumRequest.getEncryptedData()}));
+            decrypt = AESUtil.pkcs7PaddingDecrypt(sessionKey, phoneNumRequest.getIv(), phoneNumRequest.getEncryptedData());
         } catch (NoSuchPaddingException |NoSuchAlgorithmException |InvalidAlgorithmParameterException |InvalidKeyException |
                 BadPaddingException| IllegalBlockSizeException| UnsupportedEncodingException| NoSuchProviderException e) {
             log.debug("小程序获取手机号",e);
@@ -120,12 +120,11 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
         }
         // 解析字符串
         JSONObject jsonObject = JSON.parseObject(decrypt);
-
         // PURE_PHONE_NUMBER : 手机号 ，COUNTRY_CODE ：手机区号
         // 获取手机号
         String phoneNumber = jsonObject.getString(PURE_PHONE_NUMBER);
         // 响应类
-        DtoBasicResult dtoBasicResult = new DtoBasicResult();
+        DtoReturnPhoneResult returnPhoneResult = new DtoReturnPhoneResult();
         if(StringUtils.isNotEmpty(phoneNumber)){
             // 用户绑定手机号、手机区号、修改时间
             user.setPhoneNum(jsonObject.getString(PURE_PHONE_NUMBER));
@@ -134,13 +133,14 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
             // 修改
             update(user);
             // 设置成功编码
-            dtoBasicResult.setErrcode(SUCCESS);
+            returnPhoneResult.setErrcode(SUCCESS);
+            returnPhoneResult.setPhoneNumber(phoneNumber);
         } else {
             // 设置失败编码
-            dtoBasicResult.setErrcode(FAIL);
+            returnPhoneResult.setErrcode(FAIL);
             // 设置失败信息
-            dtoBasicResult.setErrmsg("手机号为空");
+            returnPhoneResult.setErrmsg("手机号为空");
         }
-        return dtoBasicResult;
+        return returnPhoneResult;
 	}
 }

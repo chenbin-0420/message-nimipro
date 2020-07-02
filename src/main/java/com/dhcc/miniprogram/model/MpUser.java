@@ -22,7 +22,7 @@ import java.io.Serializable;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicUpdate(true)
 @Proxy(lazy = false)
-@Table(name = "np_user", schema="dhcplat", catalog="dhcplat")
+@Table(name = "mp_user", schema="dhcplat", catalog="dhcplat")
 @TableDefine(title = "小程序用户")
 public class MpUser extends AuditedPo implements Serializable {
 	private static final long serialVersionUID = 1L;

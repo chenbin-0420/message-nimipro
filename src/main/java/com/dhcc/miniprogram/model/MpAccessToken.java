@@ -25,7 +25,7 @@ import com.dhcc.basic.model.IdentifiedPo;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicUpdate(true)
 @Proxy(lazy = false)
-@Table(name = "np_access_token", schema="dhcplat", catalog="dhcplat")
+@Table(name = "mp_access_token", schema="dhcplat", catalog="dhcplat")
 @TableDefine(title = "小程序访问令牌")
 public class MpAccessToken extends IdentifiedPo implements Serializable {
 	private static final long serialVersionUID = 1L;
