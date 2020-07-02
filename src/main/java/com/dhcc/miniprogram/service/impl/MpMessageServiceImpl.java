@@ -55,17 +55,18 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
     private MpAccessTokenService accessTokenService;
 
     /**
-     * SUCCESS ：成功标识
+     * MP_RECEIVE_SUCCESS ：成功标识
      */
-    private static final Long SUCCESS = 0L;
+    private static final Long MP_RECEIVE_SUCCESS = 0L;
+
     /**
-     * RESPONSE_SUCCESS ：响应成功标识
-     */
-    private static final Long RESPONSE_SUCCESS = 200L;
-    /**
+     * RESPONSE_SEND_SUCCESS ：响应成功标识
+     * RESPONSE_SEND_FAIL ：发送失败
      * RESPONSE_NOT_EXISTS_USER ：用户不存在
      * RESPONSE_NOT_EXISTS_PHONE ：用户不存在手机号
      */
+    private static final Long RESPONSE_SEND_SUCCESS = 200L;
+    private static final Long RESPONSE_SEND_FAIL = 4000L;
     private static final Long RESPONSE_NOT_EXISTS_USER = 4001L;
     private static final Long RESPONSE_NOT_EXISTS_PHONE = 4001L;
 
@@ -154,8 +155,8 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
         CloseableHttpClient httpClient = HttpClientUtil.getHttpClient();
         // 设置 Url 带参
         Map<String, String> paramMap = new HashMap<>(3);
-        paramMap.put("appid", login.getAppid());
-        paramMap.put("secret", login.getSecret());
+        paramMap.put("appid", wechatConfig.getAppId());
+        paramMap.put("secret", wechatConfig.getSecret());
         paramMap.put("js_code", login.getCode());
         paramMap.put("grant_type", GrantTypeEnum.AUTHORIZATION_CODE.getCode());
         // 设置请求体参数
@@ -258,12 +259,16 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
             // 解析字符串并转为 DtoBasicResult 对象
             dtoBasicResult = JSON.parseObject(result, DtoBasicResult.class);
             // errCode是 null | 0L 为成功，否则为失败
-            if(dtoBasicResult.getErrcode() == null || dtoBasicResult.getErrcode().equals(SUCCESS)){
+            if(dtoBasicResult.getErrcode() == null || dtoBasicResult.getErrcode().equals(MP_RECEIVE_SUCCESS)){
                 // 记录成功
                 mpMessage.setSendStatus(MpSendMsgStatusEnum.CG.getCode());
+                // 设置成功标识
+                dtoBasicResult.setErrcode(RESPONSE_SEND_SUCCESS);
             } else {
                 // 记录失败
                 mpMessage.setSendStatus(MpSendMsgStatusEnum.SB.getCode());
+                // 设置成功标识
+                dtoBasicResult.setErrcode(RESPONSE_SEND_FAIL);
             }
             // 记录发送时间
             mpMessage.setSendTmplTime(DateUtil.getCurrentDate());
