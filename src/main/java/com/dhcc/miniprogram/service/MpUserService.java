@@ -1,8 +1,10 @@
 package com.dhcc.miniprogram.service;
 
 import com.dhcc.basic.service.BaseService;
-import com.dhcc.miniprogram.dto.DtoGetPhoneNumRequest;
-import com.dhcc.miniprogram.dto.DtoReturnPhoneResult;
+import com.dhcc.miniprogram.dto.DtoIdenInfoResult;
+import com.dhcc.miniprogram.dto.DtoLoginRequest;
+import com.dhcc.miniprogram.dto.DtoPhoneNumberRequest;
+import com.dhcc.miniprogram.dto.DtoPhoneNumberResult;
 import com.dhcc.miniprogram.model.MpUser;
 
 /**
@@ -13,9 +15,16 @@ import com.dhcc.miniprogram.model.MpUser;
 public interface MpUserService extends BaseService<MpUser, String> {
 
     /**
-     * 小程序获取手机号
-     * @param dtoGetPhoneNumRequest 小程序获取手机号类
-     * @return DtoReturnPhoneResult
+     * 登录凭证校验
+     * @param login 登录请求类
+     * @return DtoIdenInfoResult
      */
-    DtoReturnPhoneResult getPhoneNum(DtoGetPhoneNumRequest dtoGetPhoneNumRequest);
+    DtoIdenInfoResult userLogin(DtoLoginRequest login);
+
+    /**
+     * 小程序获取手机号
+     * @param dtoPhoneNumberRequest 小程序获取手机号类
+     * @return DtoPhoneNumberResult
+     */
+    DtoPhoneNumberResult getPhoneNum(DtoPhoneNumberRequest dtoPhoneNumberRequest);
 }

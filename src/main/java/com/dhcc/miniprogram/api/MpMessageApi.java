@@ -20,40 +20,46 @@ public interface MpMessageApi {
      * @param appSecret 小程序唯一凭证密钥，即 AppSecret
      * @return token返回类
      */
-    DtoReturnTokenResult getAccessToken(String appid, String appSecret);
+    DtoAccessTokenResult getAccessToken(String appid, String appSecret);
 
     /**
      * 登录凭证校验
-     * @param dtoGetLoginRequest 登录请求类
+     * @param dtoLoginRequest 登录请求类
      * @return 用户唯一信息返回类
      */
-    DtoReturnIdenInfoResult login(DtoGetLoginRequest dtoGetLoginRequest);
+    DtoIdenInfoResult userLogin(DtoLoginRequest dtoLoginRequest);
 
     /**
      * 发送订阅消息
-     * @param dtoGetSubMsgRequest 小程序订阅消息请求类
+     * @param dtoSubscribeMessageRequest 小程序订阅消息请求类
      * @return 基础返回结果类
      */
-    DtoReturnBasicResult sendMiniproSubMsg(DtoGetSubMsgRequest dtoGetSubMsgRequest);
+    DtoBasicResult sendSubscribeMessageByPhone(DtoSubscribeMessageRequest dtoSubscribeMessageRequest);
 
     /**
      * 小程序获取手机号
-     * @param dtoGetPhoneNumRequest 小程序获取手机号类
+     * @param dtoPhoneNumberRequest 小程序获取手机号类
      * @return 手机号返回结果类
      */
-    DtoReturnPhoneResult getPhoneNum(DtoGetPhoneNumRequest dtoGetPhoneNumRequest);
+    DtoPhoneNumberResult getPhoneNum(DtoPhoneNumberRequest dtoPhoneNumberRequest);
 
     /**
      * 小程序模板授权
      * @param getTemplateAuthRequest 模板授权请求
-     * @return 模板授权返回结果类
+     * @return 返回模板授权结果
      */
-    DtoReturnTemplateAuthResult getTemplateAuthResult(DtoGetTemplateAuthRequest getTemplateAuthRequest);
+    DtoTemplateAuthResult getTemplateAuthResult(DtoTemplateAuthRequest getTemplateAuthRequest);
 
     /**
      * 添加模板授权给用户
-     * @param dtoGetTemplateAuthRequest 模板授权请求体
-     * @return 模板授权返回结果类
+     * @param getTemplateAuthRequest 模板授权请求体
+     * @return 返回模板授权结果
      */
-    DtoReturnTemplateAuthResult insertTemplateAuth(DtoGetTemplateAuthRequest dtoGetTemplateAuthRequest);
+    DtoTemplateAuthResult insertTemplateAuth(DtoTemplateAuthRequest getTemplateAuthRequest);
+
+    /**
+     * 更新所有的信息模板
+     * @return 返回基础结果
+     */
+    DtoBasicResult updateTemplateList();
 }

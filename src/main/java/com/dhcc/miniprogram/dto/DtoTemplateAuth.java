@@ -5,11 +5,11 @@ package com.dhcc.miniprogram.dto;
  * @date 2020/7/1
  * description：模板授权结果类
  */
-public class DtoGetTemplateAuthResult {
+public class DtoTemplateAuth {
     /**
-     * 模板ID
+     * 模板ID集合
      */
-    private String templateId;
+    private String[] templateIds;
     /**
      * 标题
      */
@@ -31,15 +31,15 @@ public class DtoGetTemplateAuthResult {
      */
     private Integer isSub;
 
-    public DtoGetTemplateAuthResult() {
+    public DtoTemplateAuth() {
     }
 
-    public String getTemplateId() {
-        return templateId;
+    public String[] getTemplateIds() {
+        return templateIds;
     }
 
-    public void setTemplateId(String templateId) {
-        this.templateId = templateId;
+    public void setTemplateIds(String[] templateIds) {
+        this.templateIds = templateIds;
     }
 
     public String getTitle() {

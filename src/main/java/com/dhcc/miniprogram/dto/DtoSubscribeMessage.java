@@ -1,20 +1,16 @@
 package com.dhcc.miniprogram.dto;
 
 import com.alibaba.fastjson.JSON;
+import com.dhcc.miniprogram.enums.MpSendMsgStatusEnum;
 import com.dhcc.miniprogram.model.MpMessage;
 import com.dhcc.miniprogram.util.DateUtil;
-import com.dhcc.miniprogram.enums.MpSendMsgStatusEnum;
 
 /**
  * @author cb
  * @date 2020/6/16
- * description：微信小程序订阅消息请求体
+ * description：微信小程序订阅消息主体
  */
-public class DtoGetSubMsgRequest {
-    /**
-     * phoneNumber ：用户手机号
-     */
-    private String phoneNumber;
+public class DtoSubscribeMessage {
     /**
      * touser ：是	接收者（用户）的 openid
      */
@@ -46,13 +42,6 @@ public class DtoGetSubMsgRequest {
      */
     private Object data;
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
 
     public String getTouser() {
         return touser;
@@ -103,19 +92,19 @@ public class DtoGetSubMsgRequest {
     }
 
     /**
-     * DtoGetSubMsgRequest 转 MpMessage
-     * @param dtoGetSubMsgRequest 小程序订阅消息
+     * DtoSubscribeMessage 转 MpMessage
+     * @param subscribeMessage 小程序订阅消息
      * @return 小程序订阅消息
      */
-    public static MpMessage toPO(DtoGetSubMsgRequest dtoGetSubMsgRequest){
+    public static MpMessage toPO(DtoSubscribeMessage subscribeMessage){
         MpMessage mpMessage = new MpMessage();
         mpMessage.setCreateTime(DateUtil.getCurrentDate());
-        mpMessage.setJumpPage(dtoGetSubMsgRequest.getPage());
-        mpMessage.setLangType(dtoGetSubMsgRequest.getLang());
-        mpMessage.setNimiproState(dtoGetSubMsgRequest.getMiniprogram_state());
-        mpMessage.setSendTmplCont(JSON.toJSONString(dtoGetSubMsgRequest.getData()));
-        mpMessage.setTmplId(dtoGetSubMsgRequest.getTemplate_id());
-        mpMessage.setTouser(dtoGetSubMsgRequest.getTouser());
+        mpMessage.setJumpPage(subscribeMessage.getPage());
+        mpMessage.setLangType(subscribeMessage.getLang());
+        mpMessage.setNimiproState(subscribeMessage.getMiniprogram_state());
+        mpMessage.setSendTmplCont(JSON.toJSONString(subscribeMessage.getData()));
+        mpMessage.setTmplId(subscribeMessage.getTemplate_id());
+        mpMessage.setTouser(subscribeMessage.getTouser());
         mpMessage.setSendStatus(MpSendMsgStatusEnum.CLZ.getCode());
         return mpMessage;
     }

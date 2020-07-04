@@ -9,7 +9,7 @@ import com.dhcc.miniprogram.util.DateUtil;
  * @date 2020/7/1
  * description：获取模板授权请求类
  */
-public class DtoGetTemplateAuthRequest {
+public class DtoTemplateAuthRequest {
     /**
      * 小程序手机号
      */
@@ -21,7 +21,7 @@ public class DtoGetTemplateAuthRequest {
     /**
      * 小程序模板ID
      */
-    private String templateId;
+    private String[] templateIds;
 
     public String getPhone() {
         return phone;
@@ -39,25 +39,25 @@ public class DtoGetTemplateAuthRequest {
         this.openId = openId;
     }
 
-    public String getTemplateId() {
-        return templateId;
+    public String[] getTemplateIds() {
+        return templateIds;
     }
 
-    public void setTemplateId(String templateId) {
-        this.templateId = templateId;
+    public void setTemplateIds(String[] templateIds) {
+        this.templateIds = templateIds;
     }
 
     /**
-     * DtoGetTemplateAuthRequest 转 MpTemplateAuth
+     * DtoTemplateAuthRequest 转 MpTemplateAuth
      * @param templateAuthRequest 模板授权请求
      * @return 模板授权
      */
-    public static MpTemplateAuth toPO(DtoGetTemplateAuthRequest templateAuthRequest){
+    public static MpTemplateAuth toPO(DtoTemplateAuthRequest templateAuthRequest){
         MpTemplateAuth templateAuth = new MpTemplateAuth();
         templateAuth.setPhone(templateAuthRequest.getPhone());
-        templateAuth.setTemplateId(templateAuthRequest.templateId);
-        templateAuth.setCreateUser(templateAuthRequest.getOpenId());
+        templateAuth.setTemplateId(templateAuthRequest.getTemplateIds()[0]);
         templateAuth.setIsSub(IsSubEnum.TRUE.getCode());
+        templateAuth.setCreateUser(templateAuthRequest.getOpenId());
         templateAuth.setCreateTime(DateUtil.getCurrentDate());
         return templateAuth;
     }

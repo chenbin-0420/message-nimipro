@@ -1,10 +1,10 @@
 package com.dhcc.miniprogram.util;
 
 import com.dhcc.basic.exception.BusinessException;
-import com.dhcc.miniprogram.dto.DtoGetPhoneNumRequest;
-import com.dhcc.miniprogram.dto.DtoGetSubMsgRequest;
-import com.dhcc.miniprogram.dto.DtoGetLoginRequest;
-import com.dhcc.miniprogram.dto.DtoGetTemplateAuthRequest;
+import com.dhcc.miniprogram.dto.DtoLoginRequest;
+import com.dhcc.miniprogram.dto.DtoPhoneNumberRequest;
+import com.dhcc.miniprogram.dto.DtoSubscribeMessageRequest;
+import com.dhcc.miniprogram.dto.DtoTemplateAuthRequest;
 import com.dhcc.miniprogram.enums.MpStatusEnum;
 import org.apache.commons.lang.StringUtils;
 
@@ -24,7 +24,7 @@ public class CheckInParamUtil {
      * @param token 访问token
      * @param request 小程序订阅消息请求体
      */
-    public static void checkInParam(String token, DtoGetSubMsgRequest request) {
+    public static void checkInParam(String token, DtoSubscribeMessageRequest request) {
         String reason = "";
         if (StringUtils.isEmpty(token)) {
             reason += "access_token为空，";
@@ -77,7 +77,7 @@ public class CheckInParamUtil {
      * 检查小程序登录凭证校验业务入参
      * @param login 登录凭证类
      */
-    public static void checkInParam(DtoGetLoginRequest login) {
+    public static void checkInParam(DtoLoginRequest login) {
         String reason = "";
         if (StringUtils.isEmpty(login.getCode())) {
             reason += "code为空，";
@@ -120,17 +120,17 @@ public class CheckInParamUtil {
 
     /**
      * 检查小程序获取手机号入参
-     * @param dtoGetPhoneNumRequest 获取手机号入参
+     * @param dtoPhoneNumberRequest 获取手机号入参
      */
-    public static void checkInParam(DtoGetPhoneNumRequest dtoGetPhoneNumRequest){
+    public static void checkInParam(DtoPhoneNumberRequest dtoPhoneNumberRequest){
         String reason = "";
-        if(StringUtils.isEmpty(dtoGetPhoneNumRequest.getOpenId())){
+        if(StringUtils.isEmpty(dtoPhoneNumberRequest.getOpenId())){
             reason += "openId为空,";
         }
-        if(StringUtils.isEmpty(dtoGetPhoneNumRequest.getIv())){
+        if(StringUtils.isEmpty(dtoPhoneNumberRequest.getIv())){
             reason += "iv为空,";
         }
-        if(StringUtils.isEmpty(dtoGetPhoneNumRequest.getEncryptedData())){
+        if(StringUtils.isEmpty(dtoPhoneNumberRequest.getEncryptedData())){
             reason += "encryptedData为空,";
         }
         if(StringUtils.isNotEmpty(reason)){
@@ -166,7 +166,7 @@ public class CheckInParamUtil {
      * @param val 值
      * @return map
      */
-    public static Map<String,Object> buildMap(String key,String val){
+    public static Map<String,Object> buildMap(String key,Object val){
         HashMap<String, Object> map = new HashMap<>(1);
         map.put(key,val);
         return map;
@@ -174,18 +174,18 @@ public class CheckInParamUtil {
 
     /**
      * 检查模板授权请求体入参
-     * @param dtoGetTemplateAuthRequest 模板授权请求体
+     * @param dtoTemplateAuthRequest 模板授权请求体
      */
-    public static void checkInParam(DtoGetTemplateAuthRequest dtoGetTemplateAuthRequest){
+    public static void checkInParam(DtoTemplateAuthRequest dtoTemplateAuthRequest){
         String reason = "";
-        if(StringUtils.isEmpty(dtoGetTemplateAuthRequest.getPhone())){
+        if(StringUtils.isEmpty(dtoTemplateAuthRequest.getPhone())){
             reason += "phone为空,";
         }
-        if(StringUtils.isEmpty(dtoGetTemplateAuthRequest.getOpenId())){
+        if(StringUtils.isEmpty(dtoTemplateAuthRequest.getOpenId())){
             reason += "openId为空,";
         }
-        if(StringUtils.isEmpty(dtoGetTemplateAuthRequest.getTemplateId())){
-            reason += "templateId为空,";
+        if(dtoTemplateAuthRequest.getTemplateIds() == null){
+            reason += "templateIds为空,";
         }
         if(StringUtils.isNotEmpty(reason)){
             reason = "模板授权请求参数 "+reason;

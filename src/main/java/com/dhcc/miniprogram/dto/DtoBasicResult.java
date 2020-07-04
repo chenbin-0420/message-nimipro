@@ -5,29 +5,29 @@ package com.dhcc.miniprogram.dto;
  * @date 2020/6/11
  * 基础响应类
  */
-public class DtoReturnBasicResult {
+public class DtoBasicResult {
     /**
      * errcode ：错误码
      */
-    private Long errcode;
+    private Integer errcode;
     /**
      * errmsg ：错误信息
      */
     private String errmsg;
 
-    public DtoReturnBasicResult() {
+    public DtoBasicResult() {
     }
 
-    public DtoReturnBasicResult(Long errcode, String errmsg) {
+    public DtoBasicResult(Integer errcode, String errmsg) {
         this.errcode = errcode;
         this.errmsg = errmsg;
     }
 
-    public Long getErrcode() {
+    public Integer getErrcode() {
         return errcode;
     }
 
-    public void setErrcode(Long errcode) {
+    public void setErrcode(Integer errcode) {
         this.errcode = errcode;
     }
 
@@ -39,8 +39,4 @@ public class DtoReturnBasicResult {
         this.errmsg = errmsg;
     }
 
-    @Override
-    public String toString() {
-        return "{ errcode=" + errcode + ", errmsg=" + errmsg +"}";
-    }
 }

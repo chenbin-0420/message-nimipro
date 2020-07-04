@@ -7,7 +7,7 @@ import com.dhcc.miniprogram.model.MpAccessToken;
  * @date 2020/6/19
  * description：AccessTokenResult 访问token结果类
  */
-public class DtoReturnTokenResult {
+public class DtoAccessTokenResult {
     /**
      * access_token	获取到的凭证
      */
@@ -58,16 +58,16 @@ public class DtoReturnTokenResult {
     }
 
     /**
-     * DtoReturnTokenResult 转 MpAccessToken
-     * @param dtoReturnTokenResult 获取访问令牌结果
+     * DtoAccessTokenResult 转 MpAccessToken
+     * @param dtoAccessTokenResult 获取访问令牌结果
      * @return 小程序访问令牌
      */
-    public static MpAccessToken toPO(DtoReturnTokenResult dtoReturnTokenResult){
+    public static MpAccessToken toPO(DtoAccessTokenResult dtoAccessTokenResult){
         MpAccessToken mpAccessToken = new MpAccessToken();
-        mpAccessToken.setAccessToken(dtoReturnTokenResult.getAccess_token());
-        mpAccessToken.setExpiresIn(dtoReturnTokenResult.getExpires_in());
-        mpAccessToken.setErrcode(dtoReturnTokenResult.getErrcode());
-        mpAccessToken.setErrmsg(dtoReturnTokenResult.getErrmsg());
+        mpAccessToken.setAccessToken(dtoAccessTokenResult.getAccess_token());
+        mpAccessToken.setExpiresIn(dtoAccessTokenResult.getExpires_in());
+        mpAccessToken.setErrcode(dtoAccessTokenResult.getErrcode());
+        mpAccessToken.setErrmsg(dtoAccessTokenResult.getErrmsg());
         return mpAccessToken;
     }
 }

@@ -6,7 +6,7 @@ package com.dhcc.miniprogram.dto;
  * description：小程序登录请求类
  *              登录凭证校验
  */
-public class DtoGetLoginRequest {
+public class DtoLoginRequest {
     /**
      * appid 小程序appId
      */

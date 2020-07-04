@@ -5,7 +5,7 @@ package com.dhcc.miniprogram.dto;
  * @date 2020/6/30
  * description：获取手机号类
  */
-public class DtoGetPhoneNumRequest {
+public class DtoPhoneNumberRequest {
     /**
      * 加密算法的初始向量
      */
@@ -17,13 +17,13 @@ public class DtoGetPhoneNumRequest {
     /**
      * 敏感数据对应的云 ID，开通云开发的小程序才会返回，可通过云调用直接获取开放数据
      */
-    private String cloudID;
+    private String cloudId;
     /**
      * 微信小程序ID
      */
     private String openId;
 
-    public DtoGetPhoneNumRequest() {
+    public DtoPhoneNumberRequest() {
     }
 
     public String getIv() {
@@ -42,12 +42,12 @@ public class DtoGetPhoneNumRequest {
         this.encryptedData = encryptedData;
     }
 
-    public String getCloudID() {
-        return cloudID;
+    public String getCloudId() {
+        return cloudId;
     }
 
-    public void setCloudID(String cloudID) {
-        this.cloudID = cloudID;
+    public void setCloudId(String cloudId) {
+        this.cloudId = cloudId;
     }
 
     public String getOpenId() {
@@ -56,5 +56,10 @@ public class DtoGetPhoneNumRequest {
 
     public void setOpenId(String openId) {
         this.openId = openId;
+    }
+
+    @Override
+    public String toString() {
+        return "{ openId,"+openId+"iv="+iv+",encryptedData="+encryptedData+",cloudId="+cloudId+" }";
     }
 }

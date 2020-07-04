@@ -2,7 +2,7 @@ package com.dhcc.miniprogram.util;
 
 import com.dhcc.basic.exception.BusinessException;
 import com.dhcc.miniprogram.config.WechatConfig;
-import com.dhcc.miniprogram.service.MpMessageService;
+import com.dhcc.miniprogram.service.MpAccessTokenService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -20,7 +20,7 @@ public class AccessTokenUtil {
     private WechatConfig wechatConfig;
 
     @Autowired
-    private MpMessageService mpMessageService;
+    private MpAccessTokenService accessTokenService;
 
     private static final int MAX_COUNT = 3;
 
@@ -41,7 +41,7 @@ public class AccessTokenUtil {
             // 循环3次
             for (int i = 0; i < MAX_COUNT; i++) {
                 // 获取accessToken
-                String accessTokenLasted = mpMessageService.getAccessToken(wechatConfig.getAppId(), wechatConfig.getSecret()).getAccess_token();
+                String accessTokenLasted = accessTokenService.getAccessToken(wechatConfig.getAppId(), wechatConfig.getSecret()).getAccess_token();
                 // 不为 null , 返回 accessToken
                 if (StringUtils.isNotEmpty(accessTokenLasted)) {
                     setAccessToken( accessTokenLasted );
@@ -63,6 +63,6 @@ public class AccessTokenUtil {
     @Scheduled(fixedRate = 5400000)
     public void refreshAccessToken() {
         // 获取 accessToken
-        setAccessToken( mpMessageService.getAccessToken(wechatConfig.getAppId(), wechatConfig.getSecret()).getAccess_token() );
+        setAccessToken( accessTokenService.getAccessToken(wechatConfig.getAppId(), wechatConfig.getSecret()).getAccess_token() );
     }
 }

@@ -6,9 +6,7 @@ import com.dhcc.basic.exception.BusinessException;
 import com.dhcc.miniprogram.api.MpMessageApi;
 import com.dhcc.miniprogram.dto.*;
 import com.dhcc.miniprogram.enums.IsSubEnum;
-import com.dhcc.miniprogram.service.MpMessageService;
-import com.dhcc.miniprogram.service.MpTemplateAuthService;
-import com.dhcc.miniprogram.service.MpUserService;
+import com.dhcc.miniprogram.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -43,6 +41,12 @@ public class MpMessageController extends BaseController implements MpMessageApi 
     @Autowired
     private MpTemplateAuthService templateAuthService;
 
+    @Autowired
+    private MpTemplateListService templateListService;
+
+    @Autowired
+    private MpAccessTokenService accessTokenService;
+
     @Override
     @GetMapping("/verifyMsgFromWechat.do")
     @ApiOperation(value = "验证消息的确来自微信服务器",notes = "验证消息的确来自微信服务器")
@@ -74,67 +78,70 @@ public class MpMessageController extends BaseController implements MpMessageApi 
     @Override
     @PostMapping(value = "/getAccessToken.do")
     @ApiOperation(value = "获取AccessToken",notes = "获取AccessToken")
-    public DtoReturnTokenResult getAccessToken(
+    public DtoAccessTokenResult getAccessToken(
             @RequestParam(name = "appid") String appid,
             @RequestParam(name = "appSecret") String appSecret) {
-        return messageService.getAccessToken(appid,appSecret);
+        return accessTokenService.getAccessToken(appid,appSecret);
     }
 
     @Override
     @PostMapping(value = "/login.do")
     @ApiOperation(value = "登录凭证校验",notes = "登录凭证校验")
-    public DtoReturnIdenInfoResult login(DtoGetLoginRequest login) {
-        return messageService.login(login);
+    public DtoIdenInfoResult userLogin(DtoLoginRequest login) {
+        return userService.userLogin(login);
     }
 
     @Override
     @PostMapping(value="/sendNimiProSubMsg.do")
     @ApiOperation(value = "发送订阅消息",notes = "发送订阅消息")
-    public DtoReturnBasicResult sendMiniproSubMsg(@RequestBody DtoGetSubMsgRequest request) {
-        return messageService.sendMiniproSubMsg(request);
+    public DtoBasicResult sendSubscribeMessageByPhone(@RequestBody DtoSubscribeMessageRequest request) {
+        return messageService.sendSubscribeMessageByPhone(request);
     }
 
     @Override
     @PostMapping(value = "/getPhoneNum.do")
     @ApiOperation(value = "获取手机号",notes = "获取手机号")
-    public DtoReturnPhoneResult getPhoneNum(DtoGetPhoneNumRequest dtoGetPhoneNumRequest) {
-        return userService.getPhoneNum(dtoGetPhoneNumRequest);
+    public DtoPhoneNumberResult getPhoneNum(DtoPhoneNumberRequest dtoPhoneNumberRequest) {
+        return userService.getPhoneNum(dtoPhoneNumberRequest);
+    }
+
+    private static String[] tempIds;
+    private static String[] partTempIds;
+    private static String[] titles;
+    static{
+        tempIds = new String[]{
+                "CNW2KwhfJEO_yDIMYljup8Ohex8i2IU1AKejxjt5VeU",
+                "2mz7F_lVYHcm0wCWbnVMAKqWanS57qCb8Xg15tAm5U0",
+                "5u7FSvghMpuyIDsNcK9X8uuisVrMPWUnLjcm1SAHlt4",
+                "C5YHldH57nsI74HdMDpl3J7lW2J3nn7OYJW4atMxm6Q"
+        };
+        partTempIds = new String[]{ tempIds[0],tempIds[1] };
+        titles = new String[]{"业务办理进度通知","事项办理进度通知","文书送达","预约结果通知"};
     }
 
     @Override
     @PostMapping(value = "/getTemplateAuthResult.do")
-    @ApiOperation(value = "获取模板授权结果",notes = "获取模板授权结果")
-    public DtoReturnTemplateAuthResult getTemplateAuthResult(DtoGetTemplateAuthRequest getTemplateAuthRequest) {
-//        [
-//        {templateId:'Zbnxupg68pS98hOkLAZgGXrdP10rSLH4y8aQvy2DVts',title:'排队预约',desc:'政务服务大厅',isSub:'Y'},
-//        {templateId:'Zbnxupg68pS98hOkLAZgGXrdP10rSLH4y8aQvy2DVts',title:'预约成功',desc:'政务服务大厅',isSub:'Y'},
-//        {templateId:'Zbnxupg68pS98hOkLAZgGXrdP10rSLH4y8aQvy2DVts',title:'叫号通知',desc:'政务服务大厅',isSub:'Y'}
-//        ]
-
-
-        log.info("请求参数："+JSON.toJSONString(getTemplateAuthRequest));
-        List<DtoGetTemplateAuthResult> dtoGetTemplateAuthResults = new LinkedList<>();
-        String[] tempIds = {"排队预约","预约成功","叫号通知"};
-
-        for (int i = 0; i < 3; i++) {
-            DtoGetTemplateAuthResult getTemplateAuthResult = new DtoGetTemplateAuthResult();
-            getTemplateAuthResult.setTemplateId("Zbnxupg68pS98hOkLAZgGXrdP10rSLH4y8aQvy2DVts");
-            getTemplateAuthResult.setTitle(tempIds[i]);
-            getTemplateAuthResult.setDesc("政务服务大厅");
-            if( i > 1 ){
-                getTemplateAuthResult.setIsSub(IsSubEnum.TRUE.getCode());
-            } else {
-                getTemplateAuthResult.setIsSub(IsSubEnum.FALSE.getCode());
+    @ApiOperation(value = "获取授权模板结果集",notes = "获取授权模板结果集")
+    public DtoTemplateAuthResult getTemplateAuthResult(DtoTemplateAuthRequest getTemplateAuthRequest) {
+        // 记录入参
+        log.info("模板授权请求参数："+JSON.toJSONString(getTemplateAuthRequest));
+        List<DtoTemplateAuth> dtoTemplateAuths = new LinkedList<>();
+        for (int i = 0; i < tempIds.length; i++) {
+            DtoTemplateAuth getTemplateAuthResult = new DtoTemplateAuth();
+            getTemplateAuthResult.setTemplateIds(new String[]{tempIds[i]});
+            if(i == 0){
+                getTemplateAuthResult.setTemplateIds(partTempIds);
             }
+            getTemplateAuthResult.setTitle(titles[i]);
+            getTemplateAuthResult.setDesc("政务服务大厅");
+            getTemplateAuthResult.setIsSub(IsSubEnum.FALSE.getCode());
             getTemplateAuthResult.setType(1);
             getTemplateAuthResult.setOrder(i+1);
-            dtoGetTemplateAuthResults.add(getTemplateAuthResult);
+            dtoTemplateAuths.add(getTemplateAuthResult);
         }
 
-        DtoReturnTemplateAuthResult returnTemplateAuthResult = new DtoReturnTemplateAuthResult();
-        returnTemplateAuthResult.setData(dtoGetTemplateAuthResults);
-        returnTemplateAuthResult.setErrcode(200L);
-        returnTemplateAuthResult.setErrmsg("成功");
+        DtoTemplateAuthResult returnTemplateAuthResult = new DtoTemplateAuthResult(200,"成功");
+        returnTemplateAuthResult.setData(dtoTemplateAuths);
         log.info(JSON.toJSONString(returnTemplateAuthResult));
 
         return returnTemplateAuthResult;
@@ -143,34 +150,47 @@ public class MpMessageController extends BaseController implements MpMessageApi 
     @Override
     @PostMapping(value = "/insertTemplateAuth.do")
     @ApiOperation(value = "添加模板授权给用户",notes = "添加模板授权给用户")
-    public DtoReturnTemplateAuthResult insertTemplateAuth(DtoGetTemplateAuthRequest dtoGetTemplateAuthRequest) {
-
-        log.info("请求参数："+JSON.toJSONString(dtoGetTemplateAuthRequest));
-
-        templateAuthService.insertTemplateAuth(dtoGetTemplateAuthRequest);
-
-        List<DtoGetTemplateAuthResult> dtoGetTemplateAuthResults = new LinkedList<>();
-        String[] tempIds = {"排队预约","预约成功","叫号通知"};
-
-        for (int i = 0; i < 3; i++) {
-            DtoGetTemplateAuthResult getTemplateAuthResult = new DtoGetTemplateAuthResult();
-            getTemplateAuthResult.setTemplateId("Zbnxupg68pS98hOkLAZgGXrdP10rSLH4y8aQvy2DVts");
-            getTemplateAuthResult.setTitle(tempIds[i]);
-            getTemplateAuthResult.setDesc("政务服务大厅");
-            if( i > 1 ){
+    public DtoTemplateAuthResult insertTemplateAuth(DtoTemplateAuthRequest dtoTemplateAuthRequest) {
+        // 记录获取模板授权请求日志
+        log.info("请求参数："+JSON.toJSONString(dtoTemplateAuthRequest));
+        // 添加订阅模板授权
+        templateAuthService.insertTemplateAuth(dtoTemplateAuthRequest);
+        //
+        List<DtoTemplateAuth> dtoTemplateAuths = new LinkedList<>();
+        for (int i = 0; i < tempIds.length; i++) {
+            DtoTemplateAuth getTemplateAuthResult = new DtoTemplateAuth();
+            getTemplateAuthResult.setTemplateIds(new String[]{tempIds[i]});
+            getTemplateAuthResult.setTemplateIds(new String[]{tempIds[i]});
+            if(tempIds[i].equals(dtoTemplateAuthRequest.getTemplateIds()[0])){
+                if(i == 0){
+                    getTemplateAuthResult.setTemplateIds(partTempIds);
+                }
                 getTemplateAuthResult.setIsSub(IsSubEnum.TRUE.getCode());
             } else {
+                if(i == 0){
+                    getTemplateAuthResult.setTemplateIds(partTempIds);
+                }
                 getTemplateAuthResult.setIsSub(IsSubEnum.FALSE.getCode());
             }
+            getTemplateAuthResult.setTitle(titles[i]);
+            getTemplateAuthResult.setDesc("政务服务大厅");
             getTemplateAuthResult.setType(1);
             getTemplateAuthResult.setOrder(i+1);
-            dtoGetTemplateAuthResults.add(getTemplateAuthResult);
+            dtoTemplateAuths.add(getTemplateAuthResult);
         }
 
-        DtoReturnTemplateAuthResult returnTemplateAuthResult = new DtoReturnTemplateAuthResult();
-        returnTemplateAuthResult.setData(dtoGetTemplateAuthResults);
+        DtoTemplateAuthResult returnTemplateAuthResult = new DtoTemplateAuthResult(200,"成功");
+        returnTemplateAuthResult.setData(dtoTemplateAuths);
         log.info(JSON.toJSONString(returnTemplateAuthResult));
 
         return returnTemplateAuthResult;
     }
+
+    @Override
+    @PostMapping("/updateTemplateList.do")
+    @ApiOperation(value = "更新模板列表",notes = "更新模板列表")
+    public DtoBasicResult updateTemplateList() {
+        return templateListService.updateTemplateList();
+    }
+
 }

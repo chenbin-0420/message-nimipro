@@ -1,6 +1,7 @@
 package com.dhcc.miniprogram.service;
 
-import com.dhcc.miniprogram.dto.*;
+import com.dhcc.miniprogram.dto.DtoBasicResult;
+import com.dhcc.miniprogram.dto.DtoSubscribeMessageRequest;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -19,24 +20,9 @@ public interface MpMessageService {
     String verifyMsgFromWechat(HttpServletRequest request);
 
     /**
-     * 获取小程序全局唯一后台接口调用凭据（access_token）
-     * @param appid 小程序唯一凭证，即 AppID
-     * @param appSecret 小程序唯一凭证密钥，即 AppSecret
-     * @return DtoReturnTokenResult
-     */
-    DtoReturnTokenResult getAccessToken(String appid, String appSecret);
-
-    /**
-     * 登录凭证校验
-     * @param login 登录请求类
-     * @return DtoReturnIdenInfoResult
-     */
-    DtoReturnIdenInfoResult login(DtoGetLoginRequest login);
-
-    /**
      * 发送订阅消息
      * @param request 小程序订阅消息请求类
-     * @return DtoReturnBasicResult
+     * @return DtoBasicResult
      */
-    DtoReturnBasicResult sendMiniproSubMsg(DtoGetSubMsgRequest request);
+    DtoBasicResult sendSubscribeMessageByPhone(DtoSubscribeMessageRequest request);
 }
