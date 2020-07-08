@@ -1,10 +1,8 @@
 package com.dhcc.miniprogram.util;
 
 import com.dhcc.basic.exception.BusinessException;
-import com.dhcc.miniprogram.dto.DtoLoginRequest;
-import com.dhcc.miniprogram.dto.DtoPhoneNumberRequest;
-import com.dhcc.miniprogram.dto.DtoSubscribeMessageRequest;
-import com.dhcc.miniprogram.dto.DtoTemplateAuthRequest;
+import com.dhcc.miniprogram.enums.BusinessCodeEnum;
+import com.dhcc.miniprogram.dto.*;
 import com.dhcc.miniprogram.enums.MpStatusEnum;
 import com.dhcc.miniprogram.enums.SendMsgTypeEnum;
 import org.apache.commons.collections.CollectionUtils;
@@ -83,18 +81,12 @@ public class CheckInParamUtil {
     }
 
     /**
-     * 检查小程序登录凭证校验业务入参
-     * @param login 登录凭证类
+     * 检查小程序登录业务入参
+     * @param login 小程序登录
      */
-    public static void checkInParam(DtoLoginRequest login) {
-        String reason = "";
+    public static void checkInParam(DtoIdenInfoResult idenInfoResult, DtoLoginRequest login) {
         if (StringUtils.isEmpty(login.getCode())) {
-            reason += "code为空，";
-        }
-
-        if (StringUtils.isNotEmpty(reason)) {
-            reason = "登录凭证参数 " + reason;
-            throw new BusinessException(reason.substring(0, reason.length() - 1));
+            idenInfoResult.setErrcode(BusinessCodeEnum.LOGIN_PARAM_EXCEPTION.getCode()).setErrmsg(BusinessCodeEnum.LOGIN_PARAM_EXCEPTION.getMsg());
         }
     }
 
@@ -128,10 +120,11 @@ public class CheckInParamUtil {
     }
 
     /**
-     * 检查小程序获取手机号入参
+     * 检查获取手机号入参
+     * @param numberResult 手机号结果
      * @param dtoPhoneNumberRequest 获取手机号入参
      */
-    public static void checkInParam(DtoPhoneNumberRequest dtoPhoneNumberRequest){
+    public static void checkInParam(DtoPhoneNumberResult numberResult,DtoPhoneNumberRequest dtoPhoneNumberRequest){
         String reason = "";
         if(StringUtils.isEmpty(dtoPhoneNumberRequest.getOpenId())){
             reason += "openId为空,";
@@ -144,7 +137,7 @@ public class CheckInParamUtil {
         }
         if(StringUtils.isNotEmpty(reason)){
             reason = "获取手机号参数 "+reason;
-            throw new BusinessException(reason.substring(0,reason.length()-1));
+            numberResult.setErrcode(BusinessCodeEnum.GET_PHONE_NUMBER_PARAM_EMPTY.getCode()).setErrmsg(reason.substring(0,reason.length()-1));
         }
     }
 

@@ -22,7 +22,8 @@ public class DtoPhoneNumber {
         return phone;
     }
 
-    public void setPhone(String phone) {
+    public DtoPhoneNumber setPhone(String phone) {
         this.phone = phone;
+        return this;
     }
 }

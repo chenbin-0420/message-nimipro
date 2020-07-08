@@ -77,7 +77,8 @@ devMode: true
 
 token:
 #  whitelist: /sysdev/gencode/.*;/weixin/.*
-  whitelist: /.*
+#  whitelist: /.*
+  whitelist: /sendMessageApi/.*
 
 smb:
   ip: 192.168.100.79
@@ -96,3 +97,6 @@ wechat:
   externalDesc: 政务服务大厅
   internalTitle: 内部服务
   internalDesc: 政务服务大厅
+  mode: test
+  testSecret: Xcy9aujnpioqs00JC/kCVjiecMXO3wuZQr+AhoYc57Q1QF/HDMtH5o26IpYKDEcD0BhHWvjLdr2P0zyXDePivw==
+  formalSecret: /rdEmBHpIPiQJRMNV1Qg1pchvpvteJf/35YAQeHPuTubgcmgduCPKnrEsp+lwhQf2hf7glcb9l4BDWVPkfWYjA==

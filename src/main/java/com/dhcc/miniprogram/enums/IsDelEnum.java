@@ -15,7 +15,7 @@ public enum IsDelEnum {
     private String code;
     private String name;
 
-    private IsDelEnum(String code, String name) {
+    IsDelEnum(String code, String name) {
         this.code = code;
         this.name = name;
     }

@@ -5,10 +5,12 @@ import com.dhcc.basic.dao.query.SimpleCondition;
 import com.dhcc.basic.exception.BusinessException;
 import com.dhcc.basic.service.BaseServiceImpl;
 import com.dhcc.basic.util.HttpClientUtil;
+import com.dhcc.miniprogram.enums.BusinessCodeEnum;
 import com.dhcc.miniprogram.config.MiniproUrlConfig;
 import com.dhcc.miniprogram.config.WechatConfig;
 import com.dhcc.miniprogram.dao.MpMessageDao;
 import com.dhcc.miniprogram.dto.DtoBasicResult;
+import com.dhcc.miniprogram.dto.DtoSubscribeMessage;
 import com.dhcc.miniprogram.dto.DtoSubscribeMessageRequest;
 import com.dhcc.miniprogram.dto.DtoUser;
 import com.dhcc.miniprogram.enums.MpSendMsgStatusEnum;
@@ -22,6 +24,7 @@ import com.dhcc.miniprogram.util.CheckInParamUtil;
 import com.dhcc.miniprogram.util.DateUtil;
 import com.dhcc.miniprogram.util.SimpleAlgorithmUtil;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,14 +64,43 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
     private static final Integer MP_RECEIVE_SUCCESS = 0;
 
     /**
+     * code:
      * RESPONSE_SEND_SUCCESS ：发送成功
      * RESPONSE_SEND_FAIL ：发送失败
      * RESPONSE_NOT_EXISTS_USER ：用户不存在
+     * RESPONSE_NOT_EXISTS_SECRET ：秘钥不存在
+     * RESPONSE_ERROR_SECRET ：秘钥不合法
+     * RESPONSE_CORRECT_SECRET : 秘钥正确
+     * RESPONSE_SINGLE_MESSAGE_EXCEPTION : 指定人发送消息异常
+     *
+     * msg:
+     * RESPONSE_NOT_EXISTS_SECRET_MSG : 没有权限
+     * RESPONSE_ERROR_SECRET_MSG : 秘钥不合法
+     * RESPONSE_CORRECT_SECRET_MSG : 秘钥正确
+     * RESPONSE_SINGLE_MESSAGE_EXCEPTION_MSG : 指定人发送消息异常
      */
     private static final Integer RESPONSE_SEND_SUCCESS = 200;
-    private static final Integer RESPONSE_SEND_PRAT_FAIL = 1041;
-    private static final Integer RESPONSE_SEND_ALL_FAIL = 1042;
-    private static final Integer RESPONSE_NOT_EXISTS_USER = 1049;
+    private static final Integer RESPONSE_SEND_PRAT_FAIL = 641;
+    private static final Integer RESPONSE_SEND_ALL_FAIL = 642;
+    private static final Integer RESPONSE_NOT_EXISTS_SECRET = 643;
+    private static final Integer RESPONSE_ERROR_SECRET = 644;
+    private static final Integer RESPONSE_CORRECT_SECRET = 645;
+    private static final Integer RESPONSE_NOT_EXISTS_USER = 646;
+    private static final Integer RESPONSE_SINGLE_MESSAGE_EXCEPTION = 647;
+
+    private static final String RESPONSE_SEND_SUCCESS_MSG = "消息发送全部成功";
+    private static final String RESPONSE_SEND_PRAT_FAIL_MSG = "消息发送成功手机号：%s，失败手机号：%s" ;
+    private static final String RESPONSE_SEND_ALL_FAIL_MSG = "消息发送全部失败";
+    private static final String RESPONSE_NOT_EXISTS_SECRET_MSG = "没有权限";
+    private static final String RESPONSE_ERROR_SECRET_MSG = "秘钥不合法";
+    private static final String RESPONSE_CORRECT_SECRET_MSG = "秘钥正确";
+    private static final String RESPONSE_SINGLE_MESSAGE_EXCEPTION_MSG = "发送消息异常";
+    private static final String RESPONSE_NOT_EXISTS_USER_MSG = "消息发送手机号用户不存在";
+
+    /**
+     * DEV ：开发模式
+     */
+    private static final String DEV = "dev";
 
     @Override
     public String verifyMsgFromWechat(HttpServletRequest request) {
@@ -95,8 +127,8 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
             return echostr;
         } else {
             // 抛异常
-            log.debug("验证消息来自微信服务器抛异常,参数数组{}", JSON.toJSON(arr));
-            throw new BusinessException("验证消息来自微信服务器抛异常");
+            log.debug("验证消息来自微信服务器失败,参数数组{}", JSON.toJSON(arr));
+            throw new BusinessException(BusinessCodeEnum.VERIFY_SERVER_FAIL_EXCEPTION.getMsg());
         }
 
     }
@@ -107,7 +139,12 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
         // 记录发送订阅消息入参
         log.info("发送订阅消息入参：" + JSON.toJSONString(request));
         // 声明基础返回结果类
-        DtoBasicResult dtoBasicResult;
+        DtoBasicResult dtoBasicResult = new DtoBasicResult();
+        // 检验秘钥是否合法
+        checkSecret(dtoBasicResult,request.getSecret());
+        if(!dtoBasicResult.getErrcode().equals(RESPONSE_CORRECT_SECRET)){
+            return dtoBasicResult;
+        }
         // 获取 accessToken
         String accessToken = accessTokenUtil.getAccessToken();
         // 检查入参
@@ -120,7 +157,7 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
         // 判断是否有此手机号的用户
         if (user == null) {
             // 返回不存在此手机号的用户结果
-            dtoBasicResult = new DtoBasicResult(RESPONSE_NOT_EXISTS_USER, "该手机号不存在");
+            dtoBasicResult.setErrcode(RESPONSE_NOT_EXISTS_USER).setErrmsg("该手机号不存在");
             // 记录日志
             log.info("发送订阅消息失败结果：" + JSON.toJSONString(dtoBasicResult));
             return dtoBasicResult;
@@ -130,15 +167,13 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
         }
         // 获取httpClient
         CloseableHttpClient httpClient = HttpClientUtil.getHttpClient();
-        // 手机号置空
-        request.setPhoneNumber(null);
         // 将对象转为Json字符串
         String reqData = JSON.toJSONString(request);
         // 设置请求体参数
         HashMap<String, String> headerMap = new HashMap<>(1);
         // DtoSubscribeMessageRequest 转 MpMessage
         // 默认 sendStatus 是 CLZ-处理中
-        MpMessage mpMessage = DtoSubscribeMessageRequest.toPO(request);
+        MpMessage mpMessage = DtoSubscribeMessage.toPO(request);
         // 给小程序ID赋值并添加发送消息
         mpMessage.setAppId(wechatConfig.getAppId());
         dao.save(mpMessage);
@@ -170,15 +205,14 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
             return dtoBasicResult;
         } catch (Exception e) {
             // 记录日志和抛异常
-            log.debug("发送订阅消息异常", e);
-            throw new BusinessException("发送订阅消息异常");
+            log.debug(RESPONSE_SINGLE_MESSAGE_EXCEPTION_MSG, e);
+            return dtoBasicResult.setErrcode(RESPONSE_SINGLE_MESSAGE_EXCEPTION).setErrmsg(RESPONSE_SINGLE_MESSAGE_EXCEPTION_MSG);
         }
     }
 
     @Override
     public DtoBasicResult sendMassMessageByPhoneList(DtoSubscribeMessageRequest request) {
         /**
-         * request.setPhoneNumberList(null);
          * StopWatch
          */
         StopWatch stopWatch = new StopWatch();
@@ -187,17 +221,15 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
         // 打印入参日志
         log.info("群发消息入参", JSON.toJSONString(request));
         // 声明基础返回结果类
-        DtoBasicResult dtoBasicResult;
+        DtoBasicResult dtoBasicResult = new DtoBasicResult();
         // 获取 accessToken
         String accessToken = accessTokenUtil.getAccessToken();
         // 检查入参
         CheckInParamUtil.checkInParam(accessToken, request, SendMsgTypeEnum.MASS);
         // 发送失败的手机号列表
         LinkedList<String> sendFailPhoneList = new LinkedList<>();
-        // 发送失败的手机号列表
+        // 发送成功的手机号列表
         LinkedList<String> sendSuccessPhoneList = new LinkedList<>();
-        // 不存在的手机号列表
-        LinkedList<String> notExistsPhoneList = new LinkedList<>();
         // 获取手机号集合
         List<String> numberList = request.getPhoneNumberList();
         // 根据手机号集合查询用户集合
@@ -206,105 +238,125 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
         // 打印用户信息日志
         log.info("群发消息用户列表长度：" + userList.size());
         log.info("群发消息用户列表：" + JSON.toJSONString(userList));
-        // 用户列表不为空，发送订阅消息
-        if (CollectionUtils.isNotEmpty(userList)) {
-            // 设置手机号列表为空
-//            request.setPhoneNumberList(null);
+        // 用户列表为空，发送订阅消息结果
+        if (CollectionUtils.isEmpty(userList)) {
+            return dtoBasicResult.setErrcode(RESPONSE_NOT_EXISTS_USER).setErrmsg(RESPONSE_NOT_EXISTS_USER_MSG);
+        }
 
-            for (int i = 0; i < request.getCount(); i++) {
+        Integer count = request.getCount() == null ?1:request.getCount();
+        for (int i = 0; i < count; i++) {
+            if(count > 0){
                 userList.addAll(userList);
             }
-
-            // 用户迭代器
-            Iterator<DtoUser> userIterator = userList.iterator();
-            while (userIterator.hasNext()) {
-                // 获取用户OpenId 赋值给请求体的toUser属性
-                DtoUser user = userIterator.next();
-                request.setTouser(user.getOpenId());
-                // 获取用户手机号
-                String phone = user.getPhoneNum();
-                //
-                if (numberList.contains(phone)) {
-                    notExistsPhoneList.remove(phone);
-                }
-                // 获取httpClient
-                CloseableHttpClient httpClient = HttpClientUtil.getHttpClient();
-                // 将对象转为Json字符串
-                String reqData = JSON.toJSONString(request);
-                // 设置请求体参数
-                HashMap<String, String> headerMap = new HashMap<>(1);
-                // DtoSubscribeMessageRequest 转 MpMessage
-                // 默认 sendStatus 是 CLZ-处理中
-                MpMessage mpMessage = DtoSubscribeMessageRequest.toPO(request);
-                // 给小程序ID赋值并添加发送消息
-                mpMessage.setAppId(appId);
-                dao.save(mpMessage);
-                // 记录日志
-                log.info("接口名称：" + MiniproUrlConfig.SEND_SUBSCRIBE_MESSAGE.getName());
-                log.info("接口参数：" + MiniproUrlConfig.SEND_SUBSCRIBE_MESSAGE.getUrl());
-                log.info("接口路径参数：access_token=" + accessToken);
-                log.info("接口JSON参数：" + reqData);
-                // 发送 http-post 请求
-                try {
-                    // 设置 Url 带参
-                    String reqUrl = MiniproUrlConfig.SEND_SUBSCRIBE_MESSAGE.getUrl() + "?access_token=" + accessToken;
-                    // 发送Post请求并接收字符串结果
-                    String result = HttpClientUtil.doPost(httpClient, reqUrl, reqData, headerMap);
-                    log.info("群发消息单条结果：手机号=" + phone + ",返回结果=" + result);
-                    // 解析字符串并转为 DtoBasicResult 对象
-                    dtoBasicResult = JSON.parseObject(result, DtoBasicResult.class);
-                    // errCode是 null | 0L 为成功，否则为失败
-                    if (dtoBasicResult.getErrcode() == null || dtoBasicResult.getErrcode().equals(MP_RECEIVE_SUCCESS)) {
-                        // 1、mpMessage 发送状态：成功标识
-                        mpMessage.setSendStatus(MpSendMsgStatusEnum.CG.getCode());
-                        // 2、记录添加成功手机号
-                        sendSuccessPhoneList.add(phone);
-                    } else {
-                        // 1、mpMessage 发送状态：失败
-                        mpMessage.setSendStatus(MpSendMsgStatusEnum.SB.getCode());
-                        // 2、记录失败手机号
-                        sendFailPhoneList.add(phone);
-                    }
-                    // 记录发送时间并修改对象
-                    mpMessage.setSendTmplTime(DateUtil.getCurrentDate());
-                    dao.update(mpMessage);
-                } catch (Exception e) {
+        }
+        // 打印日志
+        log.info("接口名称：" + MiniproUrlConfig.SEND_SUBSCRIBE_MESSAGE.getName());
+        log.info("接口参数：" + MiniproUrlConfig.SEND_SUBSCRIBE_MESSAGE.getUrl());
+        log.info("接口路径参数：access_token=" + accessToken);
+        // 用户迭代器
+        Iterator<DtoUser> userIterator = userList.iterator();
+        while (userIterator.hasNext()) {
+            // 获取用户OpenId 赋值给请求体的toUser属性
+            DtoUser user = userIterator.next();
+            request.setTouser(user.getOpenId());
+            // 获取用户手机号
+            String phone = user.getPhoneNum();
+            // 获取httpClient
+            CloseableHttpClient httpClient = HttpClientUtil.getHttpClient();
+            // 将对象转为Json字符串
+            String reqData = JSON.toJSONString(request);
+            // 设置请求体参数
+            HashMap<String, String> headerMap = new HashMap<>(1);
+            // DtoSubscribeMessageRequest 转 MpMessage
+            // 默认 sendStatus 是 CLZ-处理中
+            MpMessage mpMessage = DtoSubscribeMessage.toPO(request);
+            // 给小程序ID赋值并添加发送消息
+            mpMessage.setAppId(appId);
+            dao.save(mpMessage);
+            // 记录日志
+            log.info("接口JSON参数：" + reqData);
+            // 发送 http-post 请求
+            try {
+                // 设置 Url 带参
+                String reqUrl = MiniproUrlConfig.SEND_SUBSCRIBE_MESSAGE.getUrl() + "?access_token=" + accessToken;
+                // 发送Post请求并接收字符串结果
+                String result = HttpClientUtil.doPost(httpClient, reqUrl, reqData, headerMap);
+                log.info("群发消息单条结果：手机号=" + phone + ",返回结果=" + result);
+                // 解析字符串并转为 DtoBasicResult 对象
+                dtoBasicResult = JSON.parseObject(result, DtoBasicResult.class);
+                // errCode是 null | 0L 为成功，否则为失败
+                if (dtoBasicResult.getErrcode() == null || dtoBasicResult.getErrcode().equals(MP_RECEIVE_SUCCESS)) {
+                    // 1、mpMessage 发送状态：成功标识
+                    mpMessage.setSendStatus(MpSendMsgStatusEnum.CG.getCode());
+                    // 2、记录添加成功手机号
+                    sendSuccessPhoneList.add(phone);
+                } else {
+                    // 1、mpMessage 发送状态：失败
+                    mpMessage.setSendStatus(MpSendMsgStatusEnum.SB.getCode());
+                    // 2、记录失败手机号
                     sendFailPhoneList.add(phone);
-                    // 记录日志和抛异常
-                    log.info("群发消息发送成功手机号：" + sendSuccessPhoneList + "，失败手机号：" + sendFailPhoneList);
-                    log.debug("群发消息异常", e);
                 }
+                // 记录发送时间并修改对象
+                mpMessage.setSendTmplTime(DateUtil.getCurrentDate());
+                dao.update(mpMessage);
+            } catch (Exception e) {
+                // 记录日志和抛异常
+                log.debug("群发消息异常", e);
+                // 添加到发送失败手机号列表
+                sendFailPhoneList.add(phone);
             }
-            //
-//            notExistsPhoneList.addAll()
-            /**
-             * 消息发送情况分析
-             * sendSuccessPhoneList为null,消息发送全部失败
-             * sendFailPhoneList为null、 sendSuccessPhoneList.size() 与 userList.size() 相等，消息发送全部成功
-             * 否则，消息发送部分成功，部分失败
-             */
-            if (CollectionUtils.isEmpty(sendSuccessPhoneList)) {
-                dtoBasicResult = new DtoBasicResult(RESPONSE_SEND_ALL_FAIL, "消息发送全部失败");
-            } else if (CollectionUtils.isEmpty(sendFailPhoneList) && sendSuccessPhoneList.size() == userList.size()) {
-                dtoBasicResult = new DtoBasicResult(RESPONSE_SEND_SUCCESS, "消息发送全部成功");
-            } else {
-                dtoBasicResult = new DtoBasicResult(RESPONSE_SEND_PRAT_FAIL, "消息发送成功手机号：" + sendSuccessPhoneList + "，失败手机号：" + sendFailPhoneList);
-            }
+        }
+        /**
+         * 消息发送情况分析
+         * sendSuccessPhoneList为null,消息发送全部失败
+         * sendFailPhoneList为null、 sendSuccessPhoneList.size() 与 userList.size() 相等，消息发送全部成功
+         * 否则，消息发送部分成功，部分失败
+         */
+        if (CollectionUtils.isEmpty(sendSuccessPhoneList)) {
+            dtoBasicResult.setErrcode(RESPONSE_SEND_ALL_FAIL).setErrmsg(RESPONSE_SEND_ALL_FAIL_MSG);
+        } else if (CollectionUtils.isEmpty(sendFailPhoneList) && sendSuccessPhoneList.size() == userList.size()) {
+            dtoBasicResult.setErrcode(RESPONSE_SEND_SUCCESS).setErrmsg(RESPONSE_SEND_SUCCESS_MSG);
         } else {
-            dtoBasicResult = new DtoBasicResult(RESPONSE_NOT_EXISTS_USER, "消息发送手机号用户不存在：" + numberList);
+            dtoBasicResult.setErrcode(RESPONSE_SEND_PRAT_FAIL).setErrmsg(String.format(RESPONSE_SEND_PRAT_FAIL_MSG,sendSuccessPhoneList,sendFailPhoneList));
         }
 
         // 打印群发结果
         log.info("群发消息结果", JSON.toJSONString(dtoBasicResult));
-
 
         stopWatch.stop();
         double timeSeconds = stopWatch.getTotalTimeSeconds();
         log.info("cost:" + timeSeconds);
         log.info(stopWatch.prettyPrint());
 
-
         return dtoBasicResult;
+    }
+
+    /**
+     * 检查秘钥
+     * @param basicResult 基础结果
+     * @param secret 秘钥
+     * @return 基础结果类
+     */
+    private void checkSecret(DtoBasicResult basicResult,String secret){
+        // 判断秘钥是否为空
+        if (StringUtils.isEmpty(secret)) {
+            // 为空，抛没有权限
+            basicResult.setErrcode(RESPONSE_NOT_EXISTS_SECRET).setErrmsg(RESPONSE_NOT_EXISTS_SECRET_MSG);
+        } else {
+            // 秘钥不为空，判断模式
+            if(wechatConfig.getMode().equals(DEV)){
+                // 正式模式，判断是否相等，不相等秘钥不合法
+                if(!wechatConfig.getFormalSecret().equals(secret)){
+                    basicResult.setErrcode(RESPONSE_ERROR_SECRET).setErrmsg(RESPONSE_ERROR_SECRET_MSG);
+                }
+            } else {
+                // 测试模式，判断是否相等，不相等秘钥不合法
+                if(!wechatConfig.getTestSecret().equals(secret)){
+                    basicResult.setErrcode(RESPONSE_ERROR_SECRET).setErrmsg(RESPONSE_ERROR_SECRET_MSG);
+                }
+            }
+        }
+        basicResult.setErrcode(RESPONSE_CORRECT_SECRET).setErrmsg(RESPONSE_CORRECT_SECRET_MSG);
     }
 
 }

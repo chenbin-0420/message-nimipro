@@ -13,7 +13,7 @@ public enum IsSubEnum {
     TRUE(1,"已订阅"),
     FALSE(0,"未订阅");
 
-    private IsSubEnum(Integer code, String name) {
+    IsSubEnum(Integer code, String name) {
         this.code = code;
         this.name = name;
     }

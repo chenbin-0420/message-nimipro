@@ -15,7 +15,7 @@ public enum SendMsgTypeEnum {
     private String Code;
     private String name;
 
-    private SendMsgTypeEnum(String code, String name) {
+    SendMsgTypeEnum(String code, String name) {
         Code = code;
         this.name = name;
     }

@@ -1,9 +1,9 @@
 package com.dhcc.miniprogram.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.dhcc.basic.exception.BusinessException;
 import com.dhcc.basic.service.BaseServiceImpl;
 import com.dhcc.basic.util.HttpClientUtil;
+import com.dhcc.miniprogram.enums.BusinessCodeEnum;
 import com.dhcc.miniprogram.config.MiniproUrlConfig;
 import com.dhcc.miniprogram.config.WechatConfig;
 import com.dhcc.miniprogram.dao.MpAccessTokenDao;
@@ -87,7 +87,9 @@ public class MpAccessTokenServiceImpl extends BaseServiceImpl<MpAccessTokenDao, 
 	@Transactional
 	public DtoAccessTokenResult getAccessToken(String appid, String appSecret) {
 		// 记录获取AccessToken入参日志
-		log.info("获取AccessToken：{ appid="+appid+",secret="+appSecret+"}");
+		log.info(String.format("获取AccessToken：{ appid=%s,secret=%s }",appid,appSecret));
+		// 初始化dtoAccessTokenResult实例
+		DtoAccessTokenResult dtoAccessTokenResult = new DtoAccessTokenResult();
 		// 检查入参
 		CheckInParamUtil.checkInParam(appid,appSecret);
 		// 获取 httpClient
@@ -106,7 +108,7 @@ public class MpAccessTokenServiceImpl extends BaseServiceImpl<MpAccessTokenDao, 
 			// 发送Get请求，并接收字符串的结果
 			String result = HttpClientUtil.doGet(httpClient, MiniproUrlConfig.GET_ACCESS_TOKEN_URL.getUrl(), paramMap, headerMap);
 			// 解析字符串为 DtoAccessTokenResult 对象
-			DtoAccessTokenResult dtoAccessTokenResult = JSON.parseObject(result, DtoAccessTokenResult.class);
+			dtoAccessTokenResult = JSON.parseObject(result, DtoAccessTokenResult.class);
 			// 访问令牌
 			MpAccessToken mpAccessToken = DtoAccessTokenResult.toPO(dtoAccessTokenResult);
 			// 设置小程序ID、秘钥、创建时间、是否删除 默认是F
@@ -120,8 +122,8 @@ public class MpAccessTokenServiceImpl extends BaseServiceImpl<MpAccessTokenDao, 
 			return dtoAccessTokenResult;
 		} catch (Exception e) {
 			// 记录日志和抛异常
-			log.debug("获取AccessToken异常", e);
-			throw new BusinessException("获取微信Token异常");
+			log.debug(BusinessCodeEnum.ACCESS_TOKEN_EXCEPTION.getMsg(), e);
+			return dtoAccessTokenResult.setErrcode(BusinessCodeEnum.ACCESS_TOKEN_EXCEPTION.getCode()).setErrmsg(BusinessCodeEnum.ACCESS_TOKEN_EXCEPTION.getMsg());
 		}
 	}
 }

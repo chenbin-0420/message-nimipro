@@ -18,7 +18,7 @@ public enum MpStatusEnum {
     private String name;
     private String code;
 
-    private MpStatusEnum(String name, String code){
+    MpStatusEnum(String name, String code){
         this.name = name;
         this.code = code;
     }

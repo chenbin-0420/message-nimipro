@@ -24,7 +24,7 @@ public enum MpSendMsgStatusEnum {
      */
     private String name;
 
-    private MpSendMsgStatusEnum(String code, String name){
+    MpSendMsgStatusEnum(String code, String name){
         this.code = code;
         this.name = name;
     }

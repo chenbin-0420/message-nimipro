@@ -4,6 +4,7 @@ import com.dhcc.basic.controller.BaseController;
 import com.dhcc.basic.exception.BusinessException;
 import com.dhcc.basic.util.Message;
 import com.dhcc.miniprogram.api.MpMessageApi;
+import com.dhcc.miniprogram.enums.BusinessCodeEnum;
 import com.dhcc.miniprogram.dto.*;
 import com.dhcc.miniprogram.service.*;
 import io.swagger.annotations.Api;
@@ -59,11 +60,11 @@ public class MpMessageController extends BaseController implements MpMessageApi 
             // 输出微信加密签名
             out.write(echostr);
         } catch (IOException e) {
-            log.debug("响应输出流异常", e);
-            throw new BusinessException("响应输出流异常");
+            log.debug(BusinessCodeEnum.VERIFY_SERVER_IO_EXCEPTION.getMsg(), e);
+            throw new BusinessException(BusinessCodeEnum.VERIFY_SERVER_IO_EXCEPTION.getMsg());
         } catch (Exception e) {
-            log.debug("验证消息的确来自微信服务器", e);
-            throw new BusinessException("验证消息的确来自微信服务器异常");
+            log.debug(BusinessCodeEnum.VERIFY_SERVER_EXCEPTION.getMsg(), e);
+            throw new BusinessException(BusinessCodeEnum.VERIFY_SERVER_EXCEPTION.getMsg());
         } finally {
             log.info("关闭微信服务器资源");
             if (out != null) {
@@ -131,7 +132,7 @@ public class MpMessageController extends BaseController implements MpMessageApi 
     }
 
     @Override
-    @PostMapping(value = "sendMassMessageByPhoneList.do")
+    @PostMapping(value = "/sendMassMessageByPhoneList.do")
     @ApiOperation(value = "发送群发消息",notes = "发送群发消息")
     public DtoBasicResult sendMassMessageByPhoneList(@RequestBody DtoSubscribeMessageRequest request) {
         return messageService.sendMassMessageByPhoneList(request);

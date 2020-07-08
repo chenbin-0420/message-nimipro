@@ -13,9 +13,13 @@ public class DtoSubscribeMessageRequest extends  DtoSubscribeMessage{
      */
     private String phoneNumber;
     /**
-     * phoneNumberList : 用户手机号集合
+     * phoneNumberList ：用户手机号集合
      */
     private List<String> phoneNumberList;
+    /**
+     * secret ：秘钥
+     */
+    private String secret;
     /**
      * 测试次数
      */
@@ -35,6 +39,14 @@ public class DtoSubscribeMessageRequest extends  DtoSubscribeMessage{
 
     public void setPhoneNumberList(List<String> phoneNumberList) {
         this.phoneNumberList = phoneNumberList;
+    }
+
+    public String getSecret() {
+        return secret;
+    }
+
+    public void setSecret(String secret) {
+        this.secret = secret;
     }
 
     public Integer getCount() {

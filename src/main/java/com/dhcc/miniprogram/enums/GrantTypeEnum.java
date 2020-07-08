@@ -16,7 +16,7 @@ public enum GrantTypeEnum {
 
     private String code;
 
-    private GrantTypeEnum(String code){
+    GrantTypeEnum(String code){
         this.code = code;
     }
 

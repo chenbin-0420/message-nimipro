@@ -2,6 +2,7 @@ package com.dhcc.miniprogram.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.dhcc.basic.service.BaseServiceImpl;
+import com.dhcc.miniprogram.enums.BusinessCodeEnum;
 import com.dhcc.miniprogram.config.WechatConfig;
 import com.dhcc.miniprogram.dao.MpTemplateAuthDao;
 import com.dhcc.miniprogram.dto.DtoTemplateAuth;
@@ -83,13 +84,6 @@ public class MpTemplateAuthServiceImpl extends BaseServiceImpl<MpTemplateAuthDao
 	@Autowired
 	private WechatConfig wechatConfig;
 
-	/**
-	 * 成功标识 ：RESPONSE_SUCCESS
-	 * 添加模板授权时异常：RESPONSE_SERVER_EXCEPTION
-	 */
-	private static final Integer RESPONSE_SUCCESS = 200;
-	private static final Integer RESPONSE_SERVER_EXCEPTION = 1039;
-
 	@Override
 	@Transactional
 	public DtoTemplateAuthResult insertTemplateAuth(DtoTemplateAuthRequest templateAuthRequest) {
@@ -134,7 +128,7 @@ public class MpTemplateAuthServiceImpl extends BaseServiceImpl<MpTemplateAuthDao
 						save(templateAuth);
 					} catch (Exception e) {
 						// 模板授权 设置模板数组、标题、描述
-						templateAuthResult = new DtoTemplateAuthResult(RESPONSE_SERVER_EXCEPTION,"服务器异常");
+						templateAuthResult = new DtoTemplateAuthResult(BusinessCodeEnum.TEMPLATE_AUTH_FAIL.getCode(),"添加模板授权失败");
 						// 返回基础的模板授权结果
 						return getBasicTemplateAuthResult(templateAuthResult);
 
@@ -144,7 +138,7 @@ public class MpTemplateAuthServiceImpl extends BaseServiceImpl<MpTemplateAuthDao
 			}
 		}
 		// 模板授权 设置模板数组、标题、描述
-		templateAuthResult = new DtoTemplateAuthResult(RESPONSE_SUCCESS,"获取模板成功");
+		templateAuthResult = new DtoTemplateAuthResult(BusinessCodeEnum.REQUEST_SUCCESS.getCode(),"获取模板成功");
 		// 返回基础的模板授权结果
 		return getBasicTemplateAuthResult(templateAuthResult);
 	}
@@ -152,7 +146,7 @@ public class MpTemplateAuthServiceImpl extends BaseServiceImpl<MpTemplateAuthDao
 	@Override
 	public DtoTemplateAuthResult getTemplateAuthResult() {
 		// 模板授权 设置模板数组、标题、描述
-		DtoTemplateAuthResult templateAuthResult = new DtoTemplateAuthResult(RESPONSE_SUCCESS,"获取模板成功");
+		DtoTemplateAuthResult templateAuthResult = new DtoTemplateAuthResult(BusinessCodeEnum.REQUEST_SUCCESS.getCode(),"获取模板成功");
 		return getBasicTemplateAuthResult(templateAuthResult);
 	}
 

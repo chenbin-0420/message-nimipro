@@ -40,6 +40,18 @@ public class WechatConfig {
      * 内部服务描述
      */
     private String internalDesc;
+    /**
+     * 模式
+     */
+    private String mode;
+    /**
+     * 测试秘钥
+     */
+    private String testSecret;
+    /**
+     * 正式秘钥
+     */
+    private String formalSecret;
 
     public String getWechatToken() {
         return wechatToken;
@@ -95,5 +107,29 @@ public class WechatConfig {
 
     public void setInternalDesc(String internalDesc) {
         this.internalDesc = internalDesc;
+    }
+
+    public String getMode() {
+        return mode;
+    }
+
+    public void setMode(String mode) {
+        this.mode = mode;
+    }
+
+    public String getTestSecret() {
+        return testSecret;
+    }
+
+    public void setTestSecret(String testSecret) {
+        this.testSecret = testSecret;
+    }
+
+    public String getFormalSecret() {
+        return formalSecret;
+    }
+
+    public void setFormalSecret(String formalSecret) {
+        this.formalSecret = formalSecret;
     }
 }

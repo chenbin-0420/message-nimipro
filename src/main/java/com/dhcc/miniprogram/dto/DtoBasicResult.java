@@ -27,16 +27,18 @@ public class DtoBasicResult {
         return errcode;
     }
 
-    public void setErrcode(Integer errcode) {
+    public DtoBasicResult setErrcode(Integer errcode) {
         this.errcode = errcode;
+        return this;
     }
 
     public String getErrmsg() {
         return errmsg;
     }
 
-    public void setErrmsg(String errmsg) {
+    public DtoBasicResult setErrmsg(String errmsg) {
         this.errmsg = errmsg;
+        return this;
     }
 
 }
