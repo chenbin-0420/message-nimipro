@@ -54,6 +54,10 @@ public class MpTemplateList extends IdentifiedPo implements Serializable {
 	@FieldDefine(title = "创建时间", number = 7)
 	@Column(name = "create_time", length = 26, unique = false, nullable = true)
 	private Date createTime;
+
+	@FieldDefine(title = "有效类型：1-生效、0-失效", number = 8)
+	@Column(name = "validation", length = 2, unique = false, nullable = true)
+	private Integer validation;
 	
 	public MpTemplateList() {
 		
@@ -154,5 +158,20 @@ public class MpTemplateList extends IdentifiedPo implements Serializable {
 	public void setCreateTime(Date createTime) {
 		this.createTime = (Date) createTime.clone();
 	}
-	
+
+	/**
+	 * 设置属性：有效类型：1-生效、0-失效
+	 * @return
+	 */
+	public Integer getValidation() {
+		return validation;
+	}
+
+	/**
+	 * 设置属性：有效类型：1-生效、0-失效
+	 * @param validation
+	 */
+	public void setValidation(Integer validation) {
+		this.validation = validation;
+	}
 }

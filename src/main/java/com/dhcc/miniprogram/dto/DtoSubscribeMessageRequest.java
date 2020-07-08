@@ -16,6 +16,10 @@ public class DtoSubscribeMessageRequest extends  DtoSubscribeMessage{
      * phoneNumberList : 用户手机号集合
      */
     private List<String> phoneNumberList;
+    /**
+     * 测试次数
+     */
+    private Integer count;
 
     public String getPhoneNumber() {
         return phoneNumber;
@@ -31,5 +35,13 @@ public class DtoSubscribeMessageRequest extends  DtoSubscribeMessage{
 
     public void setPhoneNumberList(List<String> phoneNumberList) {
         this.phoneNumberList = phoneNumberList;
+    }
+
+    public Integer getCount() {
+        return count;
+    }
+
+    public void setCount(Integer count) {
+        this.count = count;
     }
 }

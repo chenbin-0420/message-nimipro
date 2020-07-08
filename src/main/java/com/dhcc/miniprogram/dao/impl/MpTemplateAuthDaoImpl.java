@@ -1,10 +1,11 @@
 package com.dhcc.miniprogram.dao.impl;
 
-import org.springframework.stereotype.Repository;
-
+import com.dhcc.basic.dao.hibernate.BaseDaoHibImpl;
 import com.dhcc.miniprogram.dao.MpTemplateAuthDao;
 import com.dhcc.miniprogram.model.MpTemplateAuth;
-import com.dhcc.basic.dao.hibernate.BaseDaoHibImpl;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
 /*
 dao层一般情况下与model是一对一的关系！【只负责】这一个model的增删改查，保持原子性以提高复用度。
 所以要求此dao的【增删改的输入对象】和【查的输出对象】必需是此model。
@@ -18,10 +19,20 @@ dao层一般情况下与model是一对一的关系！【只负责】这一个mod
 
 /**
  * 小程序订阅消息模板授权-DAO实现
+ *
  * @author cb
  * @since 2020-07-02
  */
 @Repository
 public class MpTemplateAuthDaoImpl extends BaseDaoHibImpl<MpTemplateAuth, String> implements MpTemplateAuthDao {
-	
+
+    /**
+     * 通过条件获取ID集合的SQL
+     */
+    private static final String ID_LIST_BY_CONDITION_SQL = "SELECT m.`id` FROM mp_template_auth m  WHERE m.`template_id` = ? AND m.`phone` = ?";
+
+    @Override
+    public List<Object[]> getIdListByCondition(String templateId, String phone) {
+        return querySql(ID_LIST_BY_CONDITION_SQL, new String[]{templateId, phone});
+    }
 }

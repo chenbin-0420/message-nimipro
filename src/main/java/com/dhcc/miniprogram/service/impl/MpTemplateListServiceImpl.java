@@ -6,6 +6,7 @@ import com.dhcc.basic.util.HttpClientUtil;
 import com.dhcc.miniprogram.config.MiniproUrlConfig;
 import com.dhcc.miniprogram.dto.DtoTemplateList;
 import com.dhcc.miniprogram.dto.DtoBasicResult;
+import com.dhcc.miniprogram.dto.DtoTemplateListQuery;
 import com.dhcc.miniprogram.dto.DtoTemplateListResult;
 import com.dhcc.miniprogram.util.AccessTokenUtil;
 import com.dhcc.miniprogram.util.CheckInParamUtil;
@@ -128,7 +129,7 @@ public class MpTemplateListServiceImpl extends BaseServiceImpl<MpTemplateListDao
 					Iterator<DtoTemplateList> iterator = dtoTemplateLists.iterator();
 					// 判断迭代器是否有下一个
 					while(iterator.hasNext()){
-						// 获取dtoGetTemplateList
+						// 获取dtoTemplateList
 						DtoTemplateList dtoTemplateList = iterator.next();
 						// 获取模板ID
 						String priTmplId = dtoTemplateList.getPriTmplId();
@@ -166,5 +167,14 @@ public class MpTemplateListServiceImpl extends BaseServiceImpl<MpTemplateListDao
 			log.debug("获取模板列表异常",e);
 			throw new BusinessException("获取模板列表异常");
 		}
+	}
+
+	/**
+	 * VALIDATION ：生效
+	 */
+	private static final int VALIDATION = 1;
+	@Override
+	public List<DtoTemplateListQuery> getValidateTemplateList() {
+		return dao.querySqlEntity("SELECT mp.`template_id`,mp.`title`,mp.`type` FROM mp_template_list mp WHERE mp.`validation` = ?",new Object[]{ VALIDATION },DtoTemplateListQuery.class,null);
 	}
 }

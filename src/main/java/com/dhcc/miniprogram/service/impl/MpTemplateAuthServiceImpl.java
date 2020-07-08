@@ -1,22 +1,27 @@
 package com.dhcc.miniprogram.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.dhcc.basic.dao.query.SimpleCondition;
+import com.dhcc.basic.service.BaseServiceImpl;
+import com.dhcc.miniprogram.config.WechatConfig;
+import com.dhcc.miniprogram.dao.MpTemplateAuthDao;
+import com.dhcc.miniprogram.dto.DtoTemplateAuth;
 import com.dhcc.miniprogram.dto.DtoTemplateAuthRequest;
 import com.dhcc.miniprogram.dto.DtoTemplateAuthResult;
-import com.dhcc.miniprogram.model.MpTemplateList;
+import com.dhcc.miniprogram.dto.DtoTemplateListQuery;
+import com.dhcc.miniprogram.model.MpTemplateAuth;
+import com.dhcc.miniprogram.service.MpTemplateAuthService;
 import com.dhcc.miniprogram.service.MpTemplateListService;
 import com.dhcc.miniprogram.util.CheckInParamUtil;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.dhcc.basic.service.BaseServiceImpl;
-import com.dhcc.miniprogram.dao.MpTemplateAuthDao;
-import com.dhcc.miniprogram.model.MpTemplateAuth;
-import com.dhcc.miniprogram.service.MpTemplateAuthService;
+import java.util.LinkedList;
+import java.util.List;
 /*
 service层一般情况下与model/dao是一对一的关系！【主要负责】这一个model的增删改查，保持原子性以提高复用度。
 所以要求此service的【增删改的输入对象】和【查的输出对象】必需是此model。
@@ -73,67 +78,104 @@ public class MpTemplateAuthServiceImpl extends BaseServiceImpl<MpTemplateAuthDao
 	private static final Logger log = LoggerFactory.getLogger(MpTemplateAuthServiceImpl.class);
 
 	@Autowired
-	private MpTemplateAuthService self;
-
-	@Autowired
 	private MpTemplateListService templateListService;
 
+	@Autowired
+	private WechatConfig wechatConfig;
+
 	/**
-	 * RESPONSE_TEMPLATE_AUTH_SUCCESS ：订阅模板授权成功
-	 * RESPONSE_TEMPLATE_AUTH_REPEAT：订阅模板已授权
+	 * 成功标识 ：RESPONSE_SUCCESS
+	 * 添加模板授权时异常：RESPONSE_SERVER_EXCEPTION
 	 */
-	private static final Integer RESPONSE_TEMPLATE_AUTH_SUCCESS = 200;
-	private static final Integer RESPONSE_TEMPLATE_AUTH_REPEAT = 1041;
+	private static final Integer RESPONSE_SUCCESS = 200;
+	private static final Integer RESPONSE_SERVER_EXCEPTION = 1039;
 
 	@Override
+	@Transactional
 	public DtoTemplateAuthResult insertTemplateAuth(DtoTemplateAuthRequest templateAuthRequest) {
 		// 打印日志
 		log.info("添加模板授权参数："+ JSON.toJSONString(templateAuthRequest));
-		// 声明返回模板授权结果
-		DtoTemplateAuthResult dtoReturnTemplateAuthResult = null;
 		// 检查入参
 		CheckInParamUtil.checkInParam(templateAuthRequest);
 		// 获取手机号
 		String phone = templateAuthRequest.getPhone();
 		// 获取需订阅的模板
 		String[] templateIds = templateAuthRequest.getTemplateIds();
-		if(templateIds != null && templateIds.length > 0){
-			for (String templateId : templateIds) {
-				// 模板ID不为空，添加模板授权
-				if(StringUtils.isNotEmpty(templateId)){
-					// 根据模板ID和手机号查询模板授权
-					SimpleCondition sc = new SimpleCondition()
-							.addParm("templateId",templateId)
-							.addParm("phone", phone);
-					MpTemplateAuth templateAuth = self.findOne(sc);
-					if(templateAuth == null){
-						// 根据 templateId 条件查询对应模板列表
-						SimpleCondition condition = new SimpleCondition().addParm("templateId",templateId);
-						MpTemplateList templateList = templateListService.findOne(condition);
-						// 模板授权属性设置 标题、描述、类型、排列顺序并添加模板授权信息
-						templateAuth = DtoTemplateAuthRequest.toPO(templateAuthRequest);
-						templateAuth.setTitle(templateList.getTitle());
-						templateAuth.setDesc("政务服务大厅");
-						templateAuth.setType(templateList.getType());
-						templateAuth.setOrder(1);
-						save(templateAuth);
-						// 授权成功
-						dtoReturnTemplateAuthResult = new DtoTemplateAuthResult(RESPONSE_TEMPLATE_AUTH_SUCCESS,"手机号为 "+phone+"，订阅模板授权成功，模板ID="+templateId);
-					} else {
-						// 订阅已授权
-						dtoReturnTemplateAuthResult = new DtoTemplateAuthResult(RESPONSE_TEMPLATE_AUTH_REPEAT,"手机号为 "+phone+"，订阅模板已授权，模板ID="+templateId);
-					}
-					log.info("订阅模板授权结果："+JSON.toJSONString(dtoReturnTemplateAuthResult));
+		// 实际可订阅的模板列表
+		LinkedList<DtoTemplateListQuery> templateListQueries = new LinkedList<>();
+		// 有效模板数据循环
+		for (String templateId : templateIds) {
+			for (DtoTemplateListQuery templateListQuery : templateListService.getValidateTemplateList()) {
+				if(templateId.equals(templateListQuery.getTemplateId())){
+					// 实际可订阅的模板
+					templateListQueries.add(templateListQuery);
 				}
 			}
 		}
+		// 声明模板授权结果
+		DtoTemplateAuthResult templateAuthResult;
+		// 实际可订阅模板列表
+		for (DtoTemplateListQuery templateListQuery : templateListQueries) {
+			// 获取模板ID
+			String templateId = templateListQuery.getTemplateId();
+			// 模板ID不为空，添加模板授权
+			if(StringUtils.isNotEmpty(templateId)){
+				// 根据模板ID和手机号查询模板授权
+				List<Object[]> idListByCondition = dao.getIdListByCondition(templateId, phone);
+				if(CollectionUtils.isEmpty(idListByCondition)) {
+					// 模板授权属性设置 模板ID、标题、描述、类型、排列顺序并添加模板授权信息
+					MpTemplateAuth templateAuth = DtoTemplateAuthRequest.toPO(templateAuthRequest);
+					templateAuth.setTemplateId(templateId);
+					templateAuth.setTitle(templateListQuery.getTitle());
+					templateAuth.setTmplDesc("政务服务大厅");
+					templateAuth.setType(templateListQuery.getType());
+					templateAuth.setTmplOrder(1);
+					try {
+						save(templateAuth);
+					} catch (Exception e) {
+						// 模板授权 设置模板数组、标题、描述
+						templateAuthResult = new DtoTemplateAuthResult(RESPONSE_SERVER_EXCEPTION,"服务器异常");
+						// 返回基础的模板授权结果
+						return getBasicTemplateAuthResult(templateAuthResult);
 
-		// 返回响应
-		return dtoReturnTemplateAuthResult;
+					}
+					log.info(JSON.toJSONString(templateAuth));
+				}
+			}
+		}
+		// 模板授权 设置模板数组、标题、描述
+		templateAuthResult = new DtoTemplateAuthResult(RESPONSE_SUCCESS,"获取模板成功");
+		// 返回基础的模板授权结果
+		return getBasicTemplateAuthResult(templateAuthResult);
+	}
+
+	@Override
+	public DtoTemplateAuthResult getTemplateAuthResult() {
+		// 模板授权 设置模板数组、标题、描述
+		DtoTemplateAuthResult templateAuthResult = new DtoTemplateAuthResult(RESPONSE_SUCCESS,"获取模板成功");
+		return getBasicTemplateAuthResult(templateAuthResult);
+	}
+
+	/**
+	 * 基础的模板授权结果
+	 * @return 模板授权结果
+	 */
+	private DtoTemplateAuthResult getBasicTemplateAuthResult(DtoTemplateAuthResult templateAuthResult){
+		// 声明并添加模板ID集合
+		LinkedList<String> tmplIdList = new LinkedList<>();
+		for (DtoTemplateListQuery templateListQuery : templateListService.getValidateTemplateList()) {
+			tmplIdList.add(templateListQuery.getTemplateId());
+		}
+		// 初始化数组
+		String[] tmplIds = new String[tmplIdList.size()];
+		// 设置模板ID、标题、描述
+		DtoTemplateAuth dtoTemplateAuth = new DtoTemplateAuth(wechatConfig.getExternalTitle(),wechatConfig.getExternalDesc(),tmplIdList.toArray(tmplIds));
+		return templateAuthResult.setData(dtoTemplateAuth);
 	}
 
 	@Override
 	public MpTemplateAuth findByPhone(String phone) {
 		return dao.findOne("a.phone = ?", new Object[]{ phone });
 	}
+
 }

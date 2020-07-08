@@ -36,20 +36,20 @@ public class MpTemplateAuth extends AuditedPo implements Serializable {
 	private String templateId;
 
 	@FieldDefine(title = "模板标题", number = 4)
-	@Column(name = "title", length = 20, unique = false, nullable = true)
+	@Column(name = "title", length = 32, unique = false, nullable = true)
 	private String title;
 
 	@FieldDefine(title = "描述", number = 5)
-	@Column(name = "desc", length = 32, unique = false, nullable = true)
-	private String desc;
+	@Column(name = "tmpl_desc", length = 200, unique = false, nullable = true)
+	private String tmplDesc;
 
 	@FieldDefine(title = "模板类型：2-一次性消息、3-长期消息", number = 6)
 	@Column(name = "type", length = 3, unique = false, nullable = true)
 	private Integer type;
 
 	@FieldDefine(title = "模板排序,按从小到大的顺序排版", number = 7)
-	@Column(name = "order", length = 3, unique = false, nullable = true)
-	private Integer order;
+	@Column(name = "tmpl_order", length = 3, unique = false, nullable = true)
+	private Integer tmplOrder;
 
 	@FieldDefine(title = "是否订阅: 0-未订阅、1-已订阅", number = 8)
 	@Column(name = "is_sub", length = 3, unique = false, nullable = true)
@@ -111,16 +111,16 @@ public class MpTemplateAuth extends AuditedPo implements Serializable {
 	 * 读取属性：描述
 	 * @return
 	 */
-	public String getDesc() {
-		return desc;
+	public String getTmplDesc() {
+		return tmplDesc;
 	}
 
 	/**
 	 * 设置属性：描述
-	 * @param desc
+	 * @param tmplDesc
 	 */
-	public void setDesc(String desc) {
-		this.desc = desc;
+	public void setTmplDesc(String tmplDesc) {
+		this.tmplDesc = tmplDesc;
 	}
 
 	/**
@@ -143,16 +143,16 @@ public class MpTemplateAuth extends AuditedPo implements Serializable {
 	 * 读取属性：模板排序,按从小到大的顺序排版
 	 * @return
 	 */
-	public Integer getOrder() {
-		return order;
+	public Integer getTmplOrder() {
+		return tmplOrder;
 	}
 
 	/**
 	 * 设置属性：模板排序,按从小到大的顺序排版
-	 * @param order
+	 * @param tmplOrder
 	 */
-	public void setOrder(Integer order) {
-		this.order = order;
+	public void setTmplOrder(Integer tmplOrder) {
+		this.tmplOrder = tmplOrder;
 	}
 
 	/**

@@ -5,23 +5,23 @@ package com.dhcc.miniprogram.dto;
  * @date 2020/7/2
  * description：返回手机号结果
  */
-public class DtoPhoneNumberResult extends DtoBasicResult {
-    /**
-     * 手机号
-     */
-    private String phoneNumber;
+public class DtoPhoneNumberResult extends DtoBasicResult{
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public DtoPhoneNumberResult() {}
+    private DtoPhoneNumber data;
 
     public DtoPhoneNumberResult(Integer errcode, String errmsg) {
         super(errcode, errmsg);
+    }
+
+    public DtoPhoneNumberResult() {
+    }
+
+    public DtoPhoneNumber getData() {
+        return data;
+    }
+
+    public DtoPhoneNumberResult setData(DtoPhoneNumber data) {
+        this.data = data;
+        return this;
     }
 }

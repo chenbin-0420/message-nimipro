@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 /*
@@ -83,6 +84,7 @@ public class MpAccessTokenServiceImpl extends BaseServiceImpl<MpAccessTokenDao, 
 	private WechatConfig wechatConfig;
 
 	@Override
+	@Transactional
 	public DtoAccessTokenResult getAccessToken(String appid, String appSecret) {
 		// 记录获取AccessToken入参日志
 		log.info("获取AccessToken：{ appid="+appid+",secret="+appSecret+"}");

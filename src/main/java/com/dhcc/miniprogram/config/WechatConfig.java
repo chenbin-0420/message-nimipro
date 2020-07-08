@@ -12,11 +12,34 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix="wechat")
 public class WechatConfig {
 
+    /**
+     * 令牌
+     */
     private String wechatToken;
+    /**
+     * 小程序ID
+     */
     private String appId;
+    /**
+     * 秘钥
+     */
     private String secret;
-    private String testAppId;
-    private String testSecret;
+    /**
+     * 公众服务标题
+     */
+    private String externalTitle;
+    /**
+     * 公众服务描述
+     */
+    private String externalDesc;
+    /**
+     * 内部服务标题
+     */
+    private String internalTitle;
+    /**
+     * 内部服务描述
+     */
+    private String internalDesc;
 
     public String getWechatToken() {
         return wechatToken;
@@ -42,19 +65,35 @@ public class WechatConfig {
         this.secret = secret;
     }
 
-    public String getTestAppId() {
-        return testAppId;
+    public String getExternalTitle() {
+        return externalTitle;
     }
 
-    public void setTestAppId(String testAppId) {
-        this.testAppId = testAppId;
+    public void setExternalTitle(String externalTitle) {
+        this.externalTitle = externalTitle;
     }
 
-    public String getTestSecret() {
-        return testSecret;
+    public String getExternalDesc() {
+        return externalDesc;
     }
 
-    public void setTestSecret(String testSecret) {
-        this.testSecret = testSecret;
+    public void setExternalDesc(String externalDesc) {
+        this.externalDesc = externalDesc;
+    }
+
+    public String getInternalTitle() {
+        return internalTitle;
+    }
+
+    public void setInternalTitle(String internalTitle) {
+        this.internalTitle = internalTitle;
+    }
+
+    public String getInternalDesc() {
+        return internalDesc;
+    }
+
+    public void setInternalDesc(String internalDesc) {
+        this.internalDesc = internalDesc;
     }
 }

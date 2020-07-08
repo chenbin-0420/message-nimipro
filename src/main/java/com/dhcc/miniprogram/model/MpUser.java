@@ -36,11 +36,11 @@ public class MpUser extends AuditedPo implements Serializable {
 	private String openId;
 	
 	@FieldDefine(title = "会话密钥", number = 4)
-	@Column(name = "session_key", length = 255, unique = false, nullable = true)
+	@Column(name = "session_key", length = 30, unique = false, nullable = true)
 	private String sessionKey;
 	
 	@FieldDefine(title = "用户在开放平台的唯一标识符，在满足 UnionID 下发条件的情况下会返回", number = 5)
-	@Column(name = "unionid", length = 255, unique = false, nullable = true)
+	@Column(name = "unionid", length = 50, unique = false, nullable = true)
 	private String unionid;
 
 	@FieldDefine(title = "手机号", number = 10)

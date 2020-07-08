@@ -55,7 +55,6 @@ public class DtoTemplateAuthRequest {
     public static MpTemplateAuth toPO(DtoTemplateAuthRequest templateAuthRequest){
         MpTemplateAuth templateAuth = new MpTemplateAuth();
         templateAuth.setPhone(templateAuthRequest.getPhone());
-        templateAuth.setTemplateId(templateAuthRequest.getTemplateIds()[0]);
         templateAuth.setIsSub(IsSubEnum.TRUE.getCode());
         templateAuth.setCreateUser(templateAuthRequest.getOpenId());
         templateAuth.setCreateTime(DateUtil.getCurrentDate());

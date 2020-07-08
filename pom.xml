@@ -32,11 +32,18 @@
             </exclusions>
         </dependency>
 
+        <!-- 加密需要的jar -->
         <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk16 -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk16</artifactId>
             <version>${bcprov-jdk16.version}</version>
+        </dependency>
+
+        <!--导入配置文件处理器 配置文件进行绑定就会有提示-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
         </dependency>
 
 

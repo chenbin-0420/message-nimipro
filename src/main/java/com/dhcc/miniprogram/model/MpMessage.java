@@ -57,7 +57,7 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	private String sendStatus;
 	
 	@FieldDefine(title = "send_tmpl_cont", number = 9)
-	@Column(name = "send_tmpl_cont", length = 500, unique = false, nullable = true)
+	@Column(name = "send_tmpl_cont", length = 375, unique = false, nullable = true)
 	private String sendTmplCont;
 	
 	@FieldDefine(title = "send_tmpl_time", number = 10)

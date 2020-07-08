@@ -6,10 +6,13 @@ import com.dhcc.miniprogram.dto.DtoPhoneNumberRequest;
 import com.dhcc.miniprogram.dto.DtoSubscribeMessageRequest;
 import com.dhcc.miniprogram.dto.DtoTemplateAuthRequest;
 import com.dhcc.miniprogram.enums.MpStatusEnum;
+import com.dhcc.miniprogram.enums.SendMsgTypeEnum;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,7 +27,7 @@ public class CheckInParamUtil {
      * @param token 访问token
      * @param request 小程序订阅消息请求体
      */
-    public static void checkInParam(String token, DtoSubscribeMessageRequest request) {
+    public static void checkInParam(String token, DtoSubscribeMessageRequest request, SendMsgTypeEnum msgTypeEnum) {
         String reason = "";
         if (StringUtils.isEmpty(token)) {
             reason += "access_token为空，";
@@ -35,8 +38,15 @@ public class CheckInParamUtil {
         if (request.getData() == null) {
             reason += "data为空，";
         }
-        if(StringUtils.isEmpty(request.getPhoneNumber())){
-            reason += "phoneNumber为空,";
+        if(SendMsgTypeEnum.SINGLE.getCode().equals(msgTypeEnum.getCode())){
+            if(StringUtils.isEmpty(request.getPhoneNumber())){
+                reason += "phoneNumber为空,";
+            }
+        } else {
+            List<String> numberList = request.getPhoneNumberList();
+            if(CollectionUtils.isEmpty(numberList)){
+                reason += "phoneNumberList为空,";
+            }
         }
         if(StringUtils.isEmpty(request.getLang())){
             // 默认 zh_CN 中文简体
@@ -46,7 +56,6 @@ public class CheckInParamUtil {
             // 默认 formal 正式版
             request.setMiniprogram_state(MpStatusEnum.FORMAL.getCode());
         }
-
         if (StringUtils.isNotEmpty(reason)) {
             reason = "订阅消息参数 " + reason;
             throw new BusinessException(reason.substring(0, reason.length() - 1));

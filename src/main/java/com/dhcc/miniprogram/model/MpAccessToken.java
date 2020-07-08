@@ -31,11 +31,11 @@ public class MpAccessToken extends IdentifiedPo implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@FieldDefine(title = "开发者ID(AppID)", number = 2)
-	@Column(name = "appid", length = 50, unique = false, nullable = true)
+	@Column(name = "appid", length = 20, unique = false, nullable = true)
 	private String appid;
 
 	@FieldDefine(title = "开发者密码(AppSecret)", number = 3)
-	@Column(name = "secret", length = 255, unique = false, nullable = true)
+	@Column(name = "secret", length = 40, unique = false, nullable = true)
 	private String secret;
 
 	@FieldDefine(title = "创建时间", number = 4)
@@ -43,7 +43,7 @@ public class MpAccessToken extends IdentifiedPo implements Serializable {
 	private Date createTime;
 
 	@FieldDefine(title = "获取到的凭证", number = 5)
-	@Column(name = "access_token", length = 512, unique = false, nullable = true)
+	@Column(name = "access_token", length = 200, unique = false, nullable = true)
 	private String accessToken;
 
 	@FieldDefine(title = "凭证有效时间，单位：秒", number = 6)
@@ -55,7 +55,7 @@ public class MpAccessToken extends IdentifiedPo implements Serializable {
 	private Integer errcode;
 
 	@FieldDefine(title = "错误返回信息", number = 8)
-	@Column(name = "errmsg", length = 255, unique = false, nullable = true)
+	@Column(name = "errmsg", length = 100, unique = false, nullable = true)
 	private String errmsg;
 
 	@FieldDefine(title = "是否删除：T-已删除、F-未删除", number = 9)

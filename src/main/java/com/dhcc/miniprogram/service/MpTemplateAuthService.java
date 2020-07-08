@@ -1,9 +1,9 @@
 package com.dhcc.miniprogram.service;
 
+import com.dhcc.basic.service.BaseService;
 import com.dhcc.miniprogram.dto.DtoTemplateAuthRequest;
 import com.dhcc.miniprogram.dto.DtoTemplateAuthResult;
 import com.dhcc.miniprogram.model.MpTemplateAuth;
-import com.dhcc.basic.service.BaseService;
 
 /**
  * 小程序订阅消息模板授权-Service接口
@@ -12,11 +12,17 @@ import com.dhcc.basic.service.BaseService;
  */
 public interface MpTemplateAuthService extends BaseService<MpTemplateAuth, String> {
     /**
-     * 添加模板授权给用户
-     * @param dtoTemplateAuthRequest 模板授权请求体
-     * @return 模板授权返回结果类
+     * 用户模板授权
+     * @param dtoTemplateAuthRequest 模板授权请求
+     * @return 返回模板授权结果
      */
     DtoTemplateAuthResult insertTemplateAuth(DtoTemplateAuthRequest dtoTemplateAuthRequest);
+
+    /**
+     * 获取有效模板
+     * @return 模板授权结果
+     */
+    DtoTemplateAuthResult getTemplateAuthResult();
 
     /**
      * 根据手机号查询模板授权
@@ -24,4 +30,5 @@ public interface MpTemplateAuthService extends BaseService<MpTemplateAuth, Strin
      * @return 模板授权对象
      */
     MpTemplateAuth findByPhone(String phone);
+
 }
