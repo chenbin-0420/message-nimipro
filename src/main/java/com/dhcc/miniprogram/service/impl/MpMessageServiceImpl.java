@@ -59,11 +59,6 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
     private AccessTokenUtil accessTokenUtil;
 
     /**
-     * MP_RECEIVE_SUCCESS ：成功标识
-     */
-    private static final Integer MP_RECEIVE_SUCCESS = 0;
-
-    /**
      * code:
      * RESPONSE_SEND_SUCCESS ：发送成功
      * RESPONSE_SEND_FAIL ：发送失败
@@ -191,7 +186,7 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
             // 解析字符串并转为 DtoBasicResult 对象
             dtoBasicResult = JSON.parseObject(result, DtoBasicResult.class);
             // errCode是 null | 0L 为成功，否则为失败
-            if (dtoBasicResult.getErrcode() == null || dtoBasicResult.getErrcode().equals(MP_RECEIVE_SUCCESS)) {
+            if (dtoBasicResult.getErrcode() == null || BusinessCodeEnum.RECEIVE_SUCCESS.getCode().equals(dtoBasicResult.getErrcode())) {
                 // mpMessage 发送状态：成功标识
                 mpMessage.setSendStatus(MpSendMsgStatusEnum.CG.getCode());
             } else {
@@ -285,7 +280,7 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
                 // 解析字符串并转为 DtoBasicResult 对象
                 dtoBasicResult = JSON.parseObject(result, DtoBasicResult.class);
                 // errCode是 null | 0L 为成功，否则为失败
-                if (dtoBasicResult.getErrcode() == null || dtoBasicResult.getErrcode().equals(MP_RECEIVE_SUCCESS)) {
+                if (dtoBasicResult.getErrcode() == null || BusinessCodeEnum.RECEIVE_SUCCESS.getCode().equals(dtoBasicResult.getErrcode())) {
                     // 1、mpMessage 发送状态：成功标识
                     mpMessage.setSendStatus(MpSendMsgStatusEnum.CG.getCode());
                     // 2、记录添加成功手机号

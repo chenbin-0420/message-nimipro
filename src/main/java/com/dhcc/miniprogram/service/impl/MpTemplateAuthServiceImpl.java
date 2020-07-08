@@ -2,13 +2,10 @@ package com.dhcc.miniprogram.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.dhcc.basic.service.BaseServiceImpl;
+import com.dhcc.miniprogram.dto.*;
 import com.dhcc.miniprogram.enums.BusinessCodeEnum;
 import com.dhcc.miniprogram.config.WechatConfig;
 import com.dhcc.miniprogram.dao.MpTemplateAuthDao;
-import com.dhcc.miniprogram.dto.DtoTemplateAuth;
-import com.dhcc.miniprogram.dto.DtoTemplateAuthRequest;
-import com.dhcc.miniprogram.dto.DtoTemplateAuthResult;
-import com.dhcc.miniprogram.dto.DtoTemplateListQuery;
 import com.dhcc.miniprogram.model.MpTemplateAuth;
 import com.dhcc.miniprogram.service.MpTemplateAuthService;
 import com.dhcc.miniprogram.service.MpTemplateListService;
@@ -155,6 +152,8 @@ public class MpTemplateAuthServiceImpl extends BaseServiceImpl<MpTemplateAuthDao
 	 * @return 模板授权结果
 	 */
 	private DtoTemplateAuthResult getBasicTemplateAuthResult(DtoTemplateAuthResult templateAuthResult){
+		// 初始化DtoTemplateAuth集合
+		LinkedList<DtoTemplateAuth> authLinkedList = new LinkedList<>();
 		// 声明并添加模板ID集合
 		LinkedList<String> tmplIdList = new LinkedList<>();
 		for (DtoTemplateListQuery templateListQuery : templateListService.getValidateTemplateList()) {
@@ -164,7 +163,37 @@ public class MpTemplateAuthServiceImpl extends BaseServiceImpl<MpTemplateAuthDao
 		String[] tmplIds = new String[tmplIdList.size()];
 		// 设置模板ID、标题、描述
 		DtoTemplateAuth dtoTemplateAuth = new DtoTemplateAuth(wechatConfig.getExternalTitle(),wechatConfig.getExternalDesc(),tmplIdList.toArray(tmplIds));
-		return templateAuthResult.setData(dtoTemplateAuth);
+		// authLinkedList 添加 dtoTemplateAuth
+		authLinkedList.add(dtoTemplateAuth);
+		return templateAuthResult.setData(authLinkedList);
+	}
+
+	@Override
+	public List<DtoTemplateAuthAbbr> getTemplateAuthByPhoneList(DtoTemplateAuthAbbrRequest templateAuthAbbrRequests) {
+		// 写入参日志
+		log.info("获取模板授权缩写列表入参："+JSON.toJSONString(templateAuthAbbrRequests));
+		// 检查入参 ,验权
+		CheckInParamUtil.checkInParam(templateAuthAbbrRequests,wechatConfig);
+		// 初始化 templateAuthAbbrs 对象
+		LinkedList<DtoTemplateAuthAbbr> templateAuthAbbrs = new LinkedList<>();
+		// 查数据
+		for (String phone : templateAuthAbbrRequests.getPhoneNumberList()) {
+			if(StringUtils.isNotEmpty(phone)){
+				// 获取模板ID列表
+				List<DtoTemplateId> templateIdList = dao.getTemplateAuthByPhone(phone);
+				// 模板ID列表
+				List<String> templateIds = new LinkedList<>();
+				// 循环添加模板ID
+				for (DtoTemplateId templateId : templateIdList) {
+					templateIds.add(templateId.getTemplateId());
+				}
+				// 添加模板授权缩写
+				templateAuthAbbrs.add(new DtoTemplateAuthAbbr(phone,templateIds));
+			}
+		}
+
+		// 封装返回
+		return templateAuthAbbrs;
 	}
 
 	@Override

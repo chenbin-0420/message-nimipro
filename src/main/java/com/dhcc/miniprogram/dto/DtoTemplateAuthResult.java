@@ -1,16 +1,17 @@
 package com.dhcc.miniprogram.dto;
 
+import java.util.List;
+
 /**
  * @author cb
  * @date 2020/7/2
  * description：模板授权返回结果类
  */
 public class DtoTemplateAuthResult extends DtoBasicResult {
-
     /**
      * 数据
      */
-    private DtoTemplateAuth data;
+    private List<DtoTemplateAuth> data;
 
     public DtoTemplateAuthResult(){}
 
@@ -18,11 +19,11 @@ public class DtoTemplateAuthResult extends DtoBasicResult {
         super(errcode, errmsg);
     }
 
-    public DtoTemplateAuth getData() {
+    public List<DtoTemplateAuth> getData() {
         return data;
     }
 
-    public DtoTemplateAuthResult setData(DtoTemplateAuth data) {
+    public DtoTemplateAuthResult setData(List<DtoTemplateAuth> data) {
         this.data = data;
         return this;
     }

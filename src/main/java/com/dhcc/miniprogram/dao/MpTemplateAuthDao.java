@@ -1,7 +1,8 @@
 package com.dhcc.miniprogram.dao;
 
-import com.dhcc.miniprogram.model.MpTemplateAuth;
 import com.dhcc.basic.dao.BaseDao;
+import com.dhcc.miniprogram.dto.DtoTemplateId;
+import com.dhcc.miniprogram.model.MpTemplateAuth;
 
 import java.util.List;
 
@@ -19,4 +20,11 @@ public interface MpTemplateAuthDao extends BaseDao<MpTemplateAuth, String> {
      * @return 模板ID集合
      */
     List<Object[]> getIdListByCondition(String templateId, String phone);
+
+    /**
+     * 根据手机号查询模板ID列表
+     * @param phone 手机号
+     * @return 模板ID列表
+     */
+    List<DtoTemplateId> getTemplateAuthByPhone(String phone);
 }

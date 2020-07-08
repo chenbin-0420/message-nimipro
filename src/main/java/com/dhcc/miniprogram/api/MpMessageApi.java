@@ -3,6 +3,8 @@ package com.dhcc.miniprogram.api;
 import com.dhcc.basic.util.Message;
 import com.dhcc.miniprogram.dto.*;
 
+import java.util.List;
+
 /**
  * @author cb
  * @date 2020/6/28
@@ -77,4 +79,11 @@ public interface MpMessageApi {
      * @return 手机号返回结果类
      */
     Message<DtoPhoneNumberResult> changePhone(DtoPhoneNumberRequest dtoPhoneNumberRequest);
+
+    /**
+     * 通过手机号列表获取模板授权缩写列表
+     * @param templateAuthAbbrRequests 模板授权缩写请求
+     * @return 模板授权缩写列表
+     */
+    List<DtoTemplateAuthAbbr> getTemplateAuthByPhoneList(DtoTemplateAuthAbbrRequest templateAuthAbbrRequests);
 }

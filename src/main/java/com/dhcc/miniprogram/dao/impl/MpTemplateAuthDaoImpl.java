@@ -2,6 +2,7 @@ package com.dhcc.miniprogram.dao.impl;
 
 import com.dhcc.basic.dao.hibernate.BaseDaoHibImpl;
 import com.dhcc.miniprogram.dao.MpTemplateAuthDao;
+import com.dhcc.miniprogram.dto.DtoTemplateId;
 import com.dhcc.miniprogram.model.MpTemplateAuth;
 import org.springframework.stereotype.Repository;
 
@@ -30,9 +31,15 @@ public class MpTemplateAuthDaoImpl extends BaseDaoHibImpl<MpTemplateAuth, String
      * 通过条件获取ID集合的SQL
      */
     private static final String ID_LIST_BY_CONDITION_SQL = "SELECT m.`id` FROM mp_template_auth m  WHERE m.`template_id` = ? AND m.`phone` = ?";
+    private static final String GET_TEMPLATE_AUTH_BY_PHONE_SQL = "SELECT mp.`template_id` FROM mp_template_auth mp WHERE mp.`phone` = ?";
 
     @Override
     public List<Object[]> getIdListByCondition(String templateId, String phone) {
         return querySql(ID_LIST_BY_CONDITION_SQL, new String[]{templateId, phone});
+    }
+
+    @Override
+    public List<DtoTemplateId> getTemplateAuthByPhone(String phone) {
+        return querySqlEntity(GET_TEMPLATE_AUTH_BY_PHONE_SQL,new Object[]{phone}, DtoTemplateId.class,null);
     }
 }

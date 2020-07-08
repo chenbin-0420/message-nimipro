@@ -1,6 +1,7 @@
 package com.dhcc.miniprogram.util;
 
 import com.dhcc.basic.exception.BusinessException;
+import com.dhcc.miniprogram.config.WechatConfig;
 import com.dhcc.miniprogram.enums.BusinessCodeEnum;
 import com.dhcc.miniprogram.dto.*;
 import com.dhcc.miniprogram.enums.MpStatusEnum;
@@ -192,6 +193,41 @@ public class CheckInParamUtil {
         if(StringUtils.isNotEmpty(reason)){
             reason = "模板授权请求参数 "+reason;
             throw new BusinessException(reason.substring(0,reason.length()-1));
+        }
+    }
+
+    /**
+     * DEV ：开发模式
+     */
+    private static final String DEV = "dev";
+
+    /**
+     * 检查模板授权API请求入参
+     * @param templateAuthAbbrRequest 模板授权API请求
+     */
+    public static void checkInParam(DtoTemplateAuthAbbrRequest templateAuthAbbrRequest, WechatConfig wechatConfig){
+        // 获取秘钥
+        String secret = templateAuthAbbrRequest.getSecret();
+        // 判断秘钥是否为空
+        if (StringUtils.isEmpty(secret)) {
+            // 为空，抛没有权限
+            throw new BusinessException("没有权限");
+        } else {
+            // 秘钥不为空，判断模式
+            if(wechatConfig.getMode().equals(DEV)){
+                // 正式模式，判断是否相等，不相等秘钥不合法
+                if(!wechatConfig.getFormalSecret().equals(secret)){
+                    throw new BusinessException("秘钥不合法");
+                }
+            } else {
+                // 测试模式，判断是否相等，不相等秘钥不合法
+                if(!wechatConfig.getTestSecret().equals(secret)){
+                    throw new BusinessException("秘钥不合法");
+                }
+            }
+        }
+        if(CollectionUtils.isEmpty(templateAuthAbbrRequest.getPhoneNumberList())){
+            throw new BusinessException("模板授权API请求参数 phoneNumberList为空");
         }
     }
 

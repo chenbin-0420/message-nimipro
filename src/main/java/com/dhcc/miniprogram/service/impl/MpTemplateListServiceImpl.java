@@ -8,6 +8,7 @@ import com.dhcc.miniprogram.dto.DtoTemplateList;
 import com.dhcc.miniprogram.dto.DtoBasicResult;
 import com.dhcc.miniprogram.dto.DtoTemplateListQuery;
 import com.dhcc.miniprogram.dto.DtoTemplateListResult;
+import com.dhcc.miniprogram.enums.BusinessCodeEnum;
 import com.dhcc.miniprogram.util.AccessTokenUtil;
 import com.dhcc.miniprogram.util.CheckInParamUtil;
 import org.apache.commons.lang.StringUtils;
@@ -80,12 +81,6 @@ public class MpTemplateListServiceImpl extends BaseServiceImpl<MpTemplateListDao
 	}
 
 	private Logger log = LoggerFactory.getLogger(MpTemplateListServiceImpl.class);
-	/**
-	 * TEMPLATE_LIST_SUCCESS ：模板列表成功
-	 * RESPONSE_TEMPLATE_LIST_SUCCESS ：模板列表成功响应码
-	 */
-	private static final Integer TEMPLATE_LIST_SUCCESS = 0;
-	private static final Integer RESPONSE_TEMPLATE_LIST_SUCCESS = 200;
 
 	@Autowired
 	private AccessTokenUtil accessTokenUtil;
@@ -120,7 +115,7 @@ public class MpTemplateListServiceImpl extends BaseServiceImpl<MpTemplateListDao
 			// 检查是否为空
 			CheckInParamUtil.checkEmptyValue(map,"获取模板列表 ");
 			// errCode 为 0，表示成功
-			if(TEMPLATE_LIST_SUCCESS.equals(templateListResult.getErrcode())){
+			if(BusinessCodeEnum.RECEIVE_SUCCESS.getCode().equals(templateListResult.getErrcode())){
 				// 获取 dtoTemplateLists
 				List<DtoTemplateList> dtoTemplateLists = templateListResult.getData();
 				// dtoTemplateLists 不为空
@@ -156,7 +151,7 @@ public class MpTemplateListServiceImpl extends BaseServiceImpl<MpTemplateListDao
 					}
 				}
 				// 返回基础结果
-				templateListResult.setErrcode(RESPONSE_TEMPLATE_LIST_SUCCESS);
+				templateListResult.setErrcode(BusinessCodeEnum.REQUEST_SUCCESS.getCode());
 				templateListResult.setErrmsg("获取模板集合成功");
 				return templateListResult;
 			} else {

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 /**
  * @author cb
@@ -138,4 +139,10 @@ public class MpMessageController extends BaseController implements MpMessageApi 
         return messageService.sendMassMessageByPhoneList(request);
     }
 
+    @Override
+    @PostMapping(value = "/getTemplateAuthByPhoneList.do")
+    @ApiOperation(value = "获取用户模板授权列表",notes = "获取用户模板授权列表")
+    public List<DtoTemplateAuthAbbr> getTemplateAuthByPhoneList(@RequestBody DtoTemplateAuthAbbrRequest templateAuthAbbrRequests) {
+        return templateAuthService.getTemplateAuthByPhoneList(templateAuthAbbrRequests);
+    }
 }
