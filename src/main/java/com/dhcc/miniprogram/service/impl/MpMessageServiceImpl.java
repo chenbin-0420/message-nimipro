@@ -137,7 +137,8 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
         DtoBasicResult dtoBasicResult = new DtoBasicResult();
         // 检验秘钥是否合法
         checkSecret(dtoBasicResult,request.getSecret());
-        if(!dtoBasicResult.getErrcode().equals(RESPONSE_CORRECT_SECRET)){
+        // 不为空，那就是非法的
+        if(dtoBasicResult.getErrcode() != null){
             return dtoBasicResult;
         }
         // 获取 accessToken
@@ -217,6 +218,12 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
         log.info("群发消息入参", JSON.toJSONString(request));
         // 声明基础返回结果类
         DtoBasicResult dtoBasicResult = new DtoBasicResult();
+        // 检验秘钥是否合法
+        checkSecret(dtoBasicResult,request.getSecret());
+        // 不为空，那就是非法的
+        if(dtoBasicResult.getErrcode() != null){
+            return dtoBasicResult;
+        }
         // 获取 accessToken
         String accessToken = accessTokenUtil.getAccessToken();
         // 检查入参
@@ -351,7 +358,10 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
                 }
             }
         }
-        basicResult.setErrcode(RESPONSE_CORRECT_SECRET).setErrmsg(RESPONSE_CORRECT_SECRET_MSG);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(new Integer(123).equals(null));
     }
 
 }

@@ -173,7 +173,7 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
                 boolean mark = user.getPhoneNum() == null;
                 // 用户手机号为空，用户需要获取手机号，否则不需要
                 idenInfoResult = new DtoIdenInfoResult(mark ? BusinessCodeEnum.LOGIN_PHONE_NOT_EXISTS.getCode() : BusinessCodeEnum.LOGIN_PHONE_EXISTS.getCode(),
-                        mark ? BusinessCodeEnum.LOGIN_PHONE_EXISTS.getMsg() : user.getPhoneNum()).setData(DtoIdenInfoFilter.toFilter(idenInfo).setSession_key(null));
+                        mark ? BusinessCodeEnum.LOGIN_PHONE_NOT_EXISTS.getMsg() : user.getPhoneNum()).setData(DtoIdenInfoFilter.toFilter(idenInfo).setSession_key(null));
             }
             // 记录日志
             log.info(JSON.toJSONString(idenInfoResult));

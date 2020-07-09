@@ -121,13 +121,19 @@ public class CheckInParamUtil {
     }
 
     /**
+     * 前端传OpenId值为undefined
+     */
+    private static final String UNDEFINED = "undefined";
+    /**
      * 检查获取手机号入参
      * @param numberResult 手机号结果
      * @param dtoPhoneNumberRequest 获取手机号入参
      */
     public static void checkInParam(DtoPhoneNumberResult numberResult,DtoPhoneNumberRequest dtoPhoneNumberRequest){
         String reason = "";
-        if(StringUtils.isEmpty(dtoPhoneNumberRequest.getOpenId())){
+        // 获取openId
+        String openId = dtoPhoneNumberRequest.getOpenId();
+        if(StringUtils.isEmpty(openId) || UNDEFINED.equals(openId)){
             reason += "openId为空,";
         }
         if(StringUtils.isEmpty(dtoPhoneNumberRequest.getIv())){
