@@ -3,6 +3,8 @@ package com.dhcc.miniprogram.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.List;
+
 /**
  * @author cb
  * @date 2020/6/11
@@ -47,11 +49,11 @@ public class WechatConfig {
     /**
      * 测试秘钥
      */
-    private String testSecret;
+    private List<String> testSecretList;
     /**
      * 正式秘钥
      */
-    private String formalSecret;
+    private List<String> formalSecretList;
 
     public String getWechatToken() {
         return wechatToken;
@@ -117,19 +119,19 @@ public class WechatConfig {
         this.mode = mode;
     }
 
-    public String getTestSecret() {
-        return testSecret;
+    public List<String> getTestSecretList() {
+        return testSecretList;
     }
 
-    public void setTestSecret(String testSecret) {
-        this.testSecret = testSecret;
+    public void setTestSecretList(List<String> testSecretList) {
+        this.testSecretList = testSecretList;
     }
 
-    public String getFormalSecret() {
-        return formalSecret;
+    public List<String> getFormalSecretList() {
+        return formalSecretList;
     }
 
-    public void setFormalSecret(String formalSecret) {
-        this.formalSecret = formalSecret;
+    public void setFormalSecretList(List<String> formalSecretList) {
+        this.formalSecretList = formalSecretList;
     }
 }

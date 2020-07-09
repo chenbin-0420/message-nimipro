@@ -4,8 +4,8 @@ import com.dhcc.basic.controller.BaseController;
 import com.dhcc.basic.exception.BusinessException;
 import com.dhcc.basic.util.Message;
 import com.dhcc.miniprogram.api.MpMessageApi;
-import com.dhcc.miniprogram.enums.BusinessCodeEnum;
 import com.dhcc.miniprogram.dto.*;
+import com.dhcc.miniprogram.enums.BusinessCodeEnum;
 import com.dhcc.miniprogram.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 
 /**
  * @author cb
@@ -141,8 +140,8 @@ public class MpMessageController extends BaseController implements MpMessageApi 
 
     @Override
     @PostMapping(value = "/getTemplateAuthByPhoneList.do")
-    @ApiOperation(value = "获取用户模板授权列表",notes = "获取用户模板授权列表")
-    public List<DtoTemplateAuthAbbr> getTemplateAuthByPhoneList(@RequestBody DtoTemplateAuthAbbrRequest templateAuthAbbrRequests) {
+    @ApiOperation(value = "获取模板授权用户列表",notes = "获取模板授权用户列表")
+    public DtoTemplateAuthPhoneResult getTemplateAuthByPhoneList(@RequestBody DtoTemplateAuthPhoneRequest templateAuthAbbrRequests) {
         return templateAuthService.getTemplateAuthByPhoneList(templateAuthAbbrRequests);
     }
 }

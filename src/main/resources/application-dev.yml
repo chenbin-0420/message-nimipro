@@ -9,17 +9,6 @@ info:
   build.version: $project.version$
 
 spring:
-  redis:
-    database: 15
-    host: 106.52.219.63
-    port: 8379
-    password: dhcc_123456
-    jedis:
-      pool:
-        max-active: 20  #最大连接数
-        max-wait: 1000  #线程池最大阻塞时间
-        max-idle: 50 #最大空闲连接数
-        min-idle: 5 #最小空闲连接数
   application:
     name: message-nimipro
   datasource:
@@ -98,5 +87,11 @@ wechat:
   internalTitle: 内部服务
   internalDesc: 政务服务大厅
   mode: test
-  testSecret: Xcy9aujnpioqs00JC/kCVjiecMXO3wuZQr+AhoYc57Q1QF/HDMtH5o26IpYKDEcD0BhHWvjLdr2P0zyXDePivw==
-  formalSecret: /rdEmBHpIPiQJRMNV1Qg1pchvpvteJf/35YAQeHPuTubgcmgduCPKnrEsp+lwhQf2hf7glcb9l4BDWVPkfWYjA==
+  test-secret-list:
+    - Xcy9aujnpioqs00JC/kCVjiecMXO3wuZQr+AhoYc57Q1QF/HDMtH5o26IpYKDEcD0BhHWvjLdr2P0zyXDePivw==
+    - j1lMmWQnMomva48sHvf126qzdx8/yt9v1P5xdVZkecrzkQUDFYee6mx7T0WXF6z9WcpbkN02SGDABIiRZktnjQ==
+    - EKRYFTTqEnsyB279lXm/ADBZhiBg/4UqkyCyimWkgUwKUC5/QxDjPN69J9mD5w6kl/adz+hdnuftcIOkN7cljQ==
+  formal-secret-list:
+    - ygkaLvGCBYCWDd5UbBOwqlwsN70jqD8GIToD31U7jatchmWAPZHtlwoqsorYAMhn1oh988hLotv5VX9kM+3CqA==
+    - ygkaLvGCBYCWDd5UbBOwqr2VPED/osKqI3clJKWM8qzyeCRk47C9gjisdu3ugLSVrBcrcI22gIW0UWZXxgaiPA==
+    - ygkaLvGCBYCWDd5UbBOwqlSDemj2cFlhSLl9iCMCgNtoDy2A0bvSEUVqzyaKBrcYstzvpUJ1dEczX1Jc3Q7IbA==

@@ -2,8 +2,8 @@ package com.dhcc.miniprogram.util;
 
 import com.dhcc.basic.exception.BusinessException;
 import com.dhcc.miniprogram.config.WechatConfig;
-import com.dhcc.miniprogram.enums.BusinessCodeEnum;
 import com.dhcc.miniprogram.dto.*;
+import com.dhcc.miniprogram.enums.BusinessCodeEnum;
 import com.dhcc.miniprogram.enums.MpStatusEnum;
 import com.dhcc.miniprogram.enums.SendMsgTypeEnum;
 import org.apache.commons.collections.CollectionUtils;
@@ -26,7 +26,7 @@ public class CheckInParamUtil {
      * @param token 访问token
      * @param request 小程序订阅消息请求体
      */
-    public static void checkInParam(String token, DtoSubscribeMessageRequest request, SendMsgTypeEnum msgTypeEnum) {
+    public static DtoBasicResult checkInParam(String token, DtoSubscribeMessageRequest request, DtoBasicResult dtoBasicResult, SendMsgTypeEnum msgTypeEnum) {
         String reason = "";
         if (StringUtils.isEmpty(token)) {
             reason += "access_token为空，";
@@ -56,9 +56,16 @@ public class CheckInParamUtil {
             request.setMiniprogram_state(MpStatusEnum.FORMAL.getCode());
         }
         if (StringUtils.isNotEmpty(reason)) {
-            reason = "订阅消息参数 " + reason;
-            throw new BusinessException(reason.substring(0, reason.length() - 1));
+            if(SendMsgTypeEnum.SINGLE.getCode().equals(msgTypeEnum.getCode())){
+                reason = BusinessCodeEnum.SEND_SINGLE_MESSAGE_PARAM_EMPTY.getMsg() + reason;
+                dtoBasicResult.setErrcode(BusinessCodeEnum.SEND_SINGLE_MESSAGE_PARAM_EMPTY.getCode());
+            } else {
+                reason = BusinessCodeEnum.SEND_MASS_MESSAGE_PARAM_EMPTY.getMsg() + reason;
+                dtoBasicResult.setErrcode(BusinessCodeEnum.SEND_MASS_MESSAGE_PARAM_EMPTY.getCode());
+            }
+            return dtoBasicResult.setErrmsg(reason.substring(0, reason.length() - 1));
         }
+        return dtoBasicResult;
     }
 
     /**
@@ -209,32 +216,58 @@ public class CheckInParamUtil {
 
     /**
      * 检查模板授权API请求入参
-     * @param templateAuthAbbrRequest 模板授权API请求
+     * @param templateAuthPhoneRequest 模板授权手机号请求类
+     * @param wechatConfig 微信配置
+     * @param templateAuthPhoneResult 模板授权手机号结果类
      */
-    public static void checkInParam(DtoTemplateAuthAbbrRequest templateAuthAbbrRequest, WechatConfig wechatConfig){
+    public static DtoTemplateAuthPhoneResult checkInParam(DtoTemplateAuthPhoneRequest templateAuthPhoneRequest, WechatConfig wechatConfig, DtoTemplateAuthPhoneResult templateAuthPhoneResult){
         // 获取秘钥
-        String secret = templateAuthAbbrRequest.getSecret();
+        String secret = templateAuthPhoneRequest.getSecret();
+        checkSecret(templateAuthPhoneResult,secret,wechatConfig);
+        if(templateAuthPhoneResult.getErrcode() != null){
+            return templateAuthPhoneResult;
+        }
+        if(CollectionUtils.isEmpty(templateAuthPhoneRequest.getPhoneNumberList())){
+            templateAuthPhoneResult.setErrcode(BusinessCodeEnum.TEMPLATE_AUTH_PHONE_PARAM_EMPTY.getCode());
+            templateAuthPhoneResult.setErrmsg(BusinessCodeEnum.TEMPLATE_AUTH_PHONE_PARAM_EMPTY.getMsg());
+            return templateAuthPhoneResult;
+        }
+        return templateAuthPhoneResult;
+    }
+
+    /**
+     * 检查秘钥
+     * @param templateAuthPhoneResult 模板授权手机号结果
+     * @param secret 秘钥
+     * @param wechatConfig 微信配置类
+     * @return 基础结果类
+     */
+    private static DtoTemplateAuthPhoneResult checkSecret(DtoTemplateAuthPhoneResult templateAuthPhoneResult,String secret,WechatConfig wechatConfig){
         // 判断秘钥是否为空
         if (StringUtils.isEmpty(secret)) {
             // 为空，抛没有权限
-            throw new BusinessException("没有权限");
+            templateAuthPhoneResult.setErrcode(BusinessCodeEnum.AUTH_NOT_EXISTS_SECRET.getCode());
+            templateAuthPhoneResult.setErrmsg(BusinessCodeEnum.AUTH_NOT_EXISTS_SECRET.getMsg());
+            return templateAuthPhoneResult;
         } else {
             // 秘钥不为空，判断模式
             if(wechatConfig.getMode().equals(DEV)){
                 // 正式模式，判断是否相等，不相等秘钥不合法
-                if(!wechatConfig.getFormalSecret().equals(secret)){
-                    throw new BusinessException("秘钥不合法");
+                if(!wechatConfig.getFormalSecretList().contains(secret)){
+                    templateAuthPhoneResult.setErrcode(BusinessCodeEnum.AUTH_ERROR_SECRET.getCode());
+                    templateAuthPhoneResult.setErrmsg(BusinessCodeEnum.AUTH_ERROR_SECRET.getMsg());
+                    return templateAuthPhoneResult;
                 }
             } else {
                 // 测试模式，判断是否相等，不相等秘钥不合法
-                if(!wechatConfig.getTestSecret().equals(secret)){
-                    throw new BusinessException("秘钥不合法");
+                if(!wechatConfig.getTestSecretList().contains(secret)){
+                    templateAuthPhoneResult.setErrcode(BusinessCodeEnum.AUTH_ERROR_SECRET.getCode());
+                    templateAuthPhoneResult.setErrmsg(BusinessCodeEnum.AUTH_ERROR_SECRET.getMsg());
+                    return templateAuthPhoneResult;
                 }
             }
         }
-        if(CollectionUtils.isEmpty(templateAuthAbbrRequest.getPhoneNumberList())){
-            throw new BusinessException("模板授权API请求参数 phoneNumberList为空");
-        }
+        return templateAuthPhoneResult;
     }
 
 }

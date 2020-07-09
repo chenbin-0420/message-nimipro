@@ -5,9 +5,9 @@ import java.util.List;
 /**
  * @author cb
  * @date 2020/7/8
- * description：
+ * description：模板授权手机号请求类
  */
-public class DtoTemplateAuthAbbrRequest {
+public class DtoTemplateAuthPhoneRequest {
     /**
      * phoneNumberList ：用户手机号集合
      */

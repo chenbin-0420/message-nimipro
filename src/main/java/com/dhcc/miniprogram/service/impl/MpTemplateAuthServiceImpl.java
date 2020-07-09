@@ -2,10 +2,10 @@ package com.dhcc.miniprogram.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.dhcc.basic.service.BaseServiceImpl;
-import com.dhcc.miniprogram.dto.*;
-import com.dhcc.miniprogram.enums.BusinessCodeEnum;
 import com.dhcc.miniprogram.config.WechatConfig;
 import com.dhcc.miniprogram.dao.MpTemplateAuthDao;
+import com.dhcc.miniprogram.dto.*;
+import com.dhcc.miniprogram.enums.BusinessCodeEnum;
 import com.dhcc.miniprogram.model.MpTemplateAuth;
 import com.dhcc.miniprogram.service.MpTemplateAuthService;
 import com.dhcc.miniprogram.service.MpTemplateListService;
@@ -169,13 +169,14 @@ public class MpTemplateAuthServiceImpl extends BaseServiceImpl<MpTemplateAuthDao
 	}
 
 	@Override
-	public List<DtoTemplateAuthAbbr> getTemplateAuthByPhoneList(DtoTemplateAuthAbbrRequest templateAuthAbbrRequests) {
+	public DtoTemplateAuthPhoneResult getTemplateAuthByPhoneList(DtoTemplateAuthPhoneRequest templateAuthAbbrRequests) {
 		// 写入参日志
 		log.info("获取模板授权缩写列表入参："+JSON.toJSONString(templateAuthAbbrRequests));
+		DtoTemplateAuthPhoneResult templateAuthPhoneResult = new DtoTemplateAuthPhoneResult();
 		// 检查入参 ,验权
-		CheckInParamUtil.checkInParam(templateAuthAbbrRequests,wechatConfig);
-		// 初始化 templateAuthAbbrs 对象
-		LinkedList<DtoTemplateAuthAbbr> templateAuthAbbrs = new LinkedList<>();
+		CheckInParamUtil.checkInParam(templateAuthAbbrRequests,wechatConfig,templateAuthPhoneResult);
+		// 初始化 templateAuthPhones 对象
+		LinkedList<DtoTemplateAuthPhone> templateAuthPhones = new LinkedList<>();
 		// 查数据
 		for (String phone : templateAuthAbbrRequests.getPhoneNumberList()) {
 			if(StringUtils.isNotEmpty(phone)){
@@ -188,12 +189,15 @@ public class MpTemplateAuthServiceImpl extends BaseServiceImpl<MpTemplateAuthDao
 					templateIds.add(templateId.getTemplateId());
 				}
 				// 添加模板授权缩写
-				templateAuthAbbrs.add(new DtoTemplateAuthAbbr(phone,templateIds));
+				templateAuthPhones.add(new DtoTemplateAuthPhone(phone,templateIds));
 			}
 		}
-
+		// 手机号对应模板列表
+		templateAuthPhoneResult.setErrcode(BusinessCodeEnum.REQUEST_SUCCESS.getCode());
+		templateAuthPhoneResult.setErrmsg(BusinessCodeEnum.REQUEST_SUCCESS.getMsg());
+		templateAuthPhoneResult.setData(templateAuthPhones);
 		// 封装返回
-		return templateAuthAbbrs;
+		return templateAuthPhoneResult;
 	}
 
 	@Override

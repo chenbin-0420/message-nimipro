@@ -42,8 +42,13 @@ public enum BusinessCodeEnum {
      * AUTH_CORRECT_SECRET_MSG ：秘钥正确
      *
      * 发送消息：
+     * SEND_SINGLE_PARAM_EMPTY ：单条订阅消息参数为空
+     * SEND_MASS_PARAM_EMPTY ：群发订阅消息参数为空
      * SEND_MESSAGE_NOT_EXISTS_PHONE ：接收消息手机号不存在
      * SEND_MESSAGE_SINGLE_MESSAGE_EXCEPTION ：发送消息异常
+     *
+     * 模板授权手机号：
+     * TEMPLATE_AUTH_PHONE_PARAM_EMPTY ：模板授权手机号请求参数 phoneNumberList为空
      */
     RECEIVE_SUCCESS(0,"接收成功状态"),
     REQUEST_SUCCESS(200,"请求成功"),
@@ -60,13 +65,17 @@ public enum BusinessCodeEnum {
     GET_PHONE_NUMBER_EXCEPTION(632,"获取手机号异常"),
     GET_PHONE_NUMBER_FAIL(633,"获取手机号失败"),
     TEMPLATE_AUTH_FAIL(640,"添加模板授权失败"),
-    SEND_MESSAGE_PRAT_FAIL(641,"消息发送成功手机号：%s，失败手机号：%s"),
-    SEND_MESSAGE_ALL_FAIL(642,"消息发送全部失败"),
-    AUTH_NOT_EXISTS_SECRET(643,"没有权限"),
-    AUTH_ERROR_SECRET(644,"秘钥不合法"),
-    AUTH_CORRECT_SECRET_MSG(645,"秘钥正确"),
-    SEND_MESSAGE_NOT_EXISTS_PHONE(646,"接收消息手机号不存在"),
-    SEND_MESSAGE_SINGLE_MESSAGE_EXCEPTION(647,"发送消息异常")
+    AUTH_NOT_EXISTS_SECRET(651,"没有权限"),
+    AUTH_ERROR_SECRET(652,"秘钥不合法"),
+    AUTH_CORRECT_SECRET_MSG(653,"秘钥正确"),
+    SEND_SINGLE_MESSAGE_PARAM_EMPTY(661,"单条订阅消息参数"),
+    SEND_SINGLE_MESSAGE_NOT_EXISTS_PHONE(662,"接收单条订阅手机号不存在"),
+    SEND_SINGLE_MESSAGE_EXCEPTION(663,"单条订阅发送消息异常"),
+    SEND_MASS_MESSAGE_PARAM_EMPTY(671,"群发订阅消息参数"),
+    SEND_MASS_MESSAGE_PRAT_FAIL(672,"群发订阅消息发送成功手机号：%s，失败手机号：%s"),
+    SEND_MASS_MESSAGE_ALL_FAIL(673,"群发订阅消息发送全部失败"),
+    SEND_MASS_MESSAGE_NOT_EXISTS_PHONE(674,"接收群发订阅消息手机号不存在"),
+    TEMPLATE_AUTH_PHONE_PARAM_EMPTY(681,"模板授权手机号请求参数 phoneNumberList为空")
     ;
 
     BusinessCodeEnum(Integer code, String msg) {

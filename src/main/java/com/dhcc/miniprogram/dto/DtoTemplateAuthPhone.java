@@ -5,9 +5,9 @@ import java.util.List;
 /**
  * @author cb
  * @date 2020/7/8
- * description：模板授权缩写运输类
+ * description：模板授权手机号类
  */
-public class DtoTemplateAuthAbbr {
+public class DtoTemplateAuthPhone {
     /**
      * 手机号
      */
@@ -17,10 +17,10 @@ public class DtoTemplateAuthAbbr {
      */
     private List<String> templateId;
 
-    public DtoTemplateAuthAbbr() {
+    public DtoTemplateAuthPhone() {
     }
 
-    public DtoTemplateAuthAbbr(String phone, List<String> templateId) {
+    public DtoTemplateAuthPhone(String phone, List<String> templateId) {
         this.phone = phone;
         this.templateId = templateId;
     }
