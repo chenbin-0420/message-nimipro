@@ -20,10 +20,6 @@ public class DtoSubscribeMessageRequest extends  DtoSubscribeMessage{
      * secret ：秘钥
      */
     private String secret;
-    /**
-     * 测试次数
-     */
-    private Integer count;
 
     public String getPhoneNumber() {
         return phoneNumber;
@@ -49,11 +45,4 @@ public class DtoSubscribeMessageRequest extends  DtoSubscribeMessage{
         this.secret = secret;
     }
 
-    public Integer getCount() {
-        return count;
-    }
-
-    public void setCount(Integer count) {
-        this.count = count;
-    }
 }
