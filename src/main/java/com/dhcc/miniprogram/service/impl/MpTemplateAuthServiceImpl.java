@@ -1,7 +1,6 @@
 package com.dhcc.miniprogram.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.dhcc.basic.exception.BusinessException;
 import com.dhcc.basic.service.BaseServiceImpl;
 import com.dhcc.miniprogram.config.WechatConfig;
 import com.dhcc.miniprogram.dao.MpTemplateAuthDao;
