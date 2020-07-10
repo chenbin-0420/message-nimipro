@@ -74,8 +74,9 @@ public enum BusinessCodeEnum {
     SEND_MASS_MESSAGE_PARAM_EMPTY(671,"群发订阅消息参数"),
     SEND_MASS_MESSAGE_PRAT_FAIL(672,"群发订阅消息发送成功手机号：%s，失败手机号：%s"),
     SEND_MASS_MESSAGE_ALL_FAIL(673,"群发订阅消息发送全部失败"),
-    SEND_MASS_MESSAGE_NOT_EXISTS_PHONE(674,"接收群发订阅消息手机号不存在"),
-    TEMPLATE_AUTH_PHONE_PARAM_EMPTY(681,"模板授权手机号请求参数 phoneNumberList为空")
+    SEND_MASS_MESSAGE_NOT_EXISTS_PHONE(674,"接收群发订阅消息手机号用户不存在"),
+    TEMPLATE_AUTH_PHONE_PARAM_EMPTY(681,"用户授权模板请求参数 phoneNumberList为空"),
+    TEMPLATE_AUTH_PHONE_EXCEPTION(689,"用户授权模板异常")
     ;
 
     BusinessCodeEnum(Integer code, String msg) {

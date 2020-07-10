@@ -1,6 +1,7 @@
 package com.dhcc.miniprogram.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.dhcc.basic.exception.BusinessException;
 import com.dhcc.basic.service.BaseServiceImpl;
 import com.dhcc.miniprogram.config.WechatConfig;
 import com.dhcc.miniprogram.dao.MpTemplateAuthDao;
@@ -175,27 +176,39 @@ public class MpTemplateAuthServiceImpl extends BaseServiceImpl<MpTemplateAuthDao
 		DtoTemplateAuthPhoneResult templateAuthPhoneResult = new DtoTemplateAuthPhoneResult();
 		// 检查入参 ,验权
 		CheckInParamUtil.checkInParam(templateAuthAbbrRequests,wechatConfig,templateAuthPhoneResult);
+		// errCode 不为 null, 返回带错的对象
+		if(templateAuthPhoneResult.getErrcode() != null){
+			return templateAuthPhoneResult;
+		}
 		// 初始化 templateAuthPhones 对象
 		LinkedList<DtoTemplateAuthPhone> templateAuthPhones = new LinkedList<>();
-		// 查数据
-		for (String phone : templateAuthAbbrRequests.getPhoneNumberList()) {
-			if(StringUtils.isNotEmpty(phone)){
-				// 获取模板ID列表
-				List<DtoTemplateId> templateIdList = dao.getTemplateAuthByPhone(phone);
-				// 模板ID列表
-				List<String> templateIds = new LinkedList<>();
-				// 循环添加模板ID
-				for (DtoTemplateId templateId : templateIdList) {
-					templateIds.add(templateId.getTemplateId());
+		try {
+			// 查数据
+			for (String phone : templateAuthAbbrRequests.getPhoneNumberList()) {
+				if(StringUtils.isNotEmpty(phone)){
+					// 获取模板ID列表
+					List<DtoTemplateId> templateIdList = dao.getTemplateAuthByPhone(phone);
+					// 模板ID列表
+					List<String> templateIds = new LinkedList<>();
+					// 循环添加模板ID
+					for (DtoTemplateId templateId : templateIdList) {
+						templateIds.add(templateId.getTemplateId());
+					}
+					// 添加模板授权缩写
+					templateAuthPhones.add(new DtoTemplateAuthPhone(phone,templateIds));
 				}
-				// 添加模板授权缩写
-				templateAuthPhones.add(new DtoTemplateAuthPhone(phone,templateIds));
 			}
+			// 手机号对应模板列表
+			templateAuthPhoneResult.setErrcode(BusinessCodeEnum.REQUEST_SUCCESS.getCode());
+			templateAuthPhoneResult.setErrmsg(BusinessCodeEnum.REQUEST_SUCCESS.getMsg());
+			templateAuthPhoneResult.setData(templateAuthPhones);
+		} catch (Exception e) {
+			// 打印异常信息
+			log.debug(BusinessCodeEnum.TEMPLATE_AUTH_PHONE_EXCEPTION.getMsg(),e);
+			// 抛异常信息
+			templateAuthPhoneResult.setErrcode(BusinessCodeEnum.TEMPLATE_AUTH_PHONE_EXCEPTION.getCode());
+			templateAuthPhoneResult.setErrmsg(BusinessCodeEnum.TEMPLATE_AUTH_PHONE_EXCEPTION.getMsg());
 		}
-		// 手机号对应模板列表
-		templateAuthPhoneResult.setErrcode(BusinessCodeEnum.REQUEST_SUCCESS.getCode());
-		templateAuthPhoneResult.setErrmsg(BusinessCodeEnum.REQUEST_SUCCESS.getMsg());
-		templateAuthPhoneResult.setData(templateAuthPhones);
 		// 封装返回
 		return templateAuthPhoneResult;
 	}
