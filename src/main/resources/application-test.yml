@@ -81,9 +81,9 @@ smb:
 
 wechat:
   wechatToken: wechatToken
-  app_id: wxcedd2cc8ed79ac85
+  appId: wxcedd2cc8ed79ac85
   secret: 74fadc1dc8d2a7954d035a72e73239a3
-#  app_id: wx419a354d9fd6dd2f
+#  appId: wx419a354d9fd6dd2f
 #  secret: 4dfc3f5beb9155fdd128b50d29183330
   externalTitle: 公众服务
   externalDesc: 政务服务大厅

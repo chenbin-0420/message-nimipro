@@ -82,12 +82,18 @@ public class MpTemplateAuthServiceImpl extends BaseServiceImpl<MpTemplateAuthDao
 	private WechatConfig wechatConfig;
 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public DtoTemplateAuthResult insertTemplateAuth(DtoTemplateAuthRequest templateAuthRequest) {
 		// 打印日志
 		log.info("添加模板授权参数："+ JSON.toJSONString(templateAuthRequest));
+		// 声明模板授权结果
+		DtoTemplateAuthResult templateAuthResult = new DtoTemplateAuthResult();
 		// 检查入参
-		CheckInParamUtil.checkInParam(templateAuthRequest);
+		CheckInParamUtil.checkInParam(templateAuthResult,templateAuthRequest);
+		// errCode 不为空，返回模板授权结果
+		if(templateAuthResult.getErrcode() != null){
+			return templateAuthResult;
+		}
 		// 获取手机号
 		String phone = templateAuthRequest.getPhone();
 		// 获取需订阅的模板
@@ -103,8 +109,7 @@ public class MpTemplateAuthServiceImpl extends BaseServiceImpl<MpTemplateAuthDao
 				}
 			}
 		}
-		// 声明模板授权结果
-		DtoTemplateAuthResult templateAuthResult;
+
 		// 实际可订阅模板列表
 		for (DtoTemplateListQuery templateListQuery : templateListQueries) {
 			// 获取模板ID
@@ -118,7 +123,7 @@ public class MpTemplateAuthServiceImpl extends BaseServiceImpl<MpTemplateAuthDao
 					MpTemplateAuth templateAuth = DtoTemplateAuthRequest.toPO(templateAuthRequest);
 					templateAuth.setTemplateId(templateId);
 					templateAuth.setTitle(templateListQuery.getTitle());
-					templateAuth.setTmplDesc("政务服务大厅");
+					templateAuth.setTmplDesc(wechatConfig.getExternalDesc());
 					templateAuth.setType(templateListQuery.getType());
 					templateAuth.setTmplOrder(1);
 					try {
@@ -197,10 +202,10 @@ public class MpTemplateAuthServiceImpl extends BaseServiceImpl<MpTemplateAuthDao
 			templateAuthPhoneResult.setData(templateAuthPhones);
 		} catch (Exception e) {
 			// 打印异常信息
-			log.debug(BusinessCodeEnum.TEMPLATE_AUTH_PHONE_EXCEPTION.getMsg(),e);
+			log.debug(BusinessCodeEnum.USER_AUTH_PHONE_EXCEPTION.getMsg(),e);
 			// 抛异常信息
-			templateAuthPhoneResult.setErrcode(BusinessCodeEnum.TEMPLATE_AUTH_PHONE_EXCEPTION.getCode());
-			templateAuthPhoneResult.setErrmsg(BusinessCodeEnum.TEMPLATE_AUTH_PHONE_EXCEPTION.getMsg());
+			templateAuthPhoneResult.setErrcode(BusinessCodeEnum.USER_AUTH_PHONE_EXCEPTION.getCode());
+			templateAuthPhoneResult.setErrmsg(BusinessCodeEnum.USER_AUTH_PHONE_EXCEPTION.getMsg());
 		}
 		// 封装返回
 		return templateAuthPhoneResult;
@@ -220,7 +225,7 @@ public class MpTemplateAuthServiceImpl extends BaseServiceImpl<MpTemplateAuthDao
 		List<DtoTemplateId> templateIdList = dao.getTemplateAuthByPhoneAndTemplateId(request.getPhone(),request.getTemplateId());
 		if(CollectionUtils.isEmpty(templateIdList)){
 			// 用户没有授权操作
-			dtoBasicResult.setErrcode(BusinessCodeEnum.TEMPLATE_AUTH_TEMPLATE_EMPTY.getCode()).setErrmsg(BusinessCodeEnum.TEMPLATE_AUTH_TEMPLATE_EMPTY.getMsg());
+			dtoBasicResult.setErrcode(BusinessCodeEnum.USER_AUTH_TEMPLATE_EMPTY.getCode()).setErrmsg(BusinessCodeEnum.USER_AUTH_TEMPLATE_EMPTY.getMsg());
 		} else {
 			// 有授权操作
 			dtoBasicResult.setErrcode(BusinessCodeEnum.REQUEST_SUCCESS.getCode()).setErrmsg("获取用户授权模板成功");

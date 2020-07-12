@@ -9,10 +9,7 @@ import com.dhcc.miniprogram.enums.SendMsgTypeEnum;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author cb
@@ -73,7 +70,7 @@ public class CheckInParamUtil {
      * @param appId 小程序appId
      * @param appSecret 小程序唯一凭证密钥，即 appSecret
      */
-    public static void checkInParam(String appId, String appSecret) {
+    public static void checkInParam(DtoAccessTokenResult dtoAccessTokenResult,String appId, String appSecret) {
         String reason = "";
         if (StringUtils.isEmpty(appId)) {
             reason += "appid为空，";
@@ -83,8 +80,8 @@ public class CheckInParamUtil {
         }
 
         if (StringUtils.isNotEmpty(reason)) {
-            reason = "获取AccessToken " + reason;
-            throw new BusinessException(reason.substring(0, reason.length() - 1));
+            // 获取 AccessToken 入参为空
+            dtoAccessTokenResult.setErrcode(BusinessCodeEnum.ACCESS_TOKEN_IN_PARAM.getCode()).setErrmsg(BusinessCodeEnum.ACCESS_TOKEN_IN_PARAM.getMsg()+ reason);
         }
     }
 
@@ -156,43 +153,11 @@ public class CheckInParamUtil {
     }
 
     /**
-     * 检查多个值空值
-     * @param needMap 需排查的参数
-     * @param bisContent 业务内容
-     */
-    public static void checkEmptyValue(Map<String,Object> needMap, String bisContent){
-        StringBuilder reason = new StringBuilder();
-        Iterator<Map.Entry<String, Object>> iterator = needMap.entrySet().iterator();
-        while(iterator.hasNext()){
-            Map.Entry<String, Object> next = iterator.next();
-            if(next.getValue() == null || StringUtils.isEmpty(next.getValue().toString())){
-                reason.append(next.getKey()).append("为空,");
-            }
-        }
-
-        if(StringUtils.isNotEmpty(reason.toString())){
-            String reasonStr = bisContent + reason.toString();
-            throw new BusinessException(reasonStr.substring(0,reasonStr.length()-1));
-        }
-    }
-
-    /**
-     * 构建一个map，并初始化map，为其设置一个key-val
-     * @param key 键
-     * @param val 值
-     * @return map
-     */
-    public static Map<String,Object> buildMap(String key,Object val){
-        HashMap<String, Object> map = new HashMap<>(1);
-        map.put(key,val);
-        return map;
-    }
-
-    /**
      * 检查模板授权请求体入参
+     * @param templateAuthResult 模板授权结果
      * @param dtoTemplateAuthRequest 模板授权请求体
      */
-    public static void checkInParam(DtoTemplateAuthRequest dtoTemplateAuthRequest){
+    public static void checkInParam(DtoTemplateAuthResult templateAuthResult,DtoTemplateAuthRequest dtoTemplateAuthRequest){
         String reason = "";
         if(StringUtils.isEmpty(dtoTemplateAuthRequest.getPhone())){
             reason += "phone为空,";
@@ -204,15 +169,16 @@ public class CheckInParamUtil {
             reason += "templateIds为空,";
         }
         if(StringUtils.isNotEmpty(reason)){
-            reason = "模板授权请求参数 "+reason;
-            throw new BusinessException(reason.substring(0,reason.length()-1));
+            // 模板授权入参为空
+            templateAuthResult.setErrcode(BusinessCodeEnum.TEMPLATE_AUTH_IN_PARAM_EMPTY.getCode())
+                    .setErrmsg(BusinessCodeEnum.TEMPLATE_AUTH_IN_PARAM_EMPTY.getMsg()+reason);
         }
     }
 
     /**
-     * FORMAL ：开发模式
+     * FORMAL ：正式环境
      */
-    private static final String FORMAL = "formal";
+    public static final String FORMAL = "formal";
 
     /**
      * 检查模板授权API请求入参
@@ -228,7 +194,7 @@ public class CheckInParamUtil {
             return templateAuthPhoneResult;
         }
         if(CollectionUtils.isEmpty(templateAuthPhoneRequest.getPhoneNumberList())){
-            return wrapTemplateAuthPhoneResult(templateAuthPhoneResult,BusinessCodeEnum.TEMPLATE_AUTH_PHONE_PARAM_EMPTY);
+            return wrapTemplateAuthPhoneResult(templateAuthPhoneResult,BusinessCodeEnum.USER_AUTH_PHONE_PARAM_EMPTY);
         }
         return templateAuthPhoneResult;
     }
@@ -310,7 +276,8 @@ public class CheckInParamUtil {
             reason += "templateId为空，";
         }
         if(StringUtils.isNotEmpty(reason)){
-            dtoBasicResult.setErrcode(11).setErrmsg("用户模板授权入参 "+reason.substring(0,reason.length()-1));
+            dtoBasicResult.setErrcode(BusinessCodeEnum.USER_AUTH_TEMPLATE_IN_PARAM.getCode())
+                    .setErrmsg(BusinessCodeEnum.USER_AUTH_TEMPLATE_IN_PARAM.getMsg()+reason.substring(0,reason.length()-1));
         }
         return dtoBasicResult;
     }
@@ -325,6 +292,37 @@ public class CheckInParamUtil {
         dtoBasicResult.setErrcode(businessCodeEnum.getCode());
         dtoBasicResult.setErrmsg(businessCodeEnum.getMsg());
         return dtoBasicResult;
+    }
+
+    /**
+     * 检查秘钥
+     * @param basicResult 基础结果
+     * @param secret 秘钥
+     * @return 基础结果类
+     */
+    public static void checkSecret(DtoBasicResult basicResult,WechatConfig wechatConfig,String secret){
+        // 判断秘钥是否为空
+        if (StringUtils.isEmpty(secret)) {
+            // 为空，抛没有权限
+            basicResult.setErrcode(BusinessCodeEnum.AUTH_NOT_EXISTS_SECRET.getCode()).setErrmsg(BusinessCodeEnum.AUTH_NOT_EXISTS_SECRET.getMsg());
+        } else {
+            // 秘钥不为空，判断模式
+            if(FORMAL.equals(wechatConfig.getMode())){
+                // 正式模式，判断是否相等，不相等秘钥不合法
+                if(CollectionUtils.isNotEmpty(wechatConfig.getFormalSecretList()) && !wechatConfig.getFormalSecretList().contains(secret)){
+                    basicResult.setErrcode(BusinessCodeEnum.AUTH_ERROR_SECRET.getCode()).setErrmsg(BusinessCodeEnum.AUTH_ERROR_SECRET.getMsg());
+                } else { // 授权秘钥空值
+                    basicResult.setErrcode(BusinessCodeEnum.AUTH_SECRET_EMPTY_VALUE.getCode()).setErrmsg(BusinessCodeEnum.AUTH_SECRET_EMPTY_VALUE.getMsg());
+                }
+            } else {
+                // 测试模式，判断是否相等，不相等秘钥不合法
+                if(CollectionUtils.isNotEmpty(wechatConfig.getFormalSecretList()) && !wechatConfig.getTestSecretList().contains(secret)){
+                    basicResult.setErrcode(BusinessCodeEnum.AUTH_ERROR_SECRET.getCode()).setErrmsg(BusinessCodeEnum.AUTH_ERROR_SECRET.getMsg());
+                } else { // 授权秘钥空值
+                    basicResult.setErrcode(BusinessCodeEnum.AUTH_SECRET_EMPTY_VALUE.getCode()).setErrmsg(BusinessCodeEnum.AUTH_SECRET_EMPTY_VALUE.getMsg());
+                }
+            }
+        }
     }
 
 }

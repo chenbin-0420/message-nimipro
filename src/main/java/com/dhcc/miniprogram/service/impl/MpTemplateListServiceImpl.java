@@ -1,16 +1,19 @@
 package com.dhcc.miniprogram.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.dhcc.basic.exception.BusinessException;
+import com.dhcc.basic.service.BaseServiceImpl;
 import com.dhcc.basic.util.HttpClientUtil;
 import com.dhcc.miniprogram.config.MiniproUrlConfig;
-import com.dhcc.miniprogram.dto.DtoTemplateList;
+import com.dhcc.miniprogram.dao.MpTemplateListDao;
 import com.dhcc.miniprogram.dto.DtoBasicResult;
+import com.dhcc.miniprogram.dto.DtoTemplateList;
 import com.dhcc.miniprogram.dto.DtoTemplateListQuery;
 import com.dhcc.miniprogram.dto.DtoTemplateListResult;
 import com.dhcc.miniprogram.enums.BusinessCodeEnum;
+import com.dhcc.miniprogram.model.MpTemplateList;
+import com.dhcc.miniprogram.service.MpTemplateListService;
 import com.dhcc.miniprogram.util.AccessTokenUtil;
-import com.dhcc.miniprogram.util.CheckInParamUtil;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.slf4j.Logger;
@@ -18,15 +21,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.dhcc.basic.service.BaseServiceImpl;
-import com.dhcc.miniprogram.dao.MpTemplateListDao;
-import com.dhcc.miniprogram.model.MpTemplateList;
-import com.dhcc.miniprogram.service.MpTemplateListService;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 /*
 service层一般情况下与model/dao是一对一的关系！【主要负责】这一个model的增删改查，保持原子性以提高复用度。
 所以要求此service的【增删改的输入对象】和【查的输出对象】必需是此model。
@@ -112,16 +109,12 @@ public class MpTemplateListServiceImpl extends BaseServiceImpl<MpTemplateListDao
 			log.info("获取模板列表结果："+result);
 			// 解析字符串并返回模板列表结果
 			templateListResult = JSON.parseObject(result, DtoTemplateListResult.class);
-			// 获取一个map对象
-			Map<String, Object> map = CheckInParamUtil.buildMap("DtoTemplateListResult", templateListResult);
-			// 检查是否为空
-			CheckInParamUtil.checkEmptyValue(map,"获取模板列表 ");
 			// errCode 为 0，表示成功
 			if(BusinessCodeEnum.RECEIVE_SUCCESS.getCode().equals(templateListResult.getErrcode())){
 				// 获取 dtoTemplateLists
 				List<DtoTemplateList> dtoTemplateLists = templateListResult.getData();
 				// dtoTemplateLists 不为空
-				if(dtoTemplateLists != null){
+				if(CollectionUtils.isNotEmpty(dtoTemplateLists)){
 					// 获取模板列表运输类集合迭代器
 					Iterator<DtoTemplateList> iterator = dtoTemplateLists.iterator();
 					// 判断迭代器是否有下一个
@@ -153,18 +146,15 @@ public class MpTemplateListServiceImpl extends BaseServiceImpl<MpTemplateListDao
 					}
 				}
 				// 返回基础结果
-				templateListResult.setErrcode(BusinessCodeEnum.REQUEST_SUCCESS.getCode());
-				templateListResult.setErrmsg("获取模板集合成功");
-				return templateListResult;
+				return templateListResult.setErrcode(BusinessCodeEnum.REQUEST_SUCCESS.getCode()).setErrmsg("获取模板集合成功");
 			} else {
 				// 返回失败原因
 				return templateListResult;
 			}
 		} catch (Exception e) {
 			log.debug("获取模板列表异常",e);
-			templateListResult.setErrcode(BusinessCodeEnum.GET_TEMPLATE_LIST_EXCEPTION.getCode());
-			templateListResult.setErrmsg(BusinessCodeEnum.GET_TEMPLATE_LIST_EXCEPTION.getMsg());
-			throw new BusinessException(BusinessCodeEnum.GET_TEMPLATE_LIST_EXCEPTION.getMsg());
+			return templateListResult.setErrcode(BusinessCodeEnum.GET_TEMPLATE_LIST_EXCEPTION.getCode())
+					.setErrmsg(BusinessCodeEnum.GET_TEMPLATE_LIST_EXCEPTION.getMsg());
 		}
 	}
 

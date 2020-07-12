@@ -3,11 +3,11 @@ package com.dhcc.miniprogram.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.dhcc.basic.service.BaseServiceImpl;
 import com.dhcc.basic.util.HttpClientUtil;
-import com.dhcc.miniprogram.enums.BusinessCodeEnum;
 import com.dhcc.miniprogram.config.MiniproUrlConfig;
 import com.dhcc.miniprogram.config.WechatConfig;
 import com.dhcc.miniprogram.dao.MpAccessTokenDao;
 import com.dhcc.miniprogram.dto.DtoAccessTokenResult;
+import com.dhcc.miniprogram.enums.BusinessCodeEnum;
 import com.dhcc.miniprogram.enums.GrantTypeEnum;
 import com.dhcc.miniprogram.enums.IsDelEnum;
 import com.dhcc.miniprogram.model.MpAccessToken;
@@ -91,7 +91,12 @@ public class MpAccessTokenServiceImpl extends BaseServiceImpl<MpAccessTokenDao, 
 		// 初始化dtoAccessTokenResult实例
 		DtoAccessTokenResult dtoAccessTokenResult = new DtoAccessTokenResult();
 		// 检查入参
-		CheckInParamUtil.checkInParam(appid,appSecret);
+		CheckInParamUtil.checkInParam(dtoAccessTokenResult,appid,appSecret);
+		// 不为空，返回入参为空的属性
+		if(dtoAccessTokenResult.getErrcode() != null){
+			log.debug(JSON.toJSONString(dtoAccessTokenResult));
+			return dtoAccessTokenResult;
+		}
 		// 获取 httpClient
 		CloseableHttpClient httpClient = HttpClientUtil.getHttpClient();
 		// 设置 Url 带参

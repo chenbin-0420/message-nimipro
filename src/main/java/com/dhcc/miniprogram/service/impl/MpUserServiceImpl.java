@@ -3,14 +3,13 @@ package com.dhcc.miniprogram.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.dhcc.basic.dao.query.SimpleCondition;
-import com.dhcc.basic.exception.BusinessException;
 import com.dhcc.basic.service.BaseServiceImpl;
 import com.dhcc.basic.util.HttpClientUtil;
-import com.dhcc.miniprogram.enums.BusinessCodeEnum;
 import com.dhcc.miniprogram.config.MiniproUrlConfig;
 import com.dhcc.miniprogram.config.WechatConfig;
 import com.dhcc.miniprogram.dao.MpUserDao;
 import com.dhcc.miniprogram.dto.*;
+import com.dhcc.miniprogram.enums.BusinessCodeEnum;
 import com.dhcc.miniprogram.enums.GrantTypeEnum;
 import com.dhcc.miniprogram.model.MpUser;
 import com.dhcc.miniprogram.service.MpUserService;
@@ -97,13 +96,9 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
 
     private static final Logger log = LoggerFactory.getLogger(MpUserServiceImpl.class);
     /**
-     * 失败标识：RESPONSE_FAIL
-     * 存在手机号标识：RESPONSE_EXIST_PHONE
      * 手机号：PURE_PHONE_NUMBER
      * 手机区号：COUNTRY_CODE
      */
-    private static final Integer RESPONSE_FAIL = 420;
-    private static final Integer RESPONSE_EXIST_PHONE = 421;
     private static final String PURE_PHONE_NUMBER = "purePhoneNumber";
     private static final String COUNTRY_CODE = "countryCode";
 
@@ -117,12 +112,12 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
     public DtoIdenInfoResult userLogin(DtoLoginRequest login) {
         // 记录登录参数日志
         log.info("小程序登录入参：" + JSON.toJSONString(login));
-        // 初始化 DtoIdenInfoResult 对象
+        // 初始化 idenInfoResult 对象
         DtoIdenInfoResult idenInfoResult = new DtoIdenInfoResult();
         // 检查入参
         CheckInParamUtil.checkInParam(idenInfoResult,login);
-        // 判断小程序登录参数是否为空，抛异常
-        if(BusinessCodeEnum.LOGIN_PARAM_EXCEPTION.getCode().equals(idenInfoResult.getErrcode())){
+        // errCode不为空，抛异常
+        if(idenInfoResult.getErrcode ()!= null){
             return idenInfoResult;
         }
         // 获取 httpClient
@@ -248,7 +243,7 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public DtoPhoneNumberResult changePhone(DtoPhoneNumberRequest phoneNumberRequest) {
         // 记录入参日志
         log.info("换绑手机号入参：" + JSON.toJSONString(phoneNumberRequest));
@@ -256,8 +251,8 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
         DtoPhoneNumberResult phoneNumberResult = new DtoPhoneNumberResult();
         // 检查获取手机号入参
         CheckInParamUtil.checkInParam(phoneNumberResult,phoneNumberRequest);
-        // 参数为空，返回phoneNumberResult
-        if(BusinessCodeEnum.GET_PHONE_NUMBER_PARAM_EMPTY.getCode().equals(phoneNumberResult.getErrcode())){
+        // errCode不为空，返回phoneNumberResult
+        if(phoneNumberResult.getErrcode() != null){
             return phoneNumberResult;
         }
 
@@ -266,18 +261,24 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
         // 检查 sessionKey 为空
         String sessionKey = user.getSessionKey();
         if (StringUtils.isEmpty(sessionKey)) {
-            throw new BusinessException("换绑手机号参数 sessionKey为空");
+            // 返回换绑手机号为空
+            phoneNumberResult.setErrcode(BusinessCodeEnum.CHANGE_PHONE_SESSION_KEY_EMPTY.getCode());
+            phoneNumberResult.setErrmsg(BusinessCodeEnum.CHANGE_PHONE_SESSION_KEY_EMPTY.getMsg());
+            return phoneNumberResult;
         }
         // 使用 AES/CBC/PKCS7Padding 解密
         String decrypt;
         try {
-            log.info("接口名称：获取手机号");
+            log.info("接口名称：换绑手机号");
             log.info("接口参数：" + JSON.toJSONString(new String[]{sessionKey, phoneNumberRequest.getIv(), phoneNumberRequest.getEncryptedData()}));
             decrypt = AESUtil.pkcs7PaddingDecrypt(sessionKey, phoneNumberRequest.getIv(), phoneNumberRequest.getEncryptedData());
         } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidAlgorithmParameterException | InvalidKeyException |
                 BadPaddingException | IllegalBlockSizeException | UnsupportedEncodingException | NoSuchProviderException e) {
-            log.debug("小程序获取手机号异常", e);
-            throw new BusinessException("小程序获取手机号异常");
+            log.debug("换绑手机号异常", e);
+            // 设置换绑手机号异常
+            phoneNumberResult.setErrcode(BusinessCodeEnum.CHANGE_PHONE_EXCEPTION.getCode());
+            phoneNumberResult.setErrmsg(BusinessCodeEnum.CHANGE_PHONE_EXCEPTION.getMsg());
+            return phoneNumberResult;
         }
 
         // 解析字符串
@@ -299,11 +300,12 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
                 phoneNumberResult = new DtoPhoneNumberResult(BusinessCodeEnum.REQUEST_SUCCESS.getCode(), "换绑手机号成功").setData(new DtoPhoneNumber(phoneNumber));
             } else {
                 // 存在手机号
-                phoneNumberResult = new DtoPhoneNumberResult(RESPONSE_EXIST_PHONE, "存在手机号").setData(new DtoPhoneNumber(phoneNumber));
+                phoneNumberResult = new DtoPhoneNumberResult(BusinessCodeEnum.CHANGE_PHONE_NUMBER_SAME.getCode(),
+                        BusinessCodeEnum.CHANGE_PHONE_NUMBER_SAME.getMsg()).setData(new DtoPhoneNumber(phoneNumber));
             }
         } else {
             // 设置失败编码，失败信息
-            phoneNumberResult = new DtoPhoneNumberResult(RESPONSE_FAIL, "获取手机号失败");
+            phoneNumberResult = new DtoPhoneNumberResult(BusinessCodeEnum.CHANGE_PHONE_FAIL.getCode(), BusinessCodeEnum.CHANGE_PHONE_FAIL.getMsg());
         }
         log.info("换绑手机号返回结果：" + JSON.toJSONString(phoneNumberResult));
         return phoneNumberResult;

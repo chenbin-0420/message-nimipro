@@ -24,7 +24,6 @@ import com.dhcc.miniprogram.util.CheckInParamUtil;
 import com.dhcc.miniprogram.util.DateUtil;
 import com.dhcc.miniprogram.util.SimpleAlgorithmUtil;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,7 +100,7 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
         // 声明基础返回结果类
         DtoBasicResult dtoBasicResult = new DtoBasicResult();
         // 检验秘钥是否合法
-        checkSecret(dtoBasicResult,request.getSecret());
+        CheckInParamUtil.checkSecret(dtoBasicResult,wechatConfig,request.getSecret());
         // 不为空，那就是非法的
         if(dtoBasicResult.getErrcode() != null){
             return dtoBasicResult;
@@ -185,7 +184,7 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
         // 声明基础返回结果类
         DtoBasicResult dtoBasicResult = new DtoBasicResult();
         // 检验秘钥是否合法
-        checkSecret(dtoBasicResult,request.getSecret());
+        CheckInParamUtil.checkSecret(dtoBasicResult,wechatConfig,request.getSecret());
         // 不为空，那就是非法的
         if(dtoBasicResult.getErrcode() != null){
             return dtoBasicResult;
@@ -289,33 +288,6 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
         // 打印群发结果
         log.info("群发消息结果", JSON.toJSONString(dtoBasicResult));
         return dtoBasicResult;
-    }
-
-    /**
-     * 检查秘钥
-     * @param basicResult 基础结果
-     * @param secret 秘钥
-     * @return 基础结果类
-     */
-    private void checkSecret(DtoBasicResult basicResult,String secret){
-        // 判断秘钥是否为空
-        if (StringUtils.isEmpty(secret)) {
-            // 为空，抛没有权限
-            basicResult.setErrcode(BusinessCodeEnum.AUTH_NOT_EXISTS_SECRET.getCode()).setErrmsg(BusinessCodeEnum.AUTH_NOT_EXISTS_SECRET.getMsg());
-        } else {
-            // 秘钥不为空，判断模式
-            if(wechatConfig.getMode().equals(DEV)){
-                // 正式模式，判断是否相等，不相等秘钥不合法
-                if(!wechatConfig.getTestSecretList().contains(secret)){
-                    basicResult.setErrcode(BusinessCodeEnum.AUTH_ERROR_SECRET.getCode()).setErrmsg(BusinessCodeEnum.AUTH_ERROR_SECRET.getMsg());
-                }
-            } else {
-                // 测试模式，判断是否相等，不相等秘钥不合法
-                if(!wechatConfig.getTestSecretList().contains(secret)){
-                    basicResult.setErrcode(BusinessCodeEnum.AUTH_ERROR_SECRET.getCode()).setErrmsg(BusinessCodeEnum.AUTH_ERROR_SECRET.getMsg());
-                }
-            }
-        }
     }
 
 }
