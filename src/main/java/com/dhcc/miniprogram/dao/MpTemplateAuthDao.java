@@ -27,4 +27,12 @@ public interface MpTemplateAuthDao extends BaseDao<MpTemplateAuth, String> {
      * @return 模板ID列表
      */
     List<DtoTemplateId> getTemplateAuthByPhone(String phone);
+
+    /**
+     * 根据手机号查询模板ID列表
+     * @param phone 手机号
+     * @param templateId 模板ID
+     * @return 模板ID列表
+     */
+    List<DtoTemplateId> getTemplateAuthByPhoneAndTemplateId(String phone,String templateId);
 }

@@ -26,7 +26,7 @@ import com.dhcc.basic.model.IdentifiedPo;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicUpdate(true)
 @Proxy(lazy = false)
-@Table(name = "mp_template_list", schema="dhcplat", catalog="dhcplat")
+@Table(name = "mp_template_list", schema="dhcplat_zjzwfwzx", catalog="dhcplat_zjzwfwzx")
 @TableDefine(title = "小程序模板列表")
 public class MpTemplateList extends IdentifiedPo implements Serializable {
 	private static final long serialVersionUID = 1L;

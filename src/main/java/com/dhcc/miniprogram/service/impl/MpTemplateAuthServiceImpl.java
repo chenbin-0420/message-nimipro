@@ -169,12 +169,12 @@ public class MpTemplateAuthServiceImpl extends BaseServiceImpl<MpTemplateAuthDao
 	}
 
 	@Override
-	public DtoTemplateAuthPhoneResult getTemplateAuthByPhoneList(DtoTemplateAuthPhoneRequest templateAuthAbbrRequests) {
+	public DtoTemplateAuthPhoneResult getTemplateAuthByPhoneList(DtoTemplateAuthPhoneRequest templateAuthPhoneRequest) {
 		// 写入参日志
-		log.info("获取模板授权缩写列表入参："+JSON.toJSONString(templateAuthAbbrRequests));
+		log.info("获取用户模板授权列表入参："+JSON.toJSONString(templateAuthPhoneRequest));
 		DtoTemplateAuthPhoneResult templateAuthPhoneResult = new DtoTemplateAuthPhoneResult();
 		// 检查入参 ,验权
-		CheckInParamUtil.checkInParam(templateAuthAbbrRequests,wechatConfig,templateAuthPhoneResult);
+		CheckInParamUtil.checkInParam(templateAuthPhoneRequest,wechatConfig,templateAuthPhoneResult);
 		// errCode 不为 null, 返回带错的对象
 		if(templateAuthPhoneResult.getErrcode() != null){
 			return templateAuthPhoneResult;
@@ -183,18 +183,12 @@ public class MpTemplateAuthServiceImpl extends BaseServiceImpl<MpTemplateAuthDao
 		LinkedList<DtoTemplateAuthPhone> templateAuthPhones = new LinkedList<>();
 		try {
 			// 查数据
-			for (String phone : templateAuthAbbrRequests.getPhoneNumberList()) {
+			for (String phone : templateAuthPhoneRequest.getPhoneNumberList()) {
 				if(StringUtils.isNotEmpty(phone)){
 					// 获取模板ID列表
 					List<DtoTemplateId> templateIdList = dao.getTemplateAuthByPhone(phone);
-					// 模板ID列表
-					List<String> templateIds = new LinkedList<>();
-					// 循环添加模板ID
-					for (DtoTemplateId templateId : templateIdList) {
-						templateIds.add(templateId.getTemplateId());
-					}
 					// 添加模板授权缩写
-					templateAuthPhones.add(new DtoTemplateAuthPhone(phone,templateIds));
+					templateAuthPhones.add(new DtoTemplateAuthPhone(phone,templateIdList));
 				}
 			}
 			// 手机号对应模板列表
@@ -210,6 +204,29 @@ public class MpTemplateAuthServiceImpl extends BaseServiceImpl<MpTemplateAuthDao
 		}
 		// 封装返回
 		return templateAuthPhoneResult;
+	}
+
+	@Override
+	public DtoBasicResult getTemplateAuthByCondition(DtoTemplateAuthPhoneCondRequest request) {
+		// 记录日志
+		log.info("根据手机号、模板ID获取用户模板授权"+JSON.toJSONString(request));
+		DtoBasicResult dtoBasicResult = new DtoBasicResult();
+		// 检查入参
+		CheckInParamUtil.checkInParam(request,dtoBasicResult,wechatConfig);
+		if(dtoBasicResult.getErrcode() != null){
+			return dtoBasicResult;
+		}
+		// 获取模板ID列表
+		List<DtoTemplateId> templateIdList = dao.getTemplateAuthByPhoneAndTemplateId(request.getPhone(),request.getTemplateId());
+		if(CollectionUtils.isEmpty(templateIdList)){
+			// 用户没有授权操作
+			dtoBasicResult.setErrcode(BusinessCodeEnum.TEMPLATE_AUTH_TEMPLATE_EMPTY.getCode()).setErrmsg(BusinessCodeEnum.TEMPLATE_AUTH_TEMPLATE_EMPTY.getMsg());
+		} else {
+			// 有授权操作
+			dtoBasicResult.setErrcode(BusinessCodeEnum.REQUEST_SUCCESS.getCode()).setErrmsg("获取用户授权模板成功");
+		}
+		log.info("获取用户授权模板结果："+JSON.toJSONString(dtoBasicResult));
+		return dtoBasicResult;
 	}
 
 	@Override

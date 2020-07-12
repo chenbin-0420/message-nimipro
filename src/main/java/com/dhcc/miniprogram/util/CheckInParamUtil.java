@@ -210,9 +210,9 @@ public class CheckInParamUtil {
     }
 
     /**
-     * DEV ：开发模式
+     * FORMAL ：开发模式
      */
-    private static final String DEV = "dev";
+    private static final String FORMAL = "formal";
 
     /**
      * 检查模板授权API请求入参
@@ -228,9 +228,7 @@ public class CheckInParamUtil {
             return templateAuthPhoneResult;
         }
         if(CollectionUtils.isEmpty(templateAuthPhoneRequest.getPhoneNumberList())){
-            templateAuthPhoneResult.setErrcode(BusinessCodeEnum.TEMPLATE_AUTH_PHONE_PARAM_EMPTY.getCode());
-            templateAuthPhoneResult.setErrmsg(BusinessCodeEnum.TEMPLATE_AUTH_PHONE_PARAM_EMPTY.getMsg());
-            return templateAuthPhoneResult;
+            return wrapTemplateAuthPhoneResult(templateAuthPhoneResult,BusinessCodeEnum.TEMPLATE_AUTH_PHONE_PARAM_EMPTY);
         }
         return templateAuthPhoneResult;
     }
@@ -246,28 +244,87 @@ public class CheckInParamUtil {
         // 判断秘钥是否为空
         if (StringUtils.isEmpty(secret)) {
             // 为空，抛没有权限
-            templateAuthPhoneResult.setErrcode(BusinessCodeEnum.AUTH_NOT_EXISTS_SECRET.getCode());
-            templateAuthPhoneResult.setErrmsg(BusinessCodeEnum.AUTH_NOT_EXISTS_SECRET.getMsg());
-            return templateAuthPhoneResult;
+            return wrapTemplateAuthPhoneResult(templateAuthPhoneResult,BusinessCodeEnum.AUTH_NOT_EXISTS_SECRET);
         } else {
             // 秘钥不为空，判断模式
-            if(wechatConfig.getMode().equals(DEV)){
+            if(wechatConfig.getMode().equals(FORMAL)){
                 // 正式模式，判断是否相等，不相等秘钥不合法
                 if(!wechatConfig.getFormalSecretList().contains(secret)){
-                    templateAuthPhoneResult.setErrcode(BusinessCodeEnum.AUTH_ERROR_SECRET.getCode());
-                    templateAuthPhoneResult.setErrmsg(BusinessCodeEnum.AUTH_ERROR_SECRET.getMsg());
-                    return templateAuthPhoneResult;
+                    return wrapTemplateAuthPhoneResult(templateAuthPhoneResult,BusinessCodeEnum.AUTH_ERROR_SECRET);
                 }
             } else {
                 // 测试模式，判断是否相等，不相等秘钥不合法
                 if(!wechatConfig.getTestSecretList().contains(secret)){
-                    templateAuthPhoneResult.setErrcode(BusinessCodeEnum.AUTH_ERROR_SECRET.getCode());
-                    templateAuthPhoneResult.setErrmsg(BusinessCodeEnum.AUTH_ERROR_SECRET.getMsg());
-                    return templateAuthPhoneResult;
+                    return wrapTemplateAuthPhoneResult(templateAuthPhoneResult,BusinessCodeEnum.AUTH_ERROR_SECRET);
                 }
             }
         }
         return templateAuthPhoneResult;
+    }
+
+    /**
+     * 封装模板授权手机号结果
+     * @param templateAuthPhoneResult 模板授权手机号结果
+     * @param businessCodeEnum 业务码枚举
+     * @return 模板授权手机号结果
+     */
+    public static DtoTemplateAuthPhoneResult wrapTemplateAuthPhoneResult(DtoTemplateAuthPhoneResult templateAuthPhoneResult,BusinessCodeEnum businessCodeEnum){
+        templateAuthPhoneResult.setErrcode(businessCodeEnum.getCode());
+        templateAuthPhoneResult.setErrmsg(businessCodeEnum.getMsg());
+        return templateAuthPhoneResult;
+    }
+
+
+    /**
+     * 检查入参
+     * @param request 请求类
+     * @param dtoBasicResult 返回类
+     * @param wechatConfig 微信配置类
+     * @return 返回基础类
+     */
+    public static DtoBasicResult checkInParam(DtoTemplateAuthPhoneCondRequest request, DtoBasicResult dtoBasicResult, WechatConfig wechatConfig) {
+        String reason = "";
+        // 判断秘钥是否为空
+        String secret = request.getSecret();
+        if (StringUtils.isEmpty(secret)) {
+            // 为空，抛没有权限
+            return wrapBasicResult(dtoBasicResult,BusinessCodeEnum.AUTH_NOT_EXISTS_SECRET);
+        } else {
+            // 秘钥不为空，判断模式
+            if(wechatConfig.getMode().equals(FORMAL)){
+                // 正式模式，判断是否相等，不相等秘钥不合法
+                if(!wechatConfig.getFormalSecretList().contains(secret)){
+                    return wrapBasicResult(dtoBasicResult,BusinessCodeEnum.AUTH_ERROR_SECRET);
+                }
+            } else {
+                // 测试模式，判断是否相等，不相等秘钥不合法
+                if(!wechatConfig.getTestSecretList().contains(secret)){
+                    return wrapBasicResult(dtoBasicResult,BusinessCodeEnum.AUTH_ERROR_SECRET);
+                }
+            }
+        }
+        if(StringUtils.isEmpty(request.getPhone())){
+            reason += "phone为空，";
+        }
+        if(StringUtils.isEmpty(request.getTemplateId())){
+            reason += "templateId为空，";
+        }
+        if(StringUtils.isNotEmpty(reason)){
+            dtoBasicResult.setErrcode(11).setErrmsg("用户模板授权入参 "+reason.substring(0,reason.length()-1));
+        }
+        return dtoBasicResult;
+    }
+
+    /**
+     * 封装基础返回类
+     * @param dtoBasicResult 基础返回类及其子类
+     * @param businessCodeEnum 业务码枚举
+     * @return 基础返回类
+     */
+    public static DtoBasicResult wrapBasicResult(DtoBasicResult dtoBasicResult,BusinessCodeEnum businessCodeEnum){
+        dtoBasicResult.setErrcode(businessCodeEnum.getCode());
+        dtoBasicResult.setErrmsg(businessCodeEnum.getMsg());
+        return dtoBasicResult;
     }
 
 }

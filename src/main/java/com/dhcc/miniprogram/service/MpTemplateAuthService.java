@@ -1,10 +1,7 @@
 package com.dhcc.miniprogram.service;
 
 import com.dhcc.basic.service.BaseService;
-import com.dhcc.miniprogram.dto.DtoTemplateAuthPhoneRequest;
-import com.dhcc.miniprogram.dto.DtoTemplateAuthPhoneResult;
-import com.dhcc.miniprogram.dto.DtoTemplateAuthRequest;
-import com.dhcc.miniprogram.dto.DtoTemplateAuthResult;
+import com.dhcc.miniprogram.dto.*;
 import com.dhcc.miniprogram.model.MpTemplateAuth;
 
 /**
@@ -39,5 +36,12 @@ public interface MpTemplateAuthService extends BaseService<MpTemplateAuth, Strin
      * @return 模板授权用户列表
      */
     DtoTemplateAuthPhoneResult getTemplateAuthByPhoneList(DtoTemplateAuthPhoneRequest templateAuthAbbrRequests);
+
+    /**
+     * 通过手机号和模板ID获取模板授权用户列表
+     * @param request 模板授权用户请求
+     * @return 返回基础类
+     */
+    DtoBasicResult getTemplateAuthByCondition(DtoTemplateAuthPhoneCondRequest request);
 
 }

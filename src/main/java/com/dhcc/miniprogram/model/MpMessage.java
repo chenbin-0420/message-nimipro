@@ -23,7 +23,7 @@ import java.util.Date;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicUpdate(true)
 @Proxy(lazy = false)
-@Table(name = "mp_message", schema="dhcplat", catalog="dhcplat")
+@Table(name = "mp_message", schema="dhcplat_zjzwfwzx", catalog="dhcplat_zjzwfwzx")
 @TableDefine(title = "小程序订阅消息")
 public class MpMessage extends IdentifiedPo implements Serializable {
 	private static final long serialVersionUID = 1L;

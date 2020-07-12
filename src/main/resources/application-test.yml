@@ -1,31 +1,27 @@
 server:
-  port: 8002
+  port: 14443
   #Address: 192.168.1.99
 
-eureka:
-  client: #客户端注册进eureka服务列表内
-    service-url:
-      defaultZone: http://192.168.0.223:2001/eureka
-      #defaultZone: http://localhost:7001/eureka,http://localhost:7002/eureka/,http://localhost:7003/eureka/
-
-  instance:
-    instance-id: dhccczhyq
-    prefer-ip-address: true     #访问路径可以显示IP地址
-
 info:
-  app.name: dhccczhyq
+  app.name: message-nimipro
   company.name: www.dhcc.com
   build.artifactId: $project.artifactId$
   build.version: $project.version$
 
 spring:
   application:
-    name: dhccczhyq
+    name: message-nimipro
   datasource:
-    driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://192.168.0.141:3306/dhcplat?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
-    username: root
-    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    #UTC:全球时间,Asia/Shanghai:上海时间,GMT%2B8:北京时间 &useSSL=false
+    # 镇江测试服务器
+    url: jdbc:mysql://172.21.137.115:3306/dhcplat_zjzwfwzx?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
+    # 镇江正式服务器
+    #url: jdbc:mysql://172.21.137.120:3306/dhcplat_zjzwfwzx?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
+    username: admin
+    password: admin
+    sqlSchema:
+      plat: dhcplat_zjzwfwzx
   jpa:
     database-platform: org.hibernate.dialect.MySQLInnoDBDialect
     show-sql: true
@@ -49,33 +45,52 @@ spring:
 #            account: 1200
 logging:
   level: debug
-  config:
-
 
 #开发环境开启swagger ，注意生成环境设置为false ，不然可以直接通过api更改环境数据
 swagger:
   enable: true
+
 flyway:
-  enabled: true
-  encoding: utf-8
-  locations: classpath:db/migration
-  table: schemas_version
-  baseline-on-migrate: true
-  validate-on-migrate: false
+  enabled: false
+
+#启用shutdown
+#禁用密码验证
+endpoints:
+  shutdown:
+    enabled: true
+    sensitive: false
+
+cors:
+  #  origins: http://192.168.0.141:8113
+  # 允许所有域使用
+  origins: '*'
+
+devMode: true
+
+token:
+  #  whitelist: /sysdev/gencode/.*;/weixin/.*
+  #  whitelist: /.*
+  whitelist: /sendMessageApi/.*
+
+smb:
+  ip: 192.168.100.79
+  user: admin
+  password: 123456
+  path: smb://192.168.100.79
 
 
-# 关闭Ribbon的重试机制（如果有必要）
-ribbon:
-  MaxAutoRetriesNextServer: 0
-  ReadTimeout: 5000
-  ConnectTimeout: 5000
-
-
-## tx-manager 配置
-tx-lcn:
-  client:
-    manager-address: 192.168.0.223:8070
-  ribbon:
-    loadbalancer:
-      dtx:
-        enabled: true
+wechat:
+  wechatToken: wechatToken
+  app_id: wxcedd2cc8ed79ac85
+  secret: 74fadc1dc8d2a7954d035a72e73239a3
+#  app_id: wx419a354d9fd6dd2f
+#  secret: 4dfc3f5beb9155fdd128b50d29183330
+  externalTitle: 公众服务
+  externalDesc: 政务服务大厅
+  internalTitle: 内部服务
+  internalDesc: 政务服务大厅
+  mode: test
+  test-secret-list:
+  - Xcy9aujnpioqs00JC/kCVjiecMXO3wuZQr+AhoYc57Q1QF/HDMtH5o26IpYKDEcD0BhHWvjLdr2P0zyXDePivw==
+  - j1lMmWQnMomva48sHvf126qzdx8/yt9v1P5xdVZkecrzkQUDFYee6mx7T0WXF6z9WcpbkN02SGDABIiRZktnjQ==
+  - EKRYFTTqEnsyB279lXm/ADBZhiBg/4UqkyCyimWkgUwKUC5/QxDjPN69J9mD5w6kl/adz+hdnuftcIOkN7cljQ==

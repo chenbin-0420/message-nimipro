@@ -84,4 +84,11 @@ public interface MpMessageApi {
      * @return 模板授权用户列表
      */
     DtoTemplateAuthPhoneResult getTemplateAuthByPhoneList(DtoTemplateAuthPhoneRequest templateAuthAbbrRequests);
+
+    /**
+     * 通过手机号和模板ID获取模板授权用户列表
+     * @param request 模板授权用户请求
+     * @return 返回基础类
+     */
+    DtoBasicResult getTemplateAuthByCondition(DtoTemplateAuthPhoneCondRequest request);
 }

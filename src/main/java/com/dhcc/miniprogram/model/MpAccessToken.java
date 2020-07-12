@@ -25,7 +25,7 @@ import com.dhcc.basic.model.IdentifiedPo;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicUpdate(true)
 @Proxy(lazy = false)
-@Table(name = "mp_access_token", schema="dhcplat", catalog="dhcplat")
+@Table(name = "mp_access_token", schema="dhcplat_zjzwfwzx", catalog="dhcplat_zjzwfwzx")
 @TableDefine(title = "小程序访问令牌")
 public class MpAccessToken extends IdentifiedPo implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -107,7 +107,7 @@ public class MpAccessToken extends IdentifiedPo implements Serializable {
 	 * @return
 	 */
 	public Date getCreateTime() {
-		return createTime;
+		return (Date) createTime.clone();
 	}
 
 	/**
@@ -115,7 +115,7 @@ public class MpAccessToken extends IdentifiedPo implements Serializable {
 	 * @param createTime
 	 */
 	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
+		this.createTime = (Date) createTime.clone();
 	}
 
 	/**

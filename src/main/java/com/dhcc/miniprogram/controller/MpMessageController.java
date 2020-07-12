@@ -141,7 +141,14 @@ public class MpMessageController extends BaseController implements MpMessageApi 
     @Override
     @PostMapping(value = "/getTemplateAuthByPhoneList.do")
     @ApiOperation(value = "获取模板授权用户列表",notes = "获取模板授权用户列表")
-    public DtoTemplateAuthPhoneResult getTemplateAuthByPhoneList(@RequestBody DtoTemplateAuthPhoneRequest templateAuthAbbrRequests) {
-        return templateAuthService.getTemplateAuthByPhoneList(templateAuthAbbrRequests);
+    public DtoTemplateAuthPhoneResult getTemplateAuthByPhoneList(@RequestBody DtoTemplateAuthPhoneRequest templateAuthPhoneRequest) {
+        return templateAuthService.getTemplateAuthByPhoneList(templateAuthPhoneRequest);
+    }
+
+    @Override
+    @PostMapping(value = "/getTemplateAuthByCondition.do")
+    @ApiOperation(value = "根据手机号和模板ID查询用户模板授权",notes = "根据手机号和模板ID查询用户模板授权")
+    public DtoBasicResult getTemplateAuthByCondition(@RequestBody  DtoTemplateAuthPhoneCondRequest request) {
+        return templateAuthService.getTemplateAuthByCondition(request);
     }
 }

@@ -12,13 +12,17 @@ public enum MiniproUrlConfig {
      * GET_ACCESS_TOKEN_URL : 获取小程序全局唯一后台接口调用凭据
      * GET_SUBSCRIBE_MESSAGE : 小程序订阅消息请求类
      * GET_TEMPLATE_LIST ：获取当前帐号下的个人模板列表
+     *  测试服务 请求外网地址 10.254.35.100
+     *  端口号
+     *    14445 正式
+     *    14443 测试
      */
-    GET_CODE2SESSION_URL("登录凭证校验","https://api.weixin.qq.com/sns/jscode2session"),
-    GET_ACCESS_TOKEN_URL("获取小程序全局唯一后台接口调用凭据","https://api.weixin.qq.com/cgi-bin/token"),
-    SEND_SUBSCRIBE_MESSAGE("小程序订阅消息请求类","https://api.weixin.qq.com/cgi-bin/message/subscribe/send"),
-    GET_TEMPLATE_LIST("获取当前帐号下的个人模板列表","https://api.weixin.qq.com/wxaapi/newtmpl/gettemplate");
+    GET_CODE2SESSION_URL("登录凭证校验","http://10.254.35.100:14445/sns/jscode2session"),
+    GET_ACCESS_TOKEN_URL("获取小程序全局唯一后台接口调用凭据","http://10.254.35.100:14445/cgi-bin/token"),
+    SEND_SUBSCRIBE_MESSAGE("小程序订阅消息请求类","http://10.254.35.100:14445/cgi-bin/message/subscribe/send"),
+    GET_TEMPLATE_LIST("获取当前帐号下的个人模板列表","http://10.254.35.100:14445/wxaapi/newtmpl/gettemplate");
 
-    private MiniproUrlConfig(String name, String url) {
+    MiniproUrlConfig(String name, String url) {
         this.name = name;
         this.url = url;
     }

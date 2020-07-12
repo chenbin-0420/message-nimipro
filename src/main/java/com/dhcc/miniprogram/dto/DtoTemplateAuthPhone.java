@@ -15,14 +15,14 @@ public class DtoTemplateAuthPhone {
     /**
      * 模板ID
      */
-    private List<String> templateId;
+    private List<DtoTemplateId> templateIdList;
 
     public DtoTemplateAuthPhone() {
     }
 
-    public DtoTemplateAuthPhone(String phone, List<String> templateId) {
+    public DtoTemplateAuthPhone(String phone, List<DtoTemplateId> templateIdList) {
         this.phone = phone;
-        this.templateId = templateId;
+        this.templateIdList = templateIdList;
     }
 
     public String getPhone() {
@@ -33,11 +33,11 @@ public class DtoTemplateAuthPhone {
         this.phone = phone;
     }
 
-    public List<String> getTemplateId() {
-        return templateId;
+    public List<DtoTemplateId> getTemplateIdList() {
+        return templateIdList;
     }
 
-    public void setTemplateId(List<String> templateId) {
-        this.templateId = templateId;
+    public void setTemplateIdList(List<DtoTemplateId> templateIdList) {
+        this.templateIdList = templateIdList;
     }
 }

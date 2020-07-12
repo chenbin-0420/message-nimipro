@@ -65,6 +65,7 @@ public enum BusinessCodeEnum {
     GET_PHONE_NUMBER_EXCEPTION(632,"获取手机号异常"),
     GET_PHONE_NUMBER_FAIL(633,"获取手机号失败"),
     TEMPLATE_AUTH_FAIL(640,"添加模板授权失败"),
+    GET_TEMPLATE_LIST_EXCEPTION(641,"获取模板列表异常"),
     AUTH_NOT_EXISTS_SECRET(651,"没有权限"),
     AUTH_ERROR_SECRET(652,"秘钥不合法"),
     AUTH_CORRECT_SECRET_MSG(653,"秘钥正确"),
@@ -76,6 +77,7 @@ public enum BusinessCodeEnum {
     SEND_MASS_MESSAGE_ALL_FAIL(673,"群发订阅消息发送全部失败"),
     SEND_MASS_MESSAGE_NOT_EXISTS_PHONE(674,"接收群发订阅消息手机号用户不存在"),
     TEMPLATE_AUTH_PHONE_PARAM_EMPTY(681,"用户授权模板请求参数 phoneNumberList为空"),
+    TEMPLATE_AUTH_TEMPLATE_EMPTY(682,"用户无授权模板"),
     TEMPLATE_AUTH_PHONE_EXCEPTION(689,"用户授权模板异常")
     ;
 

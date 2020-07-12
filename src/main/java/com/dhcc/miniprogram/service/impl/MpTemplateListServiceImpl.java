@@ -96,6 +96,8 @@ public class MpTemplateListServiceImpl extends BaseServiceImpl<MpTemplateListDao
 		paramMap.put("access_token",accessToken);
 		// 设置请求体 headersMap
 		HashMap<String, String> headersMap = new HashMap<>(1);
+		// 初始化基础结果异常
+		DtoTemplateListResult templateListResult = new DtoTemplateListResult();
 		// Get请求
 		try {
 			// 获取模板列表Url配置
@@ -109,7 +111,7 @@ public class MpTemplateListServiceImpl extends BaseServiceImpl<MpTemplateListDao
 			// 记录获取模板列表日志
 			log.info("获取模板列表结果："+result);
 			// 解析字符串并返回模板列表结果
-			DtoTemplateListResult templateListResult = JSON.parseObject(result, DtoTemplateListResult.class);
+			templateListResult = JSON.parseObject(result, DtoTemplateListResult.class);
 			// 获取一个map对象
 			Map<String, Object> map = CheckInParamUtil.buildMap("DtoTemplateListResult", templateListResult);
 			// 检查是否为空
@@ -160,7 +162,9 @@ public class MpTemplateListServiceImpl extends BaseServiceImpl<MpTemplateListDao
 			}
 		} catch (Exception e) {
 			log.debug("获取模板列表异常",e);
-			throw new BusinessException("获取模板列表异常");
+			templateListResult.setErrcode(BusinessCodeEnum.GET_TEMPLATE_LIST_EXCEPTION.getCode());
+			templateListResult.setErrmsg(BusinessCodeEnum.GET_TEMPLATE_LIST_EXCEPTION.getMsg());
+			throw new BusinessException(BusinessCodeEnum.GET_TEMPLATE_LIST_EXCEPTION.getMsg());
 		}
 	}
 

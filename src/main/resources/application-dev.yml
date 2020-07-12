@@ -1,6 +1,5 @@
 ﻿server:
-  port: 8082
-  #Address: 192.168.1.99
+  port: 14443
 
 info:
   app.name: message-nimipro
@@ -13,12 +12,15 @@ spring:
     name: message-nimipro
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    #UTC:全球时间,Asia/Shanghai:上海时间,GMT%2B8:北京时间
-    url: jdbc:mysql://106.53.77.17:3306/dhcplat?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false
-    username: root
-    password: dh888888
+    #UTC:全球时间,Asia/Shanghai:上海时间,GMT%2B8:北京时间 &useSSL=false
+    # 镇江测试服务器
+    url: jdbc:mysql://172.21.137.115:3306/dhcplat_zjzwfwzx?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
+    # 镇江正式服务器
+    #url: jdbc:mysql://172.21.137.120:3306/dhcplat_zjzwfwzx?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
+    username: admin
+    password: admin
     sqlSchema:
-      plat: dhcplat
+      plat: dhcplat_zjzwfwzx
   jpa:
     database-platform: org.hibernate.dialect.MySQLInnoDBDialect
     show-sql: true
@@ -91,7 +93,3 @@ wechat:
     - Xcy9aujnpioqs00JC/kCVjiecMXO3wuZQr+AhoYc57Q1QF/HDMtH5o26IpYKDEcD0BhHWvjLdr2P0zyXDePivw==
     - j1lMmWQnMomva48sHvf126qzdx8/yt9v1P5xdVZkecrzkQUDFYee6mx7T0WXF6z9WcpbkN02SGDABIiRZktnjQ==
     - EKRYFTTqEnsyB279lXm/ADBZhiBg/4UqkyCyimWkgUwKUC5/QxDjPN69J9mD5w6kl/adz+hdnuftcIOkN7cljQ==
-  formal-secret-list:
-    - ygkaLvGCBYCWDd5UbBOwqlwsN70jqD8GIToD31U7jatchmWAPZHtlwoqsorYAMhn1oh988hLotv5VX9kM+3CqA==
-    - ygkaLvGCBYCWDd5UbBOwqr2VPED/osKqI3clJKWM8qzyeCRk47C9gjisdu3ugLSVrBcrcI22gIW0UWZXxgaiPA==
-    - ygkaLvGCBYCWDd5UbBOwqlSDemj2cFlhSLl9iCMCgNtoDy2A0bvSEUVqzyaKBrcYstzvpUJ1dEczX1Jc3Q7IbA==

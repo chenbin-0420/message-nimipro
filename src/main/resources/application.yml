@@ -1,9 +1,9 @@
 spring:
   profiles:
-    active: dev
+    active: prod
   datasource:
     sqlSchema:
-      plat: dhcplat
+      plat: dhcplat_zjzwfwzx
 
 logging:
   config: classpath:logback-spring.xml

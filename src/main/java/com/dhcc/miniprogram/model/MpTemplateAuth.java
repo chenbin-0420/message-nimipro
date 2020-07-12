@@ -22,7 +22,7 @@ import java.io.Serializable;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicUpdate(true)
 @Proxy(lazy = false)
-@Table(name = "mp_template_auth", schema="dhcplat", catalog="dhcplat")
+@Table(name = "mp_template_auth", schema="dhcplat_zjzwfwzx", catalog="dhcplat_zjzwfwzx")
 @TableDefine(title = "小程序订阅消息模板授权")
 public class MpTemplateAuth extends AuditedPo implements Serializable {
 	private static final long serialVersionUID = 1L;
