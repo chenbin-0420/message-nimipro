@@ -184,7 +184,6 @@ public class AESUtil {
             byte[] temp = new byte[groups * base];
             Arrays.fill(temp, (byte) 0);
             System.arraycopy(keyBytes, 0, temp, 0, keyLength);
-            keyBytes = temp;
         }
         // 初始化
         Security.addProvider(new BouncyCastleProvider());

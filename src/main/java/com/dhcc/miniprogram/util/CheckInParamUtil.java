@@ -311,15 +311,11 @@ public class CheckInParamUtil {
                 // 正式模式，判断是否相等，不相等秘钥不合法
                 if(CollectionUtils.isNotEmpty(wechatConfig.getFormalSecretList()) && !wechatConfig.getFormalSecretList().contains(secret)){
                     basicResult.setErrcode(BusinessCodeEnum.AUTH_ERROR_SECRET.getCode()).setErrmsg(BusinessCodeEnum.AUTH_ERROR_SECRET.getMsg());
-                } else { // 授权秘钥空值
-                    basicResult.setErrcode(BusinessCodeEnum.AUTH_SECRET_EMPTY_VALUE.getCode()).setErrmsg(BusinessCodeEnum.AUTH_SECRET_EMPTY_VALUE.getMsg());
                 }
             } else {
                 // 测试模式，判断是否相等，不相等秘钥不合法
                 if(CollectionUtils.isNotEmpty(wechatConfig.getFormalSecretList()) && !wechatConfig.getTestSecretList().contains(secret)){
                     basicResult.setErrcode(BusinessCodeEnum.AUTH_ERROR_SECRET.getCode()).setErrmsg(BusinessCodeEnum.AUTH_ERROR_SECRET.getMsg());
-                } else { // 授权秘钥空值
-                    basicResult.setErrcode(BusinessCodeEnum.AUTH_SECRET_EMPTY_VALUE.getCode()).setErrmsg(BusinessCodeEnum.AUTH_SECRET_EMPTY_VALUE.getMsg());
                 }
             }
         }
