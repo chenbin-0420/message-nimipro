@@ -3,6 +3,7 @@ package com.dhcc.miniprogram.dao.impl;
 import com.dhcc.basic.dao.hibernate.BaseDaoHibImpl;
 import com.dhcc.miniprogram.dao.MpUserDao;
 import com.dhcc.miniprogram.dto.DtoUser;
+import com.dhcc.miniprogram.dto.DtoUserId;
 import com.dhcc.miniprogram.model.MpUser;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -29,6 +30,11 @@ dao层一般情况下与model是一对一的关系！【只负责】这一个mod
  */
 @Repository
 public class MpUserDaoImpl extends BaseDaoHibImpl<MpUser, String> implements MpUserDao {
+
+    /**
+     * 根据手机号查询用户ID
+     */
+    private static final String GET_USERID_BY_PHONE_SQL = "SELECT mp.id FROM mp_user mp where mp.phone_num = ?";
 
     @Override
     public List<DtoUser> getDtoUserList(List<String> phoneList, String appId) {
@@ -58,4 +64,9 @@ public class MpUserDaoImpl extends BaseDaoHibImpl<MpUser, String> implements MpU
         return querySqlEntity(sql.toString(), param.toArray(), DtoUser.class, null);
     }
 
+    @Override
+    public DtoUserId getUserIdByPhone(String phone) {
+        List<DtoUserId> phoneNumberList = this.querySqlEntity(GET_USERID_BY_PHONE_SQL, new Object[]{phone}, DtoUserId.class, null);
+        return CollectionUtils.isEmpty(phoneNumberList) ? null: phoneNumberList.get(0);
+    }
 }

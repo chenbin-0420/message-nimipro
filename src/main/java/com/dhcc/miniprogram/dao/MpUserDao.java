@@ -2,6 +2,7 @@ package com.dhcc.miniprogram.dao;
 
 import com.dhcc.basic.dao.BaseDao;
 import com.dhcc.miniprogram.dto.DtoUser;
+import com.dhcc.miniprogram.dto.DtoUserId;
 import com.dhcc.miniprogram.model.MpUser;
 
 import java.util.List;
@@ -20,5 +21,12 @@ public interface MpUserDao extends BaseDao<MpUser, String> {
      * @return 用户列表
      */
     List<DtoUser> getDtoUserList(List<String> phoneList,String appId);
+
+    /**
+     * 通过手机号获取用户ID
+     * @param phone 手机号
+     * @return 手机号类
+     */
+    DtoUserId getUserIdByPhone(String phone);
 	
 }

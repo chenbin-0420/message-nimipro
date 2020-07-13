@@ -227,6 +227,11 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
         // 获取手机号
         String phoneNumber = jsonObject.getString(PURE_PHONE_NUMBER);
         if (StringUtils.isNotEmpty(phoneNumber)) {
+            // 获取用户ID，用户ID不为空则删除
+            DtoUserId dtoUserId = dao.getUserIdByPhone(phoneNumber);
+            if(dtoUserId != null){
+                dao.deleteById(dtoUserId.getId());
+            }
             // 用户绑定手机号、手机区号、修改时间并修改用户信息
             user.setPhoneNum(jsonObject.getString(PURE_PHONE_NUMBER));
             user.setPhonePrefix(jsonObject.getString(COUNTRY_CODE));
@@ -289,6 +294,11 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
         // 获取手机号
         String phoneNumber = jsonObject.getString(PURE_PHONE_NUMBER);
         if (StringUtils.isNotEmpty(phoneNumber)) {
+            // 获取用户ID，用户ID不为空则删除
+            DtoUserId dtoUserId = dao.getUserIdByPhone(phoneNumber);
+            if(dtoUserId != null){
+                dao.deleteById(dtoUserId.getId());
+            }
             // 手机号不同
             if(!phoneNumber.equals(user.getPhoneNum())){
                 // 1、用户绑定手机号、手机区号、修改时间并修改用户信息
