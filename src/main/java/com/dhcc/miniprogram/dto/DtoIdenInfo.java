@@ -52,6 +52,7 @@ public class DtoIdenInfo extends DtoBasicResult{
         user.setSessionKey(idenInfo.getSession_key());
         user.setUnionid(idenInfo.unionid);
         user.setCreateTime(DateUtil.getCurrentDate());
+        user.setCreateUser(idenInfo.getOpenid());
         return user;
     }
 }

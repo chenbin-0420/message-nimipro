@@ -2,7 +2,7 @@ package com.dhcc.miniprogram.model;
 
 import com.dhcc.basic.annotations.FieldDefine;
 import com.dhcc.basic.annotations.TableDefine;
-import com.dhcc.basic.model.AuditedPo;
+import com.dhcc.basic.model.IdentifiedPo;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicUpdate;
@@ -12,6 +12,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 测试用户-POJO
@@ -24,7 +25,7 @@ import java.io.Serializable;
 @Proxy(lazy = false)
 @Table(name = "mp_user", schema="dhcplat_zjzwfwzx", catalog="dhcplat_zjzwfwzx")
 @TableDefine(title = "小程序用户")
-public class MpUser extends AuditedPo implements Serializable {
+public class MpUser extends IdentifiedPo implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@FieldDefine(title = "小程序ID", number = 2)
@@ -32,7 +33,7 @@ public class MpUser extends AuditedPo implements Serializable {
 	private String appId;
 	
 	@FieldDefine(title = "用户唯一标识", number = 3)
-	@Column(name = "open_id", length = 32, unique = false, nullable = true)
+	@Column(name = "open_id", length = 30, unique = false, nullable = true)
 	private String openId;
 	
 	@FieldDefine(title = "会话密钥", number = 4)
@@ -43,13 +44,29 @@ public class MpUser extends AuditedPo implements Serializable {
 	@Column(name = "unionid", length = 50, unique = false, nullable = true)
 	private String unionid;
 
-	@FieldDefine(title = "手机号", number = 10)
+	@FieldDefine(title = "手机号", number = 6)
 	@Column(name = "phone_num", length = 11, unique = false, nullable = true)
 	private String phoneNum;
 
-	@FieldDefine(title = "手机区号", number = 11)
+	@FieldDefine(title = "手机区号", number = 7)
 	@Column(name = "phone_prefix", length = 5, unique = false, nullable = true)
 	private String phonePrefix;
+
+	@FieldDefine(title = "创建人", number = 8)
+	@Column(name = "create_user", length = 30, unique = false, nullable = true)
+	private String createUser;
+
+	@FieldDefine(title = "创建时间", number = 9)
+	@Column(name = "create_time", length = 26, unique = false, nullable = true)
+	private Date createTime;
+
+	@FieldDefine(title = "修改人", number = 10)
+	@Column(name = "modify_user", length = 30, unique = false, nullable = true)
+	private String modifyUser;
+
+	@FieldDefine(title = "修改时间", number = 11)
+	@Column(name = "modify_time", length = 26, unique = false, nullable = true)
+	private Date modifyTime;
 	
 	public MpUser() {
 		
@@ -149,5 +166,69 @@ public class MpUser extends AuditedPo implements Serializable {
 	 */
 	public void setPhonePrefix(String phonePrefix) {
 		this.phonePrefix = phonePrefix;
+	}
+
+	/**
+	 * 创建人
+	 * @return
+	 */
+	public String getCreateUser() {
+		return createUser;
+	}
+
+	/**
+	 * 创建人
+	 * @param createUser
+	 */
+	public void setCreateUser(String createUser) {
+		this.createUser = createUser;
+	}
+
+	/**
+	 * 创建时间
+	 * @return
+	 */
+	public Date getCreateTime() {
+		return createTime != null ? (Date) createTime.clone() : null;
+	}
+
+	/**
+	 * 创建时间
+	 * @return
+	 */
+	public void setCreateTime(Date createTime) {
+		this.createTime = (Date)createTime.clone();
+	}
+
+	/**
+	 * 修改人
+	 * @return
+	 */
+	public String getModifyUser() {
+		return modifyUser;
+	}
+
+	/**
+	 * 修改人
+	 * @param modifyUser
+	 */
+	public void setModifyUser(String modifyUser) {
+		this.modifyUser = modifyUser;
+	}
+
+	/**
+	 * 修改时间
+	 * @return
+	 */
+	public Date getModifyTime() {
+		return modifyTime != null ? (Date) modifyTime.clone() : null;
+	}
+
+	/**
+	 * 修改时间
+	 * @param modifyTime
+	 */
+	public void setModifyTime(Date modifyTime) {
+		this.modifyTime = (Date) modifyTime.clone();
 	}
 }

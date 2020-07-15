@@ -10,6 +10,7 @@ import com.dhcc.miniprogram.dto.DtoTemplateList;
 import com.dhcc.miniprogram.dto.DtoTemplateListQuery;
 import com.dhcc.miniprogram.dto.DtoTemplateListResult;
 import com.dhcc.miniprogram.enums.BusinessCodeEnum;
+import com.dhcc.miniprogram.enums.IsSubEnum;
 import com.dhcc.miniprogram.model.MpTemplateList;
 import com.dhcc.miniprogram.service.MpTemplateListService;
 import com.dhcc.miniprogram.util.AccessTokenUtil;
@@ -126,7 +127,7 @@ public class MpTemplateListServiceImpl extends BaseServiceImpl<MpTemplateListDao
 						// 判断 priTmplId 不为空
 						if(StringUtils.isNotEmpty(priTmplId)){
 							// 根据 templateId 查询 MpTemplateList
-							MpTemplateList templateList = dao.findOne("templateId = ?", new Object[]{ priTmplId });
+							MpTemplateList templateList = dao.findOne("templateId = ? and validation = ?", new Object[]{ priTmplId, IsSubEnum.TRUE.getCode()});
 							// 模板列表存在
 							if(templateList != null){
 								// 模板内容有改动

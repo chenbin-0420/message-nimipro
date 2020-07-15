@@ -2,7 +2,7 @@ package com.dhcc.miniprogram.model;
 
 import com.dhcc.basic.annotations.FieldDefine;
 import com.dhcc.basic.annotations.TableDefine;
-import com.dhcc.basic.model.AuditedPo;
+import com.dhcc.basic.model.IdentifiedPo;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicUpdate;
@@ -12,6 +12,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 小程序订阅消息模板授权-POJO
@@ -24,7 +25,7 @@ import java.io.Serializable;
 @Proxy(lazy = false)
 @Table(name = "mp_template_auth", schema="dhcplat_zjzwfwzx", catalog="dhcplat_zjzwfwzx")
 @TableDefine(title = "小程序订阅消息模板授权")
-public class MpTemplateAuth extends AuditedPo implements Serializable {
+public class MpTemplateAuth extends IdentifiedPo implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@FieldDefine(title = "手机号", number = 2)
@@ -54,6 +55,22 @@ public class MpTemplateAuth extends AuditedPo implements Serializable {
 	@FieldDefine(title = "是否订阅: 0-未订阅、1-已订阅", number = 8)
 	@Column(name = "is_sub", length = 3, unique = false, nullable = true)
 	private Integer isSub;
+
+	@FieldDefine(title = "创建人", number = 9)
+	@Column(name = "create_user", length = 30, unique = false, nullable = true)
+	private String createUser;
+
+	@FieldDefine(title = "创建时间", number = 10)
+	@Column(name = "create_time", length = 26, unique = false, nullable = true)
+	private Date createTime;
+
+	@FieldDefine(title = "修改人", number = 11)
+	@Column(name = "modify_user", length = 30, unique = false, nullable = true)
+	private String modifyUser;
+
+	@FieldDefine(title = "修改时间", number = 12)
+	@Column(name = "modify_time", length = 26, unique = false, nullable = true)
+	private Date modifyTime;
 
 	public MpTemplateAuth() {
 
@@ -171,4 +188,67 @@ public class MpTemplateAuth extends AuditedPo implements Serializable {
 		this.isSub = isSub;
 	}
 
+	/**
+	 * 创建人
+	 * @return
+	 */
+	public String getCreateUser() {
+		return createUser;
+	}
+
+	/**
+	 * 创建人
+	 * @param createUser
+	 */
+	public void setCreateUser(String createUser) {
+		this.createUser = createUser;
+	}
+
+	/**
+	 * 创建时间
+	 * @return
+	 */
+	public Date getCreateTime() {
+		return createTime != null ? (Date) createTime.clone() : null;
+	}
+
+	/**
+	 * 创建时间
+	 * @return
+	 */
+	public void setCreateTime(Date createTime) {
+		this.createTime = (Date)createTime.clone();
+	}
+
+	/**
+	 * 修改人
+	 * @return
+	 */
+	public String getModifyUser() {
+		return modifyUser;
+	}
+
+	/**
+	 * 修改人
+	 * @param modifyUser
+	 */
+	public void setModifyUser(String modifyUser) {
+		this.modifyUser = modifyUser;
+	}
+
+	/**
+	 * 修改时间
+	 * @return
+	 */
+	public Date getModifyTime() {
+		return modifyTime != null ? (Date) modifyTime.clone() : null;
+	}
+
+	/**
+	 * 修改时间
+	 * @param modifyTime
+	 */
+	public void setModifyTime(Date modifyTime) {
+		this.modifyTime = (Date) modifyTime.clone();
+	}
 }

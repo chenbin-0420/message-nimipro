@@ -143,7 +143,7 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
             // 根据openId查询用户是否存在
             SimpleCondition sc = new SimpleCondition()
                     .addParm("openId", idenInfo.getOpenid())
-                    .addParm("app_id", appId);
+                    .addParm("appId", appId);
             MpUser user = dao.findOne(sc);
             // 不存在添加用户
             if (user == null) {
@@ -162,6 +162,7 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
                 }
                 // 修改时间设置为当前时间并更新user
                 user.setModifyTime(DateUtil.getCurrentDate());
+                user.setModifyUser(idenInfo.getOpenid());
                 update(user);
                 // 2.返回 idenInfo 对象
                 // 标识成功，前端判断是否需要获取手机号
@@ -182,7 +183,7 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public DtoPhoneNumberResult getPhoneNumber(DtoPhoneNumberRequest phoneNumberRequest) {
         // 记录入参日志
         log.info("获取手机号入参：" + JSON.toJSONString(phoneNumberRequest));

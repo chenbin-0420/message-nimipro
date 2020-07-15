@@ -28,51 +28,51 @@ import java.util.Date;
 public class MpMessage extends IdentifiedPo implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
-	@FieldDefine(title = "app_id", number = 2)
+	@FieldDefine(title = "小程序ID", number = 2)
 	@Column(name = "app_id", length = 32, unique = false, nullable = true)
 	private String appId;
 	
-	@FieldDefine(title = "channel", number = 3)
+	@FieldDefine(title = "渠道", number = 3)
 	@Column(name = "channel", length = 2, unique = false, nullable = true)
 	private String channel;
 	
-	@FieldDefine(title = "create_time", number = 4)
+	@FieldDefine(title = "创建时间", number = 4)
 	@Column(name = "create_time", length = 26, unique = false, nullable = true)
 	private Date createTime;
 	
-	@FieldDefine(title = "jump_page", number = 5)
+	@FieldDefine(title = "跳转页面", number = 5)
 	@Column(name = "jump_page", length = 255, unique = false, nullable = true)
 	private String jumpPage;
 	
-	@FieldDefine(title = "lang_type", number = 6)
+	@FieldDefine(title = "语言类型", number = 6)
 	@Column(name = "lang_type", length = 5, unique = false, nullable = true)
 	private String langType;
 	
-	@FieldDefine(title = "nimipro_state", number = 7)
+	@FieldDefine(title = "小程序状态", number = 7)
 	@Column(name = "nimipro_state", length = 10, unique = false, nullable = true)
 	private String nimiproState;
 	
-	@FieldDefine(title = "send_status", number = 8)
+	@FieldDefine(title = "发送状态", number = 8)
 	@Column(name = "send_status", length = 3, unique = false, nullable = true)
 	private String sendStatus;
 	
-	@FieldDefine(title = "send_tmpl_cont", number = 9)
+	@FieldDefine(title = "发送模板内容", number = 9)
 	@Column(name = "send_tmpl_cont", length = 375, unique = false, nullable = true)
 	private String sendTmplCont;
 	
-	@FieldDefine(title = "send_tmpl_time", number = 10)
+	@FieldDefine(title = "发送模板时间", number = 10)
 	@Column(name = "send_tmpl_time", length = 26, unique = false, nullable = true)
 	private Date sendTmplTime;
 	
-	@FieldDefine(title = "sender", number = 11)
+	@FieldDefine(title = "发送人", number = 11)
 	@Column(name = "sender", length = 32, unique = false, nullable = true)
 	private String sender;
 	
-	@FieldDefine(title = "tmpl_id", number = 12)
+	@FieldDefine(title = "模板ID", number = 12)
 	@Column(name = "tmpl_id", length = 50, unique = false, nullable = true)
 	private String tmplId;
 	
-	@FieldDefine(title = "touser", number = 13)
+	@FieldDefine(title = "接受者ID：openid", number = 13)
 	@Column(name = "touser", length = 30, unique = false, nullable = true)
 	private String touser;
 	
@@ -81,7 +81,7 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	}
 	
 	/**
-	 * 读取属性：app_id
+	 * 读取属性：小程序ID
 	 * @return
 	 */
 	public String getAppId() {
@@ -89,7 +89,7 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	}
 	
 	/**
-	 * 设置属性：app_id
+	 * 设置属性：小程序ID
 	 * @param appId
 	 */
 	public void setAppId(String appId) {
@@ -97,7 +97,7 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	}
 	
 	/**
-	 * 读取属性：channel
+	 * 读取属性：渠道
 	 * @return
 	 */
 	public String getChannel() {
@@ -105,7 +105,7 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	}
 	
 	/**
-	 * 设置属性：channel
+	 * 设置属性：渠道
 	 * @param channel
 	 */
 	public void setChannel(String channel) {
@@ -113,7 +113,7 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	}
 	
 	/**
-	 * 读取属性：create_time
+	 * 读取属性：创建时间
 	 * @return
 	 */
 	public Date getCreateTime() {
@@ -121,7 +121,7 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	}
 	
 	/**
-	 * 设置属性：create_time
+	 * 设置属性：创建时间
 	 * @param createTime
 	 */
 	public void setCreateTime(Date createTime) {
@@ -129,7 +129,7 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	}
 	
 	/**
-	 * 读取属性：jump_page
+	 * 读取属性：跳转页面
 	 * @return
 	 */
 	public String getJumpPage() {
@@ -137,7 +137,7 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	}
 	
 	/**
-	 * 设置属性：jump_page
+	 * 设置属性：跳转页面
 	 * @param jumpPage
 	 */
 	public void setJumpPage(String jumpPage) {
@@ -145,7 +145,7 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	}
 	
 	/**
-	 * 读取属性：lang_type
+	 * 读取属性：语言类型
 	 * @return
 	 */
 	public String getLangType() {
@@ -153,7 +153,7 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	}
 	
 	/**
-	 * 设置属性：lang_type
+	 * 设置属性：语言类型
 	 * @param langType
 	 */
 	public void setLangType(String langType) {
@@ -161,7 +161,7 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	}
 	
 	/**
-	 * 读取属性：nimipro_state
+	 * 读取属性：小程序状态
 	 * @return
 	 */
 	public String getNimiproState() {
@@ -169,7 +169,7 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	}
 	
 	/**
-	 * 设置属性：nimipro_state
+	 * 设置属性：小程序状态
 	 * @param nimiproState
 	 */
 	public void setNimiproState(String nimiproState) {
@@ -177,7 +177,7 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	}
 	
 	/**
-	 * 读取属性：send_status
+	 * 读取属性：发送状态
 	 * @return
 	 */
 	public String getSendStatus() {
@@ -185,7 +185,7 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	}
 	
 	/**
-	 * 设置属性：send_status
+	 * 设置属性：发送状态
 	 * @param sendStatus
 	 */
 	public void setSendStatus(String sendStatus) {
@@ -193,7 +193,7 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	}
 	
 	/**
-	 * 读取属性：send_tmpl_cont
+	 * 读取属性：发送模板内容
 	 * @return
 	 */
 	public String getSendTmplCont() {
@@ -201,7 +201,7 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	}
 	
 	/**
-	 * 设置属性：send_tmpl_cont
+	 * 设置属性：发送模板内容
 	 * @param sendTmplCont
 	 */
 	public void setSendTmplCont(String sendTmplCont) {
@@ -209,7 +209,7 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	}
 	
 	/**
-	 * 读取属性：send_tmpl_time
+	 * 读取属性：发送模板时间
 	 * @return
 	 */
 	public Date getSendTmplTime() {
@@ -217,7 +217,7 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	}
 	
 	/**
-	 * 设置属性：send_tmpl_time
+	 * 设置属性：发送模板时间
 	 * @param sendTmplTime
 	 */
 	public void setSendTmplTime(Date sendTmplTime) {
@@ -225,7 +225,7 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	}
 	
 	/**
-	 * 读取属性：sender
+	 * 读取属性：发送者
 	 * @return
 	 */
 	public String getSender() {
@@ -233,7 +233,7 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	}
 	
 	/**
-	 * 设置属性：sender
+	 * 设置属性：发送者
 	 * @param sender
 	 */
 	public void setSender(String sender) {
@@ -241,7 +241,7 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	}
 	
 	/**
-	 * 读取属性：tmpl_id
+	 * 读取属性：模板ID
 	 * @return
 	 */
 	public String getTmplId() {
@@ -249,7 +249,7 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	}
 	
 	/**
-	 * 设置属性：tmpl_id
+	 * 设置属性：模板ID
 	 * @param tmplId
 	 */
 	public void setTmplId(String tmplId) {
@@ -257,7 +257,7 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	}
 	
 	/**
-	 * 读取属性：touser
+	 * 读取属性：接受者ID：openid
 	 * @return
 	 */
 	public String getTouser() {
@@ -265,7 +265,7 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	}
 	
 	/**
-	 * 设置属性：touser
+	 * 设置属性：接受者ID：openid
 	 * @param touser
 	 */
 	public void setTouser(String touser) {

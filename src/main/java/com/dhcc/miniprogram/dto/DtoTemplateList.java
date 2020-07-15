@@ -1,5 +1,6 @@
 package com.dhcc.miniprogram.dto;
 
+import com.dhcc.miniprogram.enums.IsSubEnum;
 import com.dhcc.miniprogram.model.MpTemplateList;
 import com.dhcc.miniprogram.util.DateUtil;
 
@@ -83,6 +84,7 @@ public class DtoTemplateList {
         templateList.setExample(getTemplateList.getExample());
         templateList.setType(getTemplateList.getType());
         templateList.setCreateTime(DateUtil.getCurrentDate());
+        templateList.setValidation(IsSubEnum.TRUE.getCode());
         return templateList;
     }
 }

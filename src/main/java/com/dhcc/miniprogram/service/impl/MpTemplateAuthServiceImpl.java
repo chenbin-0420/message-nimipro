@@ -116,9 +116,9 @@ public class MpTemplateAuthServiceImpl extends BaseServiceImpl<MpTemplateAuthDao
 			String templateId = templateListQuery.getTemplateId();
 			// 模板ID不为空，添加模板授权
 			if(StringUtils.isNotEmpty(templateId)){
-				// 根据模板ID和手机号查询模板授权
-				List<Object[]> idListByCondition = dao.getIdListByCondition(templateId, phone);
-				if(CollectionUtils.isEmpty(idListByCondition)) {
+				// 根据模板ID和手机号查询模板授权结果
+				// 模板授权结果为空，添加模板授权
+				if(CollectionUtils.isEmpty(dao.getIdListByPhoneTemplateId(templateId, phone))) {
 					// 模板授权属性设置 模板ID、标题、描述、类型、排列顺序并添加模板授权信息
 					MpTemplateAuth templateAuth = DtoTemplateAuthRequest.toPO(templateAuthRequest);
 					templateAuth.setTemplateId(templateId);
@@ -128,14 +128,14 @@ public class MpTemplateAuthServiceImpl extends BaseServiceImpl<MpTemplateAuthDao
 					templateAuth.setTmplOrder(1);
 					try {
 						save(templateAuth);
+						// 记日志
+						log.info("添加模板授权结果:"+JSON.toJSONString(templateAuth));
 					} catch (Exception e) {
 						// 模板授权 设置模板数组、标题、描述
 						templateAuthResult = new DtoTemplateAuthResult(BusinessCodeEnum.TEMPLATE_AUTH_FAIL.getCode(),"添加模板授权失败");
 						// 返回基础的模板授权结果
 						return getBasicTemplateAuthResult(templateAuthResult);
-
 					}
-					log.info(JSON.toJSONString(templateAuth));
 				}
 			}
 		}
