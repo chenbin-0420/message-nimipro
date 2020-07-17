@@ -94,7 +94,7 @@ public class MpAccessTokenServiceImpl extends BaseServiceImpl<MpAccessTokenDao, 
 		CheckInParamUtil.checkInParam(dtoAccessTokenResult,appid,appSecret);
 		// 不为空，返回入参为空的属性
 		if(dtoAccessTokenResult.getErrcode() != null){
-			log.debug(JSON.toJSONString(dtoAccessTokenResult));
+			log.error(JSON.toJSONString(dtoAccessTokenResult));
 			return dtoAccessTokenResult;
 		}
 		// 获取 httpClient
@@ -127,7 +127,7 @@ public class MpAccessTokenServiceImpl extends BaseServiceImpl<MpAccessTokenDao, 
 			return dtoAccessTokenResult;
 		} catch (Exception e) {
 			// 记录日志和抛异常
-			log.debug(BusinessCodeEnum.ACCESS_TOKEN_EXCEPTION.getMsg(), e);
+			log.error(BusinessCodeEnum.ACCESS_TOKEN_EXCEPTION.getMsg(), e);
 			return dtoAccessTokenResult.setErrcode(BusinessCodeEnum.ACCESS_TOKEN_EXCEPTION.getCode()).setErrmsg(BusinessCodeEnum.ACCESS_TOKEN_EXCEPTION.getMsg());
 		}
 	}

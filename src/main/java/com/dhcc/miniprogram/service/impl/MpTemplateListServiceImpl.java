@@ -153,7 +153,7 @@ public class MpTemplateListServiceImpl extends BaseServiceImpl<MpTemplateListDao
 				return templateListResult;
 			}
 		} catch (Exception e) {
-			log.debug("获取模板列表异常",e);
+			log.error("获取模板列表异常",e);
 			return templateListResult.setErrcode(BusinessCodeEnum.GET_TEMPLATE_LIST_EXCEPTION.getCode())
 					.setErrmsg(BusinessCodeEnum.GET_TEMPLATE_LIST_EXCEPTION.getMsg());
 		}

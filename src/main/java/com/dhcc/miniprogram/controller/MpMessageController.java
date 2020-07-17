@@ -60,10 +60,10 @@ public class MpMessageController extends BaseController implements MpMessageApi 
             // 输出微信加密签名
             out.write(echostr);
         } catch (IOException e) {
-            log.debug(BusinessCodeEnum.VERIFY_SERVER_IO_EXCEPTION.getMsg(), e);
+            log.error(BusinessCodeEnum.VERIFY_SERVER_IO_EXCEPTION.getMsg(), e);
             throw new BusinessException(BusinessCodeEnum.VERIFY_SERVER_IO_EXCEPTION.getMsg());
         } catch (Exception e) {
-            log.debug(BusinessCodeEnum.VERIFY_SERVER_EXCEPTION.getMsg(), e);
+            log.error(BusinessCodeEnum.VERIFY_SERVER_EXCEPTION.getMsg(), e);
             throw new BusinessException(BusinessCodeEnum.VERIFY_SERVER_EXCEPTION.getMsg());
         } finally {
             log.info("关闭微信服务器资源");

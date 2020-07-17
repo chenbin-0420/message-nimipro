@@ -202,7 +202,7 @@ public class MpTemplateAuthServiceImpl extends BaseServiceImpl<MpTemplateAuthDao
 			templateAuthPhoneResult.setData(templateAuthPhones);
 		} catch (Exception e) {
 			// 打印异常信息
-			log.debug(BusinessCodeEnum.USER_AUTH_PHONE_EXCEPTION.getMsg(),e);
+			log.error(BusinessCodeEnum.USER_AUTH_PHONE_EXCEPTION.getMsg(),e);
 			// 抛异常信息
 			templateAuthPhoneResult.setErrcode(BusinessCodeEnum.USER_AUTH_PHONE_EXCEPTION.getCode());
 			templateAuthPhoneResult.setErrmsg(BusinessCodeEnum.USER_AUTH_PHONE_EXCEPTION.getMsg());

@@ -81,7 +81,7 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
             return echostr;
         } else {
             // 抛异常
-            log.debug("验证消息来自微信服务器失败,参数数组{}", JSON.toJSON(arr));
+            log.error("验证消息来自微信服务器失败,参数数组{}", JSON.toJSON(arr));
             throw new BusinessException(BusinessCodeEnum.VERIFY_SERVER_FAIL_EXCEPTION.getMsg());
         }
 
@@ -168,7 +168,7 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
             return dtoBasicResult;
         } catch (Exception e) {
             // 记录日志和抛异常
-            log.debug(BusinessCodeEnum.SEND_SINGLE_MESSAGE_EXCEPTION.getMsg(), e);
+            log.error(BusinessCodeEnum.SEND_SINGLE_MESSAGE_EXCEPTION.getMsg(), e);
             return dtoBasicResult.setErrcode(BusinessCodeEnum.SEND_SINGLE_MESSAGE_EXCEPTION.getCode()).setErrmsg(BusinessCodeEnum.SEND_SINGLE_MESSAGE_EXCEPTION.getMsg());
         }
     }
@@ -264,7 +264,7 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
                 dao.update(mpMessage);
             } catch (Exception e) {
                 // 记录日志和抛异常
-                log.debug("群发消息异常", e);
+                log.error("群发消息异常", e);
                 // 添加到发送失败手机号列表
                 sendFailPhoneList.add(phone);
             }

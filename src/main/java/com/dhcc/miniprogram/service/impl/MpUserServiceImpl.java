@@ -102,15 +102,13 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
     private static final String PURE_PHONE_NUMBER = "purePhoneNumber";
     private static final String COUNTRY_CODE = "countryCode";
 
-
-
     @Autowired
     private WechatConfig wechatConfig;
 
     @Override
     @Transactional
     public DtoIdenInfoResult userLogin(DtoLoginRequest login) {
-        // 记录登录参数日志
+        // 记录登录日志
         log.info("小程序登录入参：" + JSON.toJSONString(login));
         // 初始化 idenInfoResult 对象
         DtoIdenInfoResult idenInfoResult = new DtoIdenInfoResult();
@@ -176,7 +174,7 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
             return idenInfoResult;
         } catch (Exception e) {
             // 记录日志和抛异常
-            log.debug(BusinessCodeEnum.LOGIN_SERVER_EXCEPTION.getMsg(), e);
+            log.error(BusinessCodeEnum.LOGIN_SERVER_EXCEPTION.getMsg(), e);
             return new DtoIdenInfoResult(BusinessCodeEnum.LOGIN_SERVER_EXCEPTION.getCode(), BusinessCodeEnum.LOGIN_SERVER_EXCEPTION.getMsg());
         }
     }
@@ -213,7 +211,7 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
         } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidAlgorithmParameterException | InvalidKeyException |
                 BadPaddingException | IllegalBlockSizeException | UnsupportedEncodingException | NoSuchProviderException e) {
             // 记录异常
-            log.debug(BusinessCodeEnum.GET_PHONE_NUMBER_EXCEPTION.getMsg(), e);
+            log.error(BusinessCodeEnum.GET_PHONE_NUMBER_EXCEPTION.getMsg(), e);
             // 设置 errcode、errmsg 并返回 phoneNumberResult
             phoneNumberResult.setErrcode(BusinessCodeEnum.GET_PHONE_NUMBER_EXCEPTION.getCode());
             phoneNumberResult.setErrmsg(BusinessCodeEnum.GET_PHONE_NUMBER_EXCEPTION.getMsg());
@@ -279,7 +277,7 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
             decrypt = AESUtil.pkcs7PaddingDecrypt(sessionKey, phoneNumberRequest.getIv(), phoneNumberRequest.getEncryptedData());
         } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidAlgorithmParameterException | InvalidKeyException |
                 BadPaddingException | IllegalBlockSizeException | UnsupportedEncodingException | NoSuchProviderException e) {
-            log.debug("换绑手机号异常", e);
+            log.error("换绑手机号异常", e);
             // 设置换绑手机号异常
             phoneNumberResult.setErrcode(BusinessCodeEnum.CHANGE_PHONE_EXCEPTION.getCode());
             phoneNumberResult.setErrmsg(BusinessCodeEnum.CHANGE_PHONE_EXCEPTION.getMsg());
