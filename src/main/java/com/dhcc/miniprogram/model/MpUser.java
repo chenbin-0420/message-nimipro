@@ -52,19 +52,11 @@ public class MpUser extends IdentifiedPo implements Serializable {
 	@Column(name = "phone_prefix", length = 5, unique = false, nullable = true)
 	private String phonePrefix;
 
-	@FieldDefine(title = "创建人", number = 8)
-	@Column(name = "create_user", length = 30, unique = false, nullable = true)
-	private String createUser;
-
-	@FieldDefine(title = "创建时间", number = 9)
+	@FieldDefine(title = "创建时间", number = 8)
 	@Column(name = "create_time", length = 26, unique = false, nullable = true)
 	private Date createTime;
 
-	@FieldDefine(title = "修改人", number = 10)
-	@Column(name = "modify_user", length = 30, unique = false, nullable = true)
-	private String modifyUser;
-
-	@FieldDefine(title = "修改时间", number = 11)
+	@FieldDefine(title = "修改时间", number = 9)
 	@Column(name = "modify_time", length = 26, unique = false, nullable = true)
 	private Date modifyTime;
 	
@@ -169,22 +161,6 @@ public class MpUser extends IdentifiedPo implements Serializable {
 	}
 
 	/**
-	 * 创建人
-	 * @return
-	 */
-	public String getCreateUser() {
-		return createUser;
-	}
-
-	/**
-	 * 创建人
-	 * @param createUser
-	 */
-	public void setCreateUser(String createUser) {
-		this.createUser = createUser;
-	}
-
-	/**
 	 * 创建时间
 	 * @return
 	 */
@@ -198,22 +174,6 @@ public class MpUser extends IdentifiedPo implements Serializable {
 	 */
 	public void setCreateTime(Date createTime) {
 		this.createTime = (Date)createTime.clone();
-	}
-
-	/**
-	 * 修改人
-	 * @return
-	 */
-	public String getModifyUser() {
-		return modifyUser;
-	}
-
-	/**
-	 * 修改人
-	 * @param modifyUser
-	 */
-	public void setModifyUser(String modifyUser) {
-		this.modifyUser = modifyUser;
 	}
 
 	/**

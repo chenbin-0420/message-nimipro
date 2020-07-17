@@ -32,49 +32,49 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	@Column(name = "app_id", length = 32, unique = false, nullable = true)
 	private String appId;
 	
-	@FieldDefine(title = "渠道", number = 3)
-	@Column(name = "channel", length = 2, unique = false, nullable = true)
-	private String channel;
-	
-	@FieldDefine(title = "创建时间", number = 4)
+	@FieldDefine(title = "创建时间", number = 3)
 	@Column(name = "create_time", length = 26, unique = false, nullable = true)
 	private Date createTime;
 	
-	@FieldDefine(title = "跳转页面", number = 5)
+	@FieldDefine(title = "跳转页面", number = 4)
 	@Column(name = "jump_page", length = 255, unique = false, nullable = true)
 	private String jumpPage;
 	
-	@FieldDefine(title = "语言类型", number = 6)
+	@FieldDefine(title = "语言类型", number = 5)
 	@Column(name = "lang_type", length = 5, unique = false, nullable = true)
 	private String langType;
 	
-	@FieldDefine(title = "小程序状态", number = 7)
+	@FieldDefine(title = "小程序状态", number = 6)
 	@Column(name = "nimipro_state", length = 10, unique = false, nullable = true)
 	private String nimiproState;
 	
-	@FieldDefine(title = "发送状态", number = 8)
+	@FieldDefine(title = "发送状态", number = 7)
 	@Column(name = "send_status", length = 3, unique = false, nullable = true)
 	private String sendStatus;
 	
-	@FieldDefine(title = "发送模板内容", number = 9)
+	@FieldDefine(title = "发送模板内容", number = 8)
 	@Column(name = "send_tmpl_cont", length = 375, unique = false, nullable = true)
 	private String sendTmplCont;
 	
-	@FieldDefine(title = "发送模板时间", number = 10)
+	@FieldDefine(title = "发送模板时间", number = 9)
 	@Column(name = "send_tmpl_time", length = 26, unique = false, nullable = true)
 	private Date sendTmplTime;
 	
-	@FieldDefine(title = "发送人", number = 11)
-	@Column(name = "sender", length = 32, unique = false, nullable = true)
-	private String sender;
-	
-	@FieldDefine(title = "模板ID", number = 12)
+	@FieldDefine(title = "模板ID", number = 10)
 	@Column(name = "tmpl_id", length = 50, unique = false, nullable = true)
 	private String tmplId;
 	
-	@FieldDefine(title = "接受者ID：openid", number = 13)
+	@FieldDefine(title = "接受者ID：openid", number = 11)
 	@Column(name = "touser", length = 30, unique = false, nullable = true)
 	private String touser;
+
+	@FieldDefine(title = "结果编码", number = 12)
+	@Column(name = "errcode", length = 2, unique = false, nullable = true)
+	private Integer errcode;
+
+	@FieldDefine(title = "结果消息", number = 13)
+	@Column(name = "errmsg", length = 32, unique = false, nullable = true)
+	private String errmsg;
 	
 	public MpMessage() {
 		
@@ -94,22 +94,6 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	 */
 	public void setAppId(String appId) {
 		this.appId = appId;
-	}
-	
-	/**
-	 * 读取属性：渠道
-	 * @return
-	 */
-	public String getChannel() {
-		return channel;
-	}
-	
-	/**
-	 * 设置属性：渠道
-	 * @param channel
-	 */
-	public void setChannel(String channel) {
-		this.channel = channel;
 	}
 	
 	/**
@@ -223,23 +207,7 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	public void setSendTmplTime(Date sendTmplTime) {
 		this.sendTmplTime = (Date) sendTmplTime.clone();
 	}
-	
-	/**
-	 * 读取属性：发送者
-	 * @return
-	 */
-	public String getSender() {
-		return sender;
-	}
-	
-	/**
-	 * 设置属性：发送者
-	 * @param sender
-	 */
-	public void setSender(String sender) {
-		this.sender = sender;
-	}
-	
+
 	/**
 	 * 读取属性：模板ID
 	 * @return
@@ -271,5 +239,36 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	public void setTouser(String touser) {
 		this.touser = touser;
 	}
-	
+
+	/**
+	 * 读取属性：消息编码
+	 * @return
+	 */
+	public Integer getErrcode() {
+		return errcode;
+	}
+
+	/**
+	 * 设置属性：消息编码
+	 * @param errcode
+	 */
+	public void setErrcode(Integer errcode) {
+		this.errcode = errcode;
+	}
+
+	/**
+	 * 读取属性：结果消息
+	 * @return
+	 */
+	public String getErrmsg() {
+		return errmsg;
+	}
+
+	/**
+	 * 设置属性：结果消息
+	 * @param errmsg
+	 */
+	public void setErrmsg(String errmsg) {
+		this.errmsg = errmsg;
+	}
 }

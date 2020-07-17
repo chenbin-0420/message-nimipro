@@ -162,7 +162,6 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
                 }
                 // 修改时间设置为当前时间并更新user
                 user.setModifyTime(DateUtil.getCurrentDate());
-                user.setModifyUser(idenInfo.getOpenid());
                 update(user);
                 // 2.返回 idenInfo 对象
                 // 标识成功，前端判断是否需要获取手机号
@@ -187,7 +186,7 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
     public DtoPhoneNumberResult getPhoneNumber(DtoPhoneNumberRequest phoneNumberRequest) {
         // 记录入参日志
         log.info("获取手机号入参：" + JSON.toJSONString(phoneNumberRequest));
-        // 初始化 snumberResult
+        // 初始化 phoneNumberResult
         DtoPhoneNumberResult phoneNumberResult = new DtoPhoneNumberResult();
         // 检查获取手机号入参
         CheckInParamUtil.checkInParam(phoneNumberResult,phoneNumberRequest);
@@ -230,7 +229,7 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
         if (StringUtils.isNotEmpty(phoneNumber)) {
             // 获取用户ID，用户ID不为空则删除
             DtoUserId dtoUserId = dao.getUserIdByPhone(phoneNumber);
-            if(dtoUserId != null){
+            if(dtoUserId != null && !dtoUserId.getId().equals(user.getId())){
                 dao.deleteById(dtoUserId.getId());
             }
             // 用户绑定手机号、手机区号、修改时间并修改用户信息
@@ -297,7 +296,8 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
         if (StringUtils.isNotEmpty(phoneNumber)) {
             // 获取用户ID，用户ID不为空则删除
             DtoUserId dtoUserId = dao.getUserIdByPhone(phoneNumber);
-            if(dtoUserId != null){
+            // 用户存在并且修改的手机号不为同意用户，则删除
+            if(dtoUserId != null && !dtoUserId.getId().equals(user.getId())){
                 dao.deleteById(dtoUserId.getId());
             }
             // 手机号不同

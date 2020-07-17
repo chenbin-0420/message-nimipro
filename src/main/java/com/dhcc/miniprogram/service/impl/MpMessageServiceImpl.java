@@ -56,11 +56,6 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
     @Autowired
     private AccessTokenUtil accessTokenUtil;
 
-    /**
-     * DEV ：开发模式
-     */
-    private static final String DEV = "dev";
-
     @Override
     public String verifyMsgFromWechat(HttpServletRequest request) {
         /**
@@ -141,7 +136,6 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
         MpMessage mpMessage = DtoSubscribeMessage.toPO(request);
         // 给小程序ID赋值并添加发送消息
         mpMessage.setAppId(wechatConfig.getAppId());
-        dao.save(mpMessage);
         // 发送 http-post 请求
         try {
             log.info("接口名称：" + MiniproUrlConfig.SEND_SUBSCRIBE_MESSAGE.getName());
@@ -165,9 +159,11 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
                 // mpMessage 发送状态：失败
                 mpMessage.setSendStatus(MpSendMsgStatusEnum.SB.getCode());
             }
-            // 记录发送时间并修改对象
+            // 记录发送时间并添加对象，并记录结果编码、结果消息
             mpMessage.setSendTmplTime(DateUtil.getCurrentDate());
-            dao.update(mpMessage);
+            mpMessage.setErrcode(dtoBasicResult.getErrcode());
+            mpMessage.setErrmsg(dtoBasicResult.getErrmsg());
+            dao.save(mpMessage);
             // 返回对象
             return dtoBasicResult;
         } catch (Exception e) {
@@ -261,8 +257,10 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
                     // 2、记录失败手机号
                     sendFailPhoneList.add(phone);
                 }
-                // 记录发送时间并修改对象
+                // 记录发送时间并修改对象，并记录结果编码、结果消息
                 mpMessage.setSendTmplTime(DateUtil.getCurrentDate());
+                mpMessage.setErrcode(dtoBasicResult.getErrcode());
+                mpMessage.setErrmsg(dtoBasicResult.getErrmsg());
                 dao.update(mpMessage);
             } catch (Exception e) {
                 // 记录日志和抛异常

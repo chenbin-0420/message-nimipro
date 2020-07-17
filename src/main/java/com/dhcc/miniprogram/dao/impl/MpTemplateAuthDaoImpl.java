@@ -32,8 +32,8 @@ public class MpTemplateAuthDaoImpl extends BaseDaoHibImpl<MpTemplateAuth, String
      * 通过条件获取ID集合的SQL
      */
     private static final String ID_LIST_BY_PHONE_TEMPLATE_ID_SQL = "SELECT m.`id` FROM mp_template_auth m  WHERE m.`template_id` = ? AND m.`phone` = ?";
-    private static final String GET_TEMPLATE_AUTH_BY_PHONE_SQL = "select type,title,template_id from mp_template_auth mp WHERE mp.`phone` = ?";
-    private static final String GET_TEMPLATE_AUTH_BY_PHONE_TEMPLATE_ID_SQL = "SELECT mp.`template_id` FROM mp_template_auth mp WHERE mp.`phone` = ? and mp.`template_id` = ?";
+    private static final String GET_TEMPLATE_AUTH_BY_PHONE_SQL = "select type,title,template_id from mp_template_auth mp WHERE exists( select null from mp_user where open_id = mp.create_user ) and mp.`phone` = ? ";
+    private static final String GET_TEMPLATE_AUTH_BY_PHONE_TEMPLATE_ID_SQL = "SELECT mp.`template_id` FROM mp_template_auth mp WHERE exists( select null from mp_user where open_id = mp.create_user ) and mp.`phone` = ? and mp.`template_id` = ? ";
 
     @Override
     public List<DtoTemplateAuthId> getIdListByPhoneTemplateId(String templateId, String phone) {
@@ -42,11 +42,11 @@ public class MpTemplateAuthDaoImpl extends BaseDaoHibImpl<MpTemplateAuth, String
 
     @Override
     public List<DtoTemplateId> getTemplateAuthByPhone(String phone) {
-        return querySqlEntity(GET_TEMPLATE_AUTH_BY_PHONE_SQL,new Object[]{phone}, DtoTemplateId.class,null);
+        return querySqlEntity(GET_TEMPLATE_AUTH_BY_PHONE_SQL,new Object[]{ phone }, DtoTemplateId.class,null);
     }
 
     @Override
     public List<DtoTemplateId> getTemplateAuthByPhoneAndTemplateId(String phone, String templateId) {
-        return querySqlEntity(GET_TEMPLATE_AUTH_BY_PHONE_TEMPLATE_ID_SQL,new Object[]{phone,templateId}, DtoTemplateId.class,null);
+        return querySqlEntity(GET_TEMPLATE_AUTH_BY_PHONE_TEMPLATE_ID_SQL,new Object[]{ phone, templateId }, DtoTemplateId.class,null);
     }
 }

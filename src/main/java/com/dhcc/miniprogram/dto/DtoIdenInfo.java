@@ -46,13 +46,17 @@ public class DtoIdenInfo extends DtoBasicResult{
         this.unionid = unionid;
     }
 
+    /**
+     * DtoIdenInfo 转为 MpUser 对象
+     * @param idenInfo 唯一标识用户信息类
+     * @return 用户实体类
+     */
     public static MpUser toPO(DtoIdenInfo idenInfo){
         MpUser user = new MpUser();
         user.setOpenId(idenInfo.getOpenid());
         user.setSessionKey(idenInfo.getSession_key());
         user.setUnionid(idenInfo.unionid);
         user.setCreateTime(DateUtil.getCurrentDate());
-        user.setCreateUser(idenInfo.getOpenid());
         return user;
     }
 }
