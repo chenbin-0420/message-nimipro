@@ -105,7 +105,7 @@ public class DtoSubscribeMessage {
         mpMessage.setSendTmplCont(JSON.toJSONString(subscribeMessage.getData()));
         mpMessage.setTmplId(subscribeMessage.getTemplate_id());
         mpMessage.setTouser(subscribeMessage.getTouser());
-        mpMessage.setSendStatus(MpSendMsgStatusEnum.CLZ.getCode());
+        mpMessage.setSendStatus(MpSendMsgStatusEnum.SB.getCode());
         return mpMessage;
     }
 }

@@ -68,7 +68,6 @@ cors:
 devMode: true
 
 token:
-  #  whitelist: /sysdev/gencode/.*;/weixin/.*
   #  whitelist: /.*
   whitelist: /sendMessageApi/.*
 
@@ -81,10 +80,8 @@ smb:
 
 wechat:
   wechatToken: wechatToken
-  appId: wxcedd2cc8ed79ac85
-  secret: 74fadc1dc8d2a7954d035a72e73239a3
-#  appId: wx419a354d9fd6dd2f
-#  secret: 4dfc3f5beb9155fdd128b50d29183330
+  appId: wx419a354d9fd6dd2f
+  secret: 4dfc3f5beb9155fdd128b50d29183330
   externalTitle: 公众服务
   externalDesc: 政务服务大厅
   internalTitle: 内部服务

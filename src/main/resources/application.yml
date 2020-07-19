@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: prod
+    active: prod # dev prod
   datasource:
     sqlSchema:
       plat: dhcplat_zjzwfwzx

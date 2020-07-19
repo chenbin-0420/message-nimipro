@@ -78,11 +78,11 @@ public enum BusinessCodeEnum {
     // 秘钥
     AUTH_NOT_EXISTS_SECRET(651,"没有权限"),
     AUTH_ERROR_SECRET(652,"秘钥不合法"),
-    AUTH_SECRET_EMPTY_VALUE(653,"秘钥为空"),
     // 指定人发送消息
     SEND_SINGLE_MESSAGE_PARAM_EMPTY(661,"单条订阅消息参数"),
     SEND_SINGLE_MESSAGE_NOT_EXISTS_PHONE(662,"接收单条订阅手机号不存在"),
-    SEND_SINGLE_MESSAGE_EXCEPTION(663,"单条订阅发送消息异常"),
+    SEND_SINGLE_MESSAGE_EXCEPTION(663,"单条订阅消息发送异常"),
+    SEND_SINGLE_MESSAGE_FAIL(664,"单条订阅消息发送失败"),
     // 群发消息
     SEND_MASS_MESSAGE_PARAM_EMPTY(671,"群发订阅消息参数"),
     SEND_MASS_MESSAGE_PRAT_FAIL(672,"群发订阅消息发送成功手机号：%s，失败手机号：%s"),
