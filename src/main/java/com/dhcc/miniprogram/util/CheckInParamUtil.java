@@ -159,7 +159,8 @@ public class CheckInParamUtil {
      */
     public static void checkInParam(DtoTemplateAuthResult templateAuthResult,DtoTemplateAuthRequest dtoTemplateAuthRequest){
         String reason = "";
-        if(StringUtils.isEmpty(dtoTemplateAuthRequest.getPhone())){
+        String phone = dtoTemplateAuthRequest.getPhone();
+        if(StringUtils.isEmpty(phone) || UNDEFINED.equals(phone)){
             reason += "phone为空,";
         }
         if(StringUtils.isEmpty(dtoTemplateAuthRequest.getOpenId())){
@@ -269,7 +270,7 @@ public class CheckInParamUtil {
                 }
             }
         }
-        if(StringUtils.isEmpty(request.getPhone())){
+        if(StringUtils.isEmpty(request.getPhone())||UNDEFINED.equals(request.getPhone())){
             reason += "phone为空，";
         }
         if(StringUtils.isEmpty(request.getTemplateId())){
@@ -309,12 +310,12 @@ public class CheckInParamUtil {
             // 秘钥不为空，判断模式
             if(FORMAL.equals(wechatConfig.getMode())){
                 // 正式模式，判断是否相等，不相等秘钥不合法
-                if(CollectionUtils.isNotEmpty(wechatConfig.getFormalSecretList()) && !wechatConfig.getFormalSecretList().contains(secret)){
+                if(!wechatConfig.getFormalSecretList().contains(secret)){
                     basicResult.setErrcode(BusinessCodeEnum.AUTH_ERROR_SECRET.getCode()).setErrmsg(BusinessCodeEnum.AUTH_ERROR_SECRET.getMsg());
                 }
             } else {
                 // 测试模式，判断是否相等，不相等秘钥不合法
-                if(CollectionUtils.isNotEmpty(wechatConfig.getFormalSecretList()) && !wechatConfig.getTestSecretList().contains(secret)){
+                if(!wechatConfig.getTestSecretList().contains(secret)){
                     basicResult.setErrcode(BusinessCodeEnum.AUTH_ERROR_SECRET.getCode()).setErrmsg(BusinessCodeEnum.AUTH_ERROR_SECRET.getMsg());
                 }
             }

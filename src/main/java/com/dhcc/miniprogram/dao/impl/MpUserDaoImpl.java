@@ -35,9 +35,13 @@ public class MpUserDaoImpl extends BaseDaoHibImpl<MpUser, String> implements MpU
      * 根据手机号查询用户ID
      */
     private static final String GET_USERID_BY_PHONE_SQL = "SELECT mp.id FROM mp_user mp where mp.phone_num = ?";
+    /**
+     * 根据手机号获取openId
+     */
+    private static final String GET_OPENID_BY_PHONE_SQL = "select open_id from mp_user where phone_num = ?";
 
     @Override
-    public List<DtoUser> getDtoUserList(List<String> phoneList, String appId) {
+    public List<DtoUser> getDtoUserList(List<String> phoneList) {
         // 查询的Sql
         StringBuilder sql = new StringBuilder("SELECT mp.`open_id`,mp.`phone_num` FROM mp_user mp where 1 = 1");
         // 条件Map
@@ -54,11 +58,6 @@ public class MpUserDaoImpl extends BaseDaoHibImpl<MpUser, String> implements MpU
             }
             sql.append(") ");
         }
-        // appId不为空，添加条件
-        if (StringUtils.isNotEmpty(appId)) {
-            sql.append(" and mp.`app_id` = ? ");
-            param.add(appId);
-        }
 
         // 返回用户列表
         return querySqlEntity(sql.toString(), param.toArray(), DtoUser.class, null);
@@ -68,5 +67,11 @@ public class MpUserDaoImpl extends BaseDaoHibImpl<MpUser, String> implements MpU
     public DtoUserId getUserIdByPhone(String phone) {
         List<DtoUserId> phoneNumberList = this.querySqlEntity(GET_USERID_BY_PHONE_SQL, new Object[]{phone}, DtoUserId.class, null);
         return CollectionUtils.isEmpty(phoneNumberList) ? null: phoneNumberList.get(0);
+    }
+
+
+    @Override
+    public Object getOpenIdByPhone(String phone){
+        return this.querySql(GET_OPENID_BY_PHONE_SQL,new Object[]{ phone }).get(0);
     }
 }

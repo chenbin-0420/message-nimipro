@@ -30,10 +30,9 @@ public interface MpUserService extends BaseService<MpUser, String> {
     /**
      * 获取用户列表
      * @param phoneList 手机号列表
-     * @param appId 应用id
      * @return 用户列表
      */
-    List<DtoUser> getDtoUserList(List<String> phoneList, String appId);
+    List<DtoUser> getDtoUserList(List<String> phoneList);
 
     /**
      * 换绑手机号
@@ -41,4 +40,11 @@ public interface MpUserService extends BaseService<MpUser, String> {
      * @return 手机号返回结果类
      */
     DtoPhoneNumberResult changePhone(DtoPhoneNumberRequest dtoPhoneNumberRequest);
+
+    /**
+     * 根据手机号获取openId
+     * @param phone 手机号
+     * @return openId
+     */
+    Object getOpenIdByPhone(String phone);
 }

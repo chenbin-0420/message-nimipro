@@ -55,7 +55,7 @@ public class MpAccessToken extends IdentifiedPo implements Serializable {
 	private Integer errcode;
 
 	@FieldDefine(title = "错误返回信息", number = 8)
-	@Column(name = "errmsg", length = 100, unique = false, nullable = true)
+	@Column(name = "errmsg", length = 200, unique = false, nullable = true)
 	private String errmsg;
 
 	@FieldDefine(title = "是否删除：T-已删除、F-未删除", number = 9)

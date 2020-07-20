@@ -22,7 +22,8 @@ public interface MpTemplateListService extends BaseService<MpTemplateList, Strin
 
     /**
      * 查询有效的模板列表对象
+     * @param templateIds 需添加模板列表
      * @return 模板列表
      */
-    List<DtoTemplateListQuery> getValidateTemplateList();
+    List<DtoTemplateListQuery> getValidateTemplateList(String[] templateIds);
 }

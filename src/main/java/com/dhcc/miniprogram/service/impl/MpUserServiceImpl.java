@@ -130,46 +130,49 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
         paramMap.put("grant_type", GrantTypeEnum.AUTHORIZATION_CODE.getCode());
         // 设置请求体参数
         Map<String, String> headerMap = new HashMap<>(1);
-        DtoIdenInfo idenInfo;
         try {
             log.info("接口名称：" + MiniproUrlConfig.GET_CODE2SESSION_URL.getName());
             log.info("接口参数：" + MiniproUrlConfig.GET_CODE2SESSION_URL.getUrl());
             log.info("接口参数：" + paramMap);
             // 发送Get请求，并接收字符串的结果
             String result = HttpClientUtil.doGet(httpClient, MiniproUrlConfig.GET_CODE2SESSION_URL.getUrl(), paramMap, headerMap);
-            idenInfo = JSON.parseObject(result, DtoIdenInfo.class);
-            // 根据openId查询用户是否存在
-            SimpleCondition sc = new SimpleCondition()
-                    .addParm("openId", idenInfo.getOpenid())
-                    .addParm("appId", appId);
-            MpUser user = dao.findOne(sc);
-            // 不存在添加用户
-            if (user == null) {
-                // 1.添加用户信息,获取用户信息、设置 appId 并保存mpUser
-                MpUser mpUser = DtoIdenInfo.toPO(idenInfo);
-                mpUser.setAppId(appId);
-                save(mpUser);
-                // 2.返回idenInfoResult对象 标识成功，前端判断是否需要
-                idenInfoResult = new DtoIdenInfoResult(BusinessCodeEnum.LOGIN_PHONE_NOT_EXISTS.getCode(), BusinessCodeEnum.LOGIN_PHONE_NOT_EXISTS.getMsg())
-                        .setData(DtoIdenInfoFilter.toFilter(idenInfo).setSession_key(null));
-            } else {
-                // 1.用户非第一次登录，修改信息，修改Session_key、modifyTime
-                if (StringUtils.isNotEmpty(idenInfo.getSession_key())) {
-                    // 修改sessionKey
-                    user.setSessionKey(idenInfo.getSession_key());
+            // 字符串转化为唯一信息类
+            DtoIdenInfo idenInfo = JSON.parseObject(result, DtoIdenInfo.class);
+            // 获取对象成功
+            if(BusinessCodeEnum.RECEIVE_SUCCESS.getCode().equals(idenInfo.getErrcode())){
+                // 根据openId查询用户是否存在
+                SimpleCondition sc = new SimpleCondition().addParm("openId", idenInfo.getOpenid());
+                MpUser user = dao.findOne(sc);
+                // 不存在添加用户
+                if (user == null) {
+                    // 1.添加用户信息,获取用户信息、设置 appId 并保存mpUser
+                    MpUser mpUser = DtoIdenInfo.toPO(idenInfo);
+                    mpUser.setAppId(appId);
+                    save(mpUser);
+                    // 2.返回idenInfoResult对象 标识成功，前端判断是否需要
+                    idenInfoResult = new DtoIdenInfoResult(BusinessCodeEnum.LOGIN_PHONE_NOT_EXISTS.getCode(), BusinessCodeEnum.LOGIN_PHONE_NOT_EXISTS.getMsg())
+                            .setData(DtoIdenInfoFilter.toFilter(idenInfo).setSession_key(null));
+                } else {
+                    // 1.用户非第一次登录，修改信息，修改Session_key、modifyTime
+                    if (StringUtils.isNotEmpty(idenInfo.getSession_key())) {
+                        // 修改sessionKey
+                        user.setSessionKey(idenInfo.getSession_key());
+                    }
+                    // 修改时间设置为当前时间并更新user
+                    user.setModifyTime(DateUtil.getCurrentDate());
+                    update(user);
+                    // 2.返回 idenInfo 对象
+                    // 标识成功，前端判断是否需要获取手机号
+                    boolean mark = user.getPhoneNum() == null;
+                    // 用户手机号为空，用户需要获取手机号，否则不需要
+                    idenInfoResult = new DtoIdenInfoResult(mark ? BusinessCodeEnum.LOGIN_PHONE_NOT_EXISTS.getCode() : BusinessCodeEnum.LOGIN_PHONE_EXISTS.getCode(),
+                            mark ? BusinessCodeEnum.LOGIN_PHONE_NOT_EXISTS.getMsg() : user.getPhoneNum()).setData(DtoIdenInfoFilter.toFilter(idenInfo).setSession_key(null));
                 }
-                // 修改时间设置为当前时间并更新user
-                user.setModifyTime(DateUtil.getCurrentDate());
-                update(user);
-                // 2.返回 idenInfo 对象
-                // 标识成功，前端判断是否需要获取手机号
-                boolean mark = user.getPhoneNum() == null;
-                // 用户手机号为空，用户需要获取手机号，否则不需要
-                idenInfoResult = new DtoIdenInfoResult(mark ? BusinessCodeEnum.LOGIN_PHONE_NOT_EXISTS.getCode() : BusinessCodeEnum.LOGIN_PHONE_EXISTS.getCode(),
-                        mark ? BusinessCodeEnum.LOGIN_PHONE_NOT_EXISTS.getMsg() : user.getPhoneNum()).setData(DtoIdenInfoFilter.toFilter(idenInfo).setSession_key(null));
+            } else{
+                idenInfoResult.setErrcode(idenInfo.getErrcode()).setErrmsg(idenInfo.getErrmsg());
             }
             // 记录日志
-            log.info(JSON.toJSONString(idenInfoResult));
+            log.info("登录日志："+JSON.toJSONString(idenInfoResult));
             // 解析字符串并返回结果
             return idenInfoResult;
         } catch (Exception e) {
@@ -189,22 +192,22 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
         // 检查获取手机号入参
         CheckInParamUtil.checkInParam(phoneNumberResult,phoneNumberRequest);
         // 参数为空，返回phoneNumberResult
-        if(BusinessCodeEnum.GET_PHONE_NUMBER_PARAM_EMPTY.getCode().equals(phoneNumberResult.getErrcode())){
+        if(phoneNumberResult.getErrcode() != null){
             return phoneNumberResult;
         }
         // 根据 openId 查询 MpUser
-        MpUser user = dao.findOne("a.openId = ?", new Object[]{phoneNumberRequest.getOpenId()});
+        MpUser user = dao.findOne("a.openId = ?", new Object[]{ phoneNumberRequest.getOpenId() });
         // 检查 sessionKey 为空
-        String sessionKey = user.getSessionKey();
-        if (StringUtils.isEmpty(sessionKey)) {
+        if (user == null || StringUtils.isEmpty(user.getSessionKey())) {
             // 设置 errcode、errmsg 并返回 phoneNumberResult
-            phoneNumberResult.setErrcode(BusinessCodeEnum.GET_PHONE_NUMBER_SESSION_KEY_EMPTY.getCode());
-            phoneNumberResult.setErrmsg(BusinessCodeEnum.GET_PHONE_NUMBER_SESSION_KEY_EMPTY.getMsg());
+            phoneNumberResult.setErrcode(BusinessCodeEnum.GET_PHONE_NUMBER_SESSION_KEY_EMPTY.getCode()).setErrmsg(BusinessCodeEnum.GET_PHONE_NUMBER_SESSION_KEY_EMPTY.getMsg());
             return phoneNumberResult;
         }
         // 使用 AES/CBC/PKCS7Padding 解密
         String decrypt;
         try {
+            // 获取 sessionKey
+            String sessionKey = user.getSessionKey();
             log.info("接口名称：获取手机号");
             log.info("接口参数：" + JSON.toJSONString(new String[]{sessionKey, phoneNumberRequest.getIv(), phoneNumberRequest.getEncryptedData()}));
             decrypt = AESUtil.pkcs7PaddingDecrypt(sessionKey, phoneNumberRequest.getIv(), phoneNumberRequest.getEncryptedData());
@@ -213,25 +216,25 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
             // 记录异常
             log.error(BusinessCodeEnum.GET_PHONE_NUMBER_EXCEPTION.getMsg(), e);
             // 设置 errcode、errmsg 并返回 phoneNumberResult
-            phoneNumberResult.setErrcode(BusinessCodeEnum.GET_PHONE_NUMBER_EXCEPTION.getCode());
-            phoneNumberResult.setErrmsg(BusinessCodeEnum.GET_PHONE_NUMBER_EXCEPTION.getMsg());
+            phoneNumberResult.setErrcode(BusinessCodeEnum.GET_PHONE_NUMBER_EXCEPTION.getCode()).setErrmsg(BusinessCodeEnum.GET_PHONE_NUMBER_EXCEPTION.getMsg());
             return phoneNumberResult;
         }
+        // 手机号解析结果
+        log.info("获取手机号解析结果：" + decrypt);
         // 解析字符串
         JSONObject jsonObject = JSON.parseObject(decrypt);
-        // 手机号解析结果
-        log.info("获取手机号解析结果：" + JSON.toJSONString(jsonObject));
         // PURE_PHONE_NUMBER : 手机号 ，COUNTRY_CODE ：手机区号
         // 获取手机号
         String phoneNumber = jsonObject.getString(PURE_PHONE_NUMBER);
         if (StringUtils.isNotEmpty(phoneNumber)) {
             // 获取用户ID，用户ID不为空则删除
             DtoUserId dtoUserId = dao.getUserIdByPhone(phoneNumber);
-            if(dtoUserId != null && !dtoUserId.getId().equals(user.getId())){
+            // 不是同一个用户，删除前面绑定手机号的用户
+            if(!user.getId().equals(dtoUserId.getId())){
                 dao.deleteById(dtoUserId.getId());
             }
             // 用户绑定手机号、手机区号、修改时间并修改用户信息
-            user.setPhoneNum(jsonObject.getString(PURE_PHONE_NUMBER));
+            user.setPhoneNum(phoneNumber);
             user.setPhonePrefix(jsonObject.getString(COUNTRY_CODE));
             user.setModifyTime(DateUtil.getCurrentDate());
             update(user);
@@ -262,16 +265,15 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
         // 根据 openId 查询 MpUser
         MpUser user = dao.findOne("a.openId = ?", new Object[]{phoneNumberRequest.getOpenId()});
         // 检查 sessionKey 为空
-        String sessionKey = user.getSessionKey();
-        if (StringUtils.isEmpty(sessionKey)) {
+        if (user == null || StringUtils.isEmpty(user.getSessionKey())) {
             // 返回换绑手机号为空
-            phoneNumberResult.setErrcode(BusinessCodeEnum.CHANGE_PHONE_SESSION_KEY_EMPTY.getCode());
-            phoneNumberResult.setErrmsg(BusinessCodeEnum.CHANGE_PHONE_SESSION_KEY_EMPTY.getMsg());
+            phoneNumberResult.setErrcode(BusinessCodeEnum.CHANGE_PHONE_SESSION_KEY_EMPTY.getCode()).setErrmsg(BusinessCodeEnum.CHANGE_PHONE_SESSION_KEY_EMPTY.getMsg());
             return phoneNumberResult;
         }
         // 使用 AES/CBC/PKCS7Padding 解密
         String decrypt;
         try {
+            String sessionKey = user.getSessionKey();
             log.info("接口名称：换绑手机号");
             log.info("接口参数：" + JSON.toJSONString(new String[]{sessionKey, phoneNumberRequest.getIv(), phoneNumberRequest.getEncryptedData()}));
             decrypt = AESUtil.pkcs7PaddingDecrypt(sessionKey, phoneNumberRequest.getIv(), phoneNumberRequest.getEncryptedData());
@@ -279,29 +281,27 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
                 BadPaddingException | IllegalBlockSizeException | UnsupportedEncodingException | NoSuchProviderException e) {
             log.error("换绑手机号异常", e);
             // 设置换绑手机号异常
-            phoneNumberResult.setErrcode(BusinessCodeEnum.CHANGE_PHONE_EXCEPTION.getCode());
-            phoneNumberResult.setErrmsg(BusinessCodeEnum.CHANGE_PHONE_EXCEPTION.getMsg());
+            phoneNumberResult.setErrcode(BusinessCodeEnum.CHANGE_PHONE_EXCEPTION.getCode()).setErrmsg(BusinessCodeEnum.CHANGE_PHONE_EXCEPTION.getMsg());
             return phoneNumberResult;
         }
-
+        // 手机号解析结果
+        log.info("换绑手机号解析结果：" + decrypt);
         // 解析字符串
         JSONObject jsonObject = JSON.parseObject(decrypt);
-        // 手机号解析结果
-        log.info("换绑手机号解析结果：" + JSON.toJSONString(jsonObject));
         // PURE_PHONE_NUMBER : 手机号 ，COUNTRY_CODE ：手机区号
         // 获取手机号
         String phoneNumber = jsonObject.getString(PURE_PHONE_NUMBER);
         if (StringUtils.isNotEmpty(phoneNumber)) {
             // 获取用户ID，用户ID不为空则删除
             DtoUserId dtoUserId = dao.getUserIdByPhone(phoneNumber);
-            // 用户存在并且修改的手机号不为同意用户，则删除
-            if(dtoUserId != null && !dtoUserId.getId().equals(user.getId())){
+            // 用户存在并且修改的手机号不为同一用户，则删除已绑定用户
+            if(!user.getId().equals(dtoUserId.getId())){
                 dao.deleteById(dtoUserId.getId());
             }
             // 手机号不同
             if(!phoneNumber.equals(user.getPhoneNum())){
                 // 1、用户绑定手机号、手机区号、修改时间并修改用户信息
-                user.setPhoneNum(jsonObject.getString(PURE_PHONE_NUMBER));
+                user.setPhoneNum(phoneNumber);
                 user.setPhonePrefix(jsonObject.getString(COUNTRY_CODE));
                 user.setModifyTime(DateUtil.getCurrentDate());
                 update(user);
@@ -321,7 +321,12 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
     }
 
     @Override
-    public List<DtoUser> getDtoUserList(List<String> phoneList, String appId) {
-        return dao.getDtoUserList(phoneList, appId);
+    public List<DtoUser> getDtoUserList(List<String> phoneList) {
+        return dao.getDtoUserList(phoneList);
+    }
+
+    @Override
+    public Object getOpenIdByPhone(String phone) {
+        return dao.getOpenIdByPhone(phone);
     }
 }

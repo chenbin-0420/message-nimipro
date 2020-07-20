@@ -69,11 +69,11 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	private String touser;
 
 	@FieldDefine(title = "结果编码", number = 12)
-	@Column(name = "errcode", length = 2, unique = false, nullable = true)
+	@Column(name = "errcode", length = 10, unique = false, nullable = true)
 	private Integer errcode;
 
 	@FieldDefine(title = "结果消息", number = 13)
-	@Column(name = "errmsg", length = 32, unique = false, nullable = true)
+	@Column(name = "errmsg", length = 200, unique = false, nullable = true)
 	private String errmsg;
 	
 	public MpMessage() {

@@ -46,6 +46,13 @@ public class DtoIdenInfo extends DtoBasicResult{
         this.unionid = unionid;
     }
 
+    public DtoIdenInfo() {
+    }
+
+    public DtoIdenInfo(Integer errcode, String errmsg) {
+        super(errcode, errmsg);
+    }
+
     /**
      * DtoIdenInfo 转为 MpUser 对象
      * @param idenInfo 唯一标识用户信息类

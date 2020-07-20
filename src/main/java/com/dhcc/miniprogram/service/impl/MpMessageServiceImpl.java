@@ -108,13 +108,10 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
         if(dtoBasicResult.getErrcode() != null){
             return dtoBasicResult;
         }
-        // 设置手机号查询条件
-        String phoneNumber = request.getPhoneNumber();
-        // 根据 phoneNum 查询对应用户信息
-        SimpleCondition sc = new SimpleCondition().addParm("phoneNum", phoneNumber);
-        MpUser user = userService.findOne(sc);
+        // 根据 phoneNum 查询对应openid
+        Object openId = userService.getOpenIdByPhone(request.getPhoneNumber());
         // 判断是否有此手机号的用户
-        if (user == null) {
+        if (openId == null) {
             // 返回不存在此手机号的用户结果
             dtoBasicResult.setErrcode(BusinessCodeEnum.SEND_SINGLE_MESSAGE_NOT_EXISTS_PHONE.getCode())
                     .setErrmsg(BusinessCodeEnum.SEND_SINGLE_MESSAGE_NOT_EXISTS_PHONE.getMsg());
@@ -123,7 +120,7 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
             return dtoBasicResult;
         } else {
             // 手机号不为空、订阅消息绑定OpenId
-            request.setTouser(user.getOpenId());
+            request.setTouser(openId.toString());
         }
         // 获取httpClient
         CloseableHttpClient httpClient = HttpClientUtil.getHttpClient();
@@ -149,15 +146,12 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
             log.info("发送订阅消息结果：" + result);
             // 解析字符串并转为 DtoBasicResult 对象
             dtoBasicResult = JSON.parseObject(result, DtoBasicResult.class);
-            // errCode是 null | 0L 为成功，否则为失败
-            if (dtoBasicResult.getErrcode() == null || BusinessCodeEnum.RECEIVE_SUCCESS.getCode().equals(dtoBasicResult.getErrcode())) {
+            // 0L 为成功，否则为失败
+            if (BusinessCodeEnum.RECEIVE_SUCCESS.getCode().equals(dtoBasicResult.getErrcode())) {
                 // mpMessage 发送状态：成功标识
                 mpMessage.setSendStatus(MpSendMsgStatusEnum.CG.getCode());
                 // 请求成功
                 dtoBasicResult.setErrcode(BusinessCodeEnum.REQUEST_SUCCESS.getCode()).setErrmsg(BusinessCodeEnum.REQUEST_SUCCESS.getMsg());
-            } else {
-                // mpMessage 发送状态：失败
-                mpMessage.setSendStatus(MpSendMsgStatusEnum.SB.getCode());
             }
             // 记录发送时间并添加对象，并记录结果编码、结果消息
             mpMessage.setSendTmplTime(DateUtil.getCurrentDate());
@@ -197,11 +191,8 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
         LinkedList<String> sendFailPhoneList = new LinkedList<>();
         // 发送成功的手机号列表
         LinkedList<String> sendSuccessPhoneList = new LinkedList<>();
-        // 获取手机号集合
-        List<String> numberList = request.getPhoneNumberList();
         // 根据手机号集合查询用户集合
-        String appId = wechatConfig.getAppId();
-        List<DtoUser> userList = userService.getDtoUserList(numberList, appId);
+        List<DtoUser> userList = userService.getDtoUserList(request.getPhoneNumberList());
         // 打印用户信息日志
         log.info("群发消息用户列表长度：" + userList.size());
         log.info("群发消息用户列表：" + JSON.toJSONString(userList));
@@ -229,10 +220,9 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
             // 设置请求体参数
             HashMap<String, String> headerMap = new HashMap<>(1);
             // DtoSubscribeMessageRequest 转 MpMessage
-            // 默认 sendStatus 是 CLZ-处理中
             MpMessage mpMessage = DtoSubscribeMessage.toPO(request);
             // 给小程序ID赋值并添加发送消息
-            mpMessage.setAppId(appId);
+            mpMessage.setAppId(wechatConfig.getAppId());
             dao.save(mpMessage);
             // 记录日志
             log.info("接口JSON参数：" + reqData);
@@ -246,15 +236,13 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
                 // 解析字符串并转为 DtoBasicResult 对象
                 dtoBasicResult = JSON.parseObject(result, DtoBasicResult.class);
                 // errCode是 null | 0L 为成功，否则为失败
-                if (dtoBasicResult.getErrcode() == null || BusinessCodeEnum.RECEIVE_SUCCESS.getCode().equals(dtoBasicResult.getErrcode())) {
+                if (BusinessCodeEnum.RECEIVE_SUCCESS.getCode().equals(dtoBasicResult.getErrcode())) {
                     // 1、mpMessage 发送状态：成功标识
                     mpMessage.setSendStatus(MpSendMsgStatusEnum.CG.getCode());
                     // 2、记录添加成功手机号
                     sendSuccessPhoneList.add(phone);
                 } else {
-                    // 1、mpMessage 发送状态：失败
-                    mpMessage.setSendStatus(MpSendMsgStatusEnum.SB.getCode());
-                    // 2、记录失败手机号
+                    // 1、记录失败手机号
                     sendFailPhoneList.add(phone);
                 }
                 // 记录发送时间并修改对象，并记录结果编码、结果消息

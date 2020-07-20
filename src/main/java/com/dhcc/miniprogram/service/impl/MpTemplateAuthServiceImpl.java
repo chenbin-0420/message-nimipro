@@ -98,20 +98,9 @@ public class MpTemplateAuthServiceImpl extends BaseServiceImpl<MpTemplateAuthDao
 		String phone = templateAuthRequest.getPhone();
 		// 获取需订阅的模板
 		String[] templateIds = templateAuthRequest.getTemplateIds();
-		// 实际可订阅的模板列表
-		LinkedList<DtoTemplateListQuery> templateListQueries = new LinkedList<>();
-		// 有效模板数据循环
-		for (String templateId : templateIds) {
-			for (DtoTemplateListQuery templateListQuery : templateListService.getValidateTemplateList()) {
-				if(templateId.equals(templateListQuery.getTemplateId())){
-					// 实际可订阅的模板
-					templateListQueries.add(templateListQuery);
-				}
-			}
-		}
 
 		// 实际可订阅模板列表
-		for (DtoTemplateListQuery templateListQuery : templateListQueries) {
+		for (DtoTemplateListQuery templateListQuery : templateListService.getValidateTemplateList(templateIds)) {
 			// 获取模板ID
 			String templateId = templateListQuery.getTemplateId();
 			// 模板ID不为空，添加模板授权
@@ -161,13 +150,11 @@ public class MpTemplateAuthServiceImpl extends BaseServiceImpl<MpTemplateAuthDao
 		LinkedList<DtoTemplateAuth> authLinkedList = new LinkedList<>();
 		// 声明并添加模板ID集合
 		LinkedList<String> tmplIdList = new LinkedList<>();
-		for (DtoTemplateListQuery templateListQuery : templateListService.getValidateTemplateList()) {
+		for (DtoTemplateListQuery templateListQuery : templateListService.getValidateTemplateList(null)) {
 			tmplIdList.add(templateListQuery.getTemplateId());
 		}
-		// 初始化数组
-		String[] tmplIds = new String[tmplIdList.size()];
 		// 设置模板ID、标题、描述
-		DtoTemplateAuth dtoTemplateAuth = new DtoTemplateAuth(wechatConfig.getExternalTitle(),wechatConfig.getExternalDesc(),tmplIdList.toArray(tmplIds));
+		DtoTemplateAuth dtoTemplateAuth = new DtoTemplateAuth(wechatConfig.getExternalTitle(),wechatConfig.getExternalDesc(),tmplIdList.toArray(new String[0]));
 		// authLinkedList 添加 dtoTemplateAuth
 		authLinkedList.add(dtoTemplateAuth);
 		return templateAuthResult.setData(authLinkedList);
@@ -192,20 +179,18 @@ public class MpTemplateAuthServiceImpl extends BaseServiceImpl<MpTemplateAuthDao
 				if(StringUtils.isNotEmpty(phone)){
 					// 获取模板ID列表
 					List<DtoTemplateId> templateIdList = dao.getTemplateAuthByPhone(phone);
-					// 添加模板授权缩写
+					// 添加用户授权模板
 					templateAuthPhones.add(new DtoTemplateAuthPhone(phone,templateIdList));
 				}
 			}
 			// 手机号对应模板列表
-			templateAuthPhoneResult.setErrcode(BusinessCodeEnum.REQUEST_SUCCESS.getCode());
-			templateAuthPhoneResult.setErrmsg(BusinessCodeEnum.REQUEST_SUCCESS.getMsg());
+			templateAuthPhoneResult.setErrcode(BusinessCodeEnum.REQUEST_SUCCESS.getCode()).setErrmsg(BusinessCodeEnum.REQUEST_SUCCESS.getMsg());
 			templateAuthPhoneResult.setData(templateAuthPhones);
 		} catch (Exception e) {
 			// 打印异常信息
 			log.error(BusinessCodeEnum.USER_AUTH_PHONE_EXCEPTION.getMsg(),e);
 			// 抛异常信息
-			templateAuthPhoneResult.setErrcode(BusinessCodeEnum.USER_AUTH_PHONE_EXCEPTION.getCode());
-			templateAuthPhoneResult.setErrmsg(BusinessCodeEnum.USER_AUTH_PHONE_EXCEPTION.getMsg());
+			templateAuthPhoneResult.setErrcode(BusinessCodeEnum.USER_AUTH_PHONE_EXCEPTION.getCode()).setErrmsg(BusinessCodeEnum.USER_AUTH_PHONE_EXCEPTION.getMsg());
 		}
 		// 封装返回
 		return templateAuthPhoneResult;

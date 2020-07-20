@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 /*
 service层一般情况下与model/dao是一对一的关系！【主要负责】这一个model的增删改查，保持原子性以提高复用度。
@@ -94,7 +95,7 @@ public class MpTemplateListServiceImpl extends BaseServiceImpl<MpTemplateListDao
 		paramMap.put("access_token",accessToken);
 		// 设置请求体 headersMap
 		HashMap<String, String> headersMap = new HashMap<>(1);
-		// 初始化基础结果异常
+		// 初始化模板列表结果异常
 		DtoTemplateListResult templateListResult = new DtoTemplateListResult();
 		// Get请求
 		try {
@@ -163,8 +164,26 @@ public class MpTemplateListServiceImpl extends BaseServiceImpl<MpTemplateListDao
 	 * VALIDATION ：生效
 	 */
 	private static final int VALIDATION = 1;
+
 	@Override
-	public List<DtoTemplateListQuery> getValidateTemplateList() {
-		return dao.querySqlEntity("SELECT mp.`template_id`,mp.`title`,mp.`type` FROM mp_template_list mp WHERE mp.`validation` = ?",new Object[]{ VALIDATION },DtoTemplateListQuery.class,null);
+	public List<DtoTemplateListQuery> getValidateTemplateList(String[] templateIds) {
+		List<Object> param = new LinkedList<>();
+		StringBuilder sql = new StringBuilder(" SELECT mp.`template_id`,mp.`title`,mp.`type` FROM mp_template_list mp ");
+		if(true){
+			sql.append("where  mp.`validation` = ?");
+			param.add(VALIDATION);
+		}
+		if( templateIds != null && templateIds.length > 0 ){
+			sql.append(" and mp.template_id in ( ");
+			for (int i = 0; i < templateIds.length; i++) {
+				param.add(templateIds[i]);
+				sql.append(" ?");
+				if(i < templateIds.length-1){
+					sql.append(", ");
+				}
+			}
+			sql.append(" )");
+		}
+		return dao.querySqlEntity(sql.toString(),param.toArray(new Object[0]),DtoTemplateListQuery.class,null);
 	}
 }
