@@ -204,7 +204,7 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
             return phoneNumberResult;
         }
         // 使用 AES/CBC/PKCS7Padding 解密
-        String decrypt;
+        String decrypt = "";
         try {
             // 获取 sessionKey
             String sessionKey = user.getSessionKey();
@@ -230,7 +230,7 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
             // 获取用户ID，用户ID不为空则删除
             DtoUserId dtoUserId = dao.getUserIdByPhone(phoneNumber);
             // 不是同一个用户，删除前面绑定手机号的用户
-            if(!user.getId().equals(dtoUserId.getId())){
+            if(dtoUserId != null && !dtoUserId.getId().equals(user.getId())){
                 dao.deleteById(dtoUserId.getId());
             }
             // 用户绑定手机号、手机区号、修改时间并修改用户信息
