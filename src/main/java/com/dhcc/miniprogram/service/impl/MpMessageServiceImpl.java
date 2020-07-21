@@ -146,8 +146,8 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
             log.info("发送订阅消息结果：" + result);
             // 解析字符串并转为 DtoBasicResult 对象
             dtoBasicResult = JSON.parseObject(result, DtoBasicResult.class);
-            // 0L 为成功，否则为失败
-            if (BusinessCodeEnum.RECEIVE_SUCCESS.getCode().equals(dtoBasicResult.getErrcode())) {
+            // null | 0L 为成功，否则为失败
+            if (dtoBasicResult.getErrcode() == null || BusinessCodeEnum.RECEIVE_SUCCESS.getCode().equals(dtoBasicResult.getErrcode())) {
                 // mpMessage 发送状态：成功标识
                 mpMessage.setSendStatus(MpSendMsgStatusEnum.CG.getCode());
                 // 请求成功
@@ -237,7 +237,7 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
                 // 解析字符串并转为 DtoBasicResult 对象
                 dtoBasicResult = JSON.parseObject(result, DtoBasicResult.class);
                 // errCode是 null | 0L 为成功，否则为失败
-                if (BusinessCodeEnum.RECEIVE_SUCCESS.getCode().equals(dtoBasicResult.getErrcode())) {
+                if (dtoBasicResult.getErrcode() == null || BusinessCodeEnum.RECEIVE_SUCCESS.getCode().equals(dtoBasicResult.getErrcode())) {
                     // 1、mpMessage 发送状态：成功标识
                     mpMessage.setSendStatus(MpSendMsgStatusEnum.CG.getCode());
                     // 2、记录添加成功手机号

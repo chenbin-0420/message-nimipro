@@ -139,7 +139,7 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
             // 字符串转化为唯一信息类
             DtoIdenInfo idenInfo = JSON.parseObject(result, DtoIdenInfo.class);
             // 获取对象成功
-            if(BusinessCodeEnum.RECEIVE_SUCCESS.getCode().equals(idenInfo.getErrcode())){
+            if(idenInfo.getErrcode() == null|| BusinessCodeEnum.RECEIVE_SUCCESS.getCode().equals(idenInfo.getErrcode())){
                 // 根据openId查询用户是否存在
                 SimpleCondition sc = new SimpleCondition().addParm("openId", idenInfo.getOpenid());
                 MpUser user = dao.findOne(sc);

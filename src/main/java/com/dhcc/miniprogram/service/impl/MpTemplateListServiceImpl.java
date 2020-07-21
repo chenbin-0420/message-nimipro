@@ -114,7 +114,7 @@ public class MpTemplateListServiceImpl extends BaseServiceImpl<MpTemplateListDao
 			// 解析字符串并返回模板列表结果
 			templateListResult = JSON.parseObject(result, DtoTemplateListResult.class);
 			// errCode 为 0，表示成功
-			if(BusinessCodeEnum.RECEIVE_SUCCESS.getCode().equals(templateListResult.getErrcode())){
+			if(templateListResult.getErrcode() == null || BusinessCodeEnum.RECEIVE_SUCCESS.getCode().equals(templateListResult.getErrcode())){
 				// 获取 dtoTemplateLists
 				List<DtoTemplateList> dtoTemplateLists = templateListResult.getData();
 				// dtoTemplateLists 不为空
