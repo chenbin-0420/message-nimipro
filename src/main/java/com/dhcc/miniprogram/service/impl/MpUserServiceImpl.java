@@ -294,8 +294,8 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
         if (StringUtils.isNotEmpty(phoneNumber)) {
             // 获取用户ID，用户ID不为空则删除
             DtoUserId dtoUserId = dao.getUserIdByPhone(phoneNumber);
-            // 用户存在并且修改的手机号不为同一用户，则删除已绑定用户
-            if(!user.getId().equals(dtoUserId.getId())){
+            // 不是同一个用户，删除前面绑定手机号的用户
+            if(dtoUserId != null && !dtoUserId.getId().equals(user.getId())){
                 dao.deleteById(dtoUserId.getId());
             }
             // 手机号不同
