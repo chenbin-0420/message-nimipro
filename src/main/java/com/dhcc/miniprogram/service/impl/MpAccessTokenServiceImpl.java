@@ -84,7 +84,7 @@ public class MpAccessTokenServiceImpl extends BaseServiceImpl<MpAccessTokenDao, 
 	private WechatConfig wechatConfig;
 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public DtoAccessTokenResult getAccessToken(String appid, String appSecret) {
 		// 记录获取AccessToken入参日志
 		log.info(String.format("获取AccessToken：{ appid=%s,secret=%s }",appid,appSecret));

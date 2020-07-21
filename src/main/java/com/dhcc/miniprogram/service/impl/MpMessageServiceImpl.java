@@ -88,7 +88,7 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public DtoBasicResult sendSubscribeMessageByPhone(DtoSubscribeMessageRequest request) {
         // 记录发送订阅消息入参
         log.info("发送订阅消息入参：" + JSON.toJSONString(request));
@@ -168,6 +168,7 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public DtoBasicResult sendMassMessageByPhoneList(DtoSubscribeMessageRequest request) {
         // 打印入参日志
         log.info("群发消息入参", JSON.toJSONString(request));

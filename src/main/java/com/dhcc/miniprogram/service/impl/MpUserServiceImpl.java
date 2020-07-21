@@ -106,7 +106,7 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
     private WechatConfig wechatConfig;
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public DtoIdenInfoResult userLogin(DtoLoginRequest login) {
         // 记录登录日志
         log.info("小程序登录入参：" + JSON.toJSONString(login));
