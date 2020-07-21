@@ -14,7 +14,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     #UTC:全球时间,Asia/Shanghai:上海时间,GMT%2B8:北京时间
     # 镇江正式服务器
-    url: jdbc:mysql://172.21.137.120:3306/dhcplat_zjzwfwzx?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
+    url: jdbc:mysql://172.21.137.120:3306/dhcplat_zjzwfwzx?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false&allowPublicKeyRetrieval=true
     username: admin
     password: admin
     sqlSchema:
