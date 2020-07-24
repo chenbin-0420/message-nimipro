@@ -120,8 +120,9 @@ public class MpTemplateAuthServiceImpl extends BaseServiceImpl<MpTemplateAuthDao
 						// 记日志
 						log.info("添加模板授权结果:"+JSON.toJSONString(templateAuth));
 					} catch (Exception e) {
+						log.error(BusinessCodeEnum.TEMPLATE_AUTH_FAIL.getMsg(),e);
 						// 模板授权 设置模板数组、标题、描述
-						templateAuthResult = new DtoTemplateAuthResult(BusinessCodeEnum.TEMPLATE_AUTH_FAIL.getCode(),"添加模板授权失败");
+						templateAuthResult = new DtoTemplateAuthResult(BusinessCodeEnum.TEMPLATE_AUTH_FAIL.getCode(),BusinessCodeEnum.TEMPLATE_AUTH_FAIL.getMsg());
 						// 返回基础的模板授权结果
 						return getBasicTemplateAuthResult(templateAuthResult);
 					}
@@ -177,10 +178,8 @@ public class MpTemplateAuthServiceImpl extends BaseServiceImpl<MpTemplateAuthDao
 			// 查数据
 			for (String phone : templateAuthPhoneRequest.getPhoneNumberList()) {
 				if(StringUtils.isNotEmpty(phone)){
-					// 获取模板ID列表
-					List<DtoTemplateId> templateIdList = dao.getTemplateAuthByPhone(phone);
-					// 添加用户授权模板
-					templateAuthPhones.add(new DtoTemplateAuthPhone(phone,templateIdList));
+					// 添加用户授权模板   数据格式：手机号 模板ID列表
+					templateAuthPhones.add(new DtoTemplateAuthPhone(phone,dao.getTemplateAuthByPhone(phone)));
 				}
 			}
 			// 手机号对应模板列表
@@ -199,7 +198,7 @@ public class MpTemplateAuthServiceImpl extends BaseServiceImpl<MpTemplateAuthDao
 	@Override
 	public DtoBasicResult getTemplateAuthByCondition(DtoTemplateAuthPhoneCondRequest request) {
 		// 记录日志
-		log.info("根据手机号、模板ID获取用户模板授权"+JSON.toJSONString(request));
+		log.info("根据手机号、模板ID获取用户模板授权："+JSON.toJSONString(request));
 		DtoBasicResult dtoBasicResult = new DtoBasicResult();
 		// 检查入参
 		CheckInParamUtil.checkInParam(request,dtoBasicResult,wechatConfig);

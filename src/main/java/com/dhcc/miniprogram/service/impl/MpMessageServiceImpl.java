@@ -1,7 +1,6 @@
 package com.dhcc.miniprogram.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.dhcc.basic.dao.query.SimpleCondition;
 import com.dhcc.basic.exception.BusinessException;
 import com.dhcc.basic.service.BaseServiceImpl;
 import com.dhcc.basic.util.HttpClientUtil;
@@ -16,7 +15,6 @@ import com.dhcc.miniprogram.enums.BusinessCodeEnum;
 import com.dhcc.miniprogram.enums.MpSendMsgStatusEnum;
 import com.dhcc.miniprogram.enums.SendMsgTypeEnum;
 import com.dhcc.miniprogram.model.MpMessage;
-import com.dhcc.miniprogram.model.MpUser;
 import com.dhcc.miniprogram.service.MpMessageService;
 import com.dhcc.miniprogram.service.MpUserService;
 import com.dhcc.miniprogram.util.AccessTokenUtil;

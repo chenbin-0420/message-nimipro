@@ -30,6 +30,7 @@ public class MessageMiniproApplication {
                 "External: \thttp://" + ip + ":" + port + path + "/\n\t" +
                 "swagger-ui: \thttp://" + ip + ":" + port + path + "/swagger-ui.html\n\t" +
                 "code-create: \thttp://" + ip + ":" + port + path + "/gencode.html\n\t" +
+                "线程数："+ Runtime.getRuntime().availableProcessors()+"\n\t"+
                 "--------------------------------------------------------------");
     }
 
