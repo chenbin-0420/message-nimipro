@@ -1,6 +1,5 @@
 server:
   port: 14443
-  #Address: 192.168.1.99
 
 info:
   app.name: message-nimipro
@@ -15,9 +14,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     #UTC:全球时间,Asia/Shanghai:上海时间,GMT%2B8:北京时间 &useSSL=false
     # 镇江测试服务器
-    url: jdbc:mysql://172.21.137.115:3306/dhcplat_zjzwfwzx?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
-    # 镇江正式服务器
-    #url: jdbc:mysql://172.21.137.120:3306/dhcplat_zjzwfwzx?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
+    url: jdbc:mysql://172.21.137.115:3306/dhcplat_zjzwfwzx?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false&allowPublicKeyRetrieval=true
     username: admin
     password: admin
     sqlSchema:
@@ -27,8 +24,8 @@ spring:
     show-sql: true
     properties:
       hibernate:
-        #        hbm2ddl.auto: update
-        #        dialect: org.hibernate.dialect.MySQL5Dialect
+#        hbm2ddl.auto: update
+#        dialect: org.hibernate.dialect.MySQL5Dialect
         cache:
           use_second_level_cache: false
 #          region.factory_class: org.hibernate.cache.redis.hibernate5.SingletonRedisRegionFactory
@@ -80,8 +77,8 @@ smb:
 
 wechat:
   wechatToken: wechatToken
-  appId: wx419a354d9fd6dd2f
-  secret: 4dfc3f5beb9155fdd128b50d29183330
+  appId: wx5b096c8e1294aab5
+  secret: a303a3a90b5442ec06b197c39675bcd8
   externalTitle: 公众服务
   externalDesc: 政务服务大厅
   internalTitle: 内部服务

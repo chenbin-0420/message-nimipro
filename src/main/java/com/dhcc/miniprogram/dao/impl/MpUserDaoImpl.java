@@ -72,6 +72,7 @@ public class MpUserDaoImpl extends BaseDaoHibImpl<MpUser, String> implements MpU
 
     @Override
     public Object getOpenIdByPhone(String phone){
-        return this.querySql(GET_OPENID_BY_PHONE_SQL,new Object[]{ phone }).get(0);
+        List<Object[]> list = this.querySql(GET_OPENID_BY_PHONE_SQL, new Object[]{phone});
+        return CollectionUtils.isEmpty(list) ? null: list.get(0);
     }
 }

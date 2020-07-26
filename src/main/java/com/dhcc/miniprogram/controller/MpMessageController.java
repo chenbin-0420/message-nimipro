@@ -91,7 +91,7 @@ public class MpMessageController extends BaseController implements MpMessageApi 
 
     @Override
     @PostMapping(value="/sendNimiProSubMsg.do")
-    @ApiOperation(value = "发送订阅消息",notes = "发送订阅消息")
+    @ApiOperation(value = "指定人发送订阅消息",notes = "指定人发送订阅消息")
     public DtoBasicResult sendSubscribeMessageByPhone(@RequestBody DtoSubscribeMessageRequest request) {
         return messageService.sendSubscribeMessageByPhone(request);
     }
@@ -112,7 +112,7 @@ public class MpMessageController extends BaseController implements MpMessageApi 
 
     @Override
     @PostMapping(value = "/getTemplateAuthResult.do")
-    @ApiOperation(value = "用户模板列表",notes = "用户模板列表")
+    @ApiOperation(value = "获取用户模板授权列表",notes = "获取用户模板授权列表")
     public Message<DtoTemplateAuthResult> getTemplateAuthResult(DtoTemplateAuthRequest getTemplateAuthRequest) {
         return new Message<DtoTemplateAuthResult>().setData(templateAuthService.getTemplateAuthResult());
     }
@@ -140,7 +140,7 @@ public class MpMessageController extends BaseController implements MpMessageApi 
 
     @Override
     @PostMapping(value = "/getTemplateAuthByPhoneList.do")
-    @ApiOperation(value = "获取模板授权用户列表",notes = "获取模板授权用户列表")
+    @ApiOperation(value = "根据手机号列表获取用户模板授权列表",notes = "根据手机号列表获用户模板授权列表")
     public DtoTemplateAuthPhoneResult getTemplateAuthByPhoneList(@RequestBody DtoTemplateAuthPhoneRequest templateAuthPhoneRequest) {
         return templateAuthService.getTemplateAuthByPhoneList(templateAuthPhoneRequest);
     }

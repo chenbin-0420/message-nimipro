@@ -16,6 +16,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <bcprov-jdk16.version>1.46</bcprov-jdk16.version>
+        <httpclient.version>4.5.5</httpclient.version>
     </properties>
 
     <dependencies>
@@ -30,7 +31,21 @@
                     <groupId>org.springframework.amqp</groupId>
                     <artifactId>spring-rabbit</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-actuator</artifactId>
+                </exclusion>
             </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${httpclient.version}</version>
         </dependency>
 
         <!-- 加密需要的jar -->

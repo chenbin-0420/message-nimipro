@@ -96,6 +96,7 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
         CheckInParamUtil.checkSecret(dtoBasicResult,wechatConfig,request.getSecret());
         // 不为空，那就是非法的
         if(dtoBasicResult.getErrcode() != null){
+            log.error("发送订阅消息："+JSON.toJSONString(dtoBasicResult));
             return dtoBasicResult;
         }
         // 获取 accessToken
@@ -104,6 +105,7 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
         CheckInParamUtil.checkInParam(accessToken, request,dtoBasicResult, SendMsgTypeEnum.SINGLE);
         // 不为空，参数有为空
         if(dtoBasicResult.getErrcode() != null){
+            log.error("发送订阅消息："+JSON.toJSONString(dtoBasicResult));
             return dtoBasicResult;
         }
         // 根据 phoneNum 查询对应openid
@@ -114,7 +116,7 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
             dtoBasicResult.setErrcode(BusinessCodeEnum.SEND_SINGLE_MESSAGE_NOT_EXISTS_PHONE.getCode())
                     .setErrmsg(BusinessCodeEnum.SEND_SINGLE_MESSAGE_NOT_EXISTS_PHONE.getMsg());
             // 记录日志
-            log.info("发送订阅消息失败结果：" + JSON.toJSONString(dtoBasicResult));
+            log.error("发送订阅消息失败结果：" + JSON.toJSONString(dtoBasicResult));
             return dtoBasicResult;
         } else {
             // 手机号不为空、订阅消息绑定OpenId

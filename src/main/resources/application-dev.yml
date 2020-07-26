@@ -1,5 +1,18 @@
 ﻿server:
+  # 服务器http端口
   port: 14443
+#  # tomcat 配置
+#  tomcat:
+#    # 最大线程数
+#    max-threads: 6
+#    # 最小线程数
+#    min-spare-threads: 3
+#    # 队列长度
+#    accept-count: 1000
+#    # 最大连接数
+#    max-connections: 1000
+#  # 连接建立超时时间
+#  connection-timeout: 10000
 
 info:
   app.name: message-nimipro
@@ -13,13 +26,10 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     #UTC:全球时间,Asia/Shanghai:上海时间,GMT%2B8:北京时间
-    # 镇江测试服务器
-    url: jdbc:mysql://172.21.137.115:3306/dhcplat_zjzwfwzx?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false
+    # 本地服务器
+    url: jdbc:mysql://localhost:3306/dhcplat_zjzwfwzx?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false&allowPublicKeyRetrieval=true
     username: admin
     password: admin
-#    url: jdbc:mysql://localhost:3306/dhcplat_zjzwfwzx?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false
-#    username: admin
-#    password: admin
     sqlSchema:
       plat: dhcplat_zjzwfwzx
   jpa:
@@ -62,7 +72,7 @@ devMode: true
 
 token:
 #  whitelist: /.*
-  whitelist: /sendMessageApi/.*;/async/.*;
+  whitelist: /sendMessageApi/.*;
 
 smb:
   ip: 192.168.100.79

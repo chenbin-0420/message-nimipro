@@ -92,7 +92,7 @@ public enum BusinessCodeEnum {
     USER_AUTH_PHONE_PARAM_EMPTY(681,"用户授权模板请求参数 phoneNumberList为空"),
     USER_AUTH_TEMPLATE_EMPTY(682,"用户无授权模板"),
     USER_AUTH_TEMPLATE_IN_PARAM(682,"用户模板授权入参 "),
-    USER_AUTH_PHONE_EXCEPTION(689,"用户授权模板异常")
+    USER_AUTH_PHONE_EXCEPTION(689,"用户模板授权失败")
     ;
 
     BusinessCodeEnum(Integer code, String msg) {
