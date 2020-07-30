@@ -1,15 +1,18 @@
 package com.dhcc.miniprogram.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.dhcc.basic.dao.query.SimpleCondition;
 import com.dhcc.basic.service.BaseServiceImpl;
 import com.dhcc.miniprogram.config.WechatConfig;
 import com.dhcc.miniprogram.dao.MpTemplateAuthDao;
 import com.dhcc.miniprogram.dto.*;
 import com.dhcc.miniprogram.enums.BusinessCodeEnum;
+import com.dhcc.miniprogram.enums.TemplateStatusEnum;
 import com.dhcc.miniprogram.model.MpTemplateAuth;
 import com.dhcc.miniprogram.service.MpTemplateAuthService;
 import com.dhcc.miniprogram.service.MpTemplateListService;
 import com.dhcc.miniprogram.util.CheckInParamUtil;
+import com.dhcc.miniprogram.util.DateUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -83,7 +86,7 @@ public class MpTemplateAuthServiceImpl extends BaseServiceImpl<MpTemplateAuthDao
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public DtoTemplateAuthResult insertTemplateAuth(DtoTemplateAuthRequest templateAuthRequest) {
+	public DtoTemplateAuthResult insertTemplateAuth(DtoUpdateTemplateAuthRequest templateAuthRequest) {
 		// 打印日志
 		log.info("添加模板授权参数："+ JSON.toJSONString(templateAuthRequest));
 		// 声明模板授权结果
@@ -92,40 +95,58 @@ public class MpTemplateAuthServiceImpl extends BaseServiceImpl<MpTemplateAuthDao
 		CheckInParamUtil.checkInParam(templateAuthResult,templateAuthRequest);
 		// errCode 不为空，返回模板授权结果
 		if(templateAuthResult.getErrcode() != null){
+			log.info("模板授权参数为空："+ JSON.toJSONString(templateAuthResult));
 			return templateAuthResult;
 		}
 		// 获取手机号
 		String phone = templateAuthRequest.getPhone();
-		// 获取需订阅的模板
-		String[] templateIds = templateAuthRequest.getTemplateIds();
-
-		// 实际可订阅模板列表
-		for (DtoTemplateListQuery templateListQuery : templateListService.getValidateTemplateList(templateIds)) {
-			// 获取模板ID
-			String templateId = templateListQuery.getTemplateId();
-			// 模板ID不为空，添加模板授权
+		// 添加或修改模板授权
+		for (DtoUpdateTemplateStatus updateTemplate : templateAuthRequest.getTemplates()) {
+			String templateId = updateTemplate.getTemplateId();
+			// 通过名称转换模板状态枚举
+			TemplateStatusEnum templateStatusEnum = TemplateStatusEnum.convertTemplateStatusEnumByName(updateTemplate.getStatus());
 			if(StringUtils.isNotEmpty(templateId)){
-				// 根据模板ID和手机号查询模板授权结果
-				// 模板授权结果为空，添加模板授权
-				if(CollectionUtils.isEmpty(dao.getIdListByPhoneTemplateId(templateId, phone))) {
-					// 模板授权属性设置 模板ID、标题、描述、类型、排列顺序并添加模板授权信息
-					MpTemplateAuth templateAuth = DtoTemplateAuthRequest.toPO(templateAuthRequest);
-					templateAuth.setTemplateId(templateId);
-					templateAuth.setTitle(templateListQuery.getTitle());
-					templateAuth.setTmplDesc(wechatConfig.getExternalDesc());
-					templateAuth.setType(templateListQuery.getType());
-					templateAuth.setTmplOrder(1);
-					try {
-						save(templateAuth);
-						// 记日志
-						log.info("添加模板授权结果:"+JSON.toJSONString(templateAuth));
-					} catch (Exception e) {
-						log.error(BusinessCodeEnum.TEMPLATE_AUTH_FAIL.getMsg(),e);
-						// 模板授权 设置模板数组、标题、描述
-						templateAuthResult = new DtoTemplateAuthResult(BusinessCodeEnum.TEMPLATE_AUTH_FAIL.getCode(),BusinessCodeEnum.TEMPLATE_AUTH_FAIL.getMsg());
-						// 返回基础的模板授权结果
-						return getBasicTemplateAuthResult(templateAuthResult);
+				DtoTemplateListQuery dtoTemplateListQuery = templateListService.getValidateTemplateListByTemplateId(templateId);
+				if( dtoTemplateListQuery != null ){
+					// 根据模板ID和手机号查询模板授权结果
+					SimpleCondition sc = new SimpleCondition()
+							.addParm("templateId", updateTemplate.getTemplateId())
+							.addParm("phone",phone);
+					MpTemplateAuth templateAuth = dao.findOne(sc);
+					// 模板授权结果为空，添加模板授权
+					if(templateAuth == null) {
+						// 用户在订阅界面，允许接收模板消息时添加模板授权
+						if(TemplateStatusEnum.ACCEPT.equals(templateStatusEnum)){
+							templateAuth = DtoUpdateTemplateAuthRequest.toPO(templateAuthRequest);
+							// 模板授权属性设置 模板ID、标题、描述、类型、排列顺序并添加模板授权信息
+							templateAuth.setTemplateId(templateId);
+							templateAuth.setTitle(dtoTemplateListQuery.getTitle());
+							templateAuth.setTmplDesc(wechatConfig.getExternalDesc());
+							templateAuth.setType(dtoTemplateListQuery.getType());
+							templateAuth.setTmplOrder(1);
+							// 设置已订阅
+							templateAuth.setIsSub(TemplateStatusEnum.ACCEPT.getValue());
+							// 添加模板授权
+							save(templateAuth);
+							// 记日志
+							log.info("添加模板授权结果:"+JSON.toJSONString(templateAuth));
+						}
+					} else {
+						// 模板授权状态与数据库中模板授权状态不一致修改模板授权状态
+						if(!templateStatusEnum.getValue().equals(templateAuth.getIsSub())){
+							// 根据模板状态值修改模板状态
+							templateAuth.setIsSub(templateStatusEnum.getValue());
+							templateAuth.setModifyTime(DateUtil.getCurrentDate());
+							templateAuth.setModifyUser(templateAuthRequest.getOpenId());
+							update(templateAuth);
+							log.info("修改模板授权结果:"+JSON.toJSONString(templateAuth));
+						}
 					}
+				} else {
+					log.error(BusinessCodeEnum.TEMPLATE_AUTH_FAIL.getMsg());
+					templateAuthResult = new DtoTemplateAuthResult(BusinessCodeEnum.TEMPLATE_AUTH_FAIL.getCode(),BusinessCodeEnum.TEMPLATE_AUTH_FAIL.getMsg());
+					// 返回基础的模板授权结果
+					return getBasicTemplateAuthResult(templateAuthResult);
 				}
 			}
 		}

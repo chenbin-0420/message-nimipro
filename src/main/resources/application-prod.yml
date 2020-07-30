@@ -16,7 +16,7 @@ spring:
     # 镇江正式服务器
     url: jdbc:mysql://172.21.137.120:3306/dhcplat_zjzwfwzx?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false&allowPublicKeyRetrieval=true
     username: admin
-    password: admin
+    password: admin@ZJzwfwzx@20200727
     sqlSchema:
       plat: dhcplat_zjzwfwzx
   jpa:

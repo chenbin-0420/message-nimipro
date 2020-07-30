@@ -75,9 +75,12 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	@FieldDefine(title = "结果消息", number = 13)
 	@Column(name = "errmsg", length = 200, unique = false, nullable = true)
 	private String errmsg;
+
+	@FieldDefine(title = "发送类型 1-发送指定人消息 2-群发消息", number = 14)
+	@Column(name = "send_type", length = 10, unique = false, nullable = true)
+	private Integer sendType;
 	
 	public MpMessage() {
-		
 	}
 	
 	/**
@@ -270,5 +273,21 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	 */
 	public void setErrmsg(String errmsg) {
 		this.errmsg = errmsg;
+	}
+
+	/**
+	 * 读取属性：发送类型 1-发送指定人消息 2-群发消息
+	 * @return
+	 */
+	public Integer getSendType() {
+		return sendType;
+	}
+
+	/**
+	 * 设置属性：发送类型 1-发送指定人消息 2-群发消息
+	 * @param sendType
+	 */
+	public void setSendType(Integer sendType) {
+		this.sendType = sendType;
 	}
 }

@@ -188,4 +188,12 @@ public class MpTemplateListServiceImpl extends BaseServiceImpl<MpTemplateListDao
 		}
 		return dao.querySqlEntity(sql.toString(),param.toArray(new Object[0]),DtoTemplateListQuery.class,null);
 	}
+
+	private static final String GET_VALIDATE_TEMPLATE_LIST_BY_TEMPLATE_ID_SQL = "SELECT mp.`template_id`,mp.`title`,mp.`type` FROM mp_template_list mp where  mp.`validation` = ? and mp.template_id = ? ";
+
+	@Override
+	public DtoTemplateListQuery getValidateTemplateListByTemplateId(String templateId) {
+		List<DtoTemplateListQuery> templateListQueries = dao.querySqlEntity(GET_VALIDATE_TEMPLATE_LIST_BY_TEMPLATE_ID_SQL, new Object[]{ VALIDATION, templateId }, DtoTemplateListQuery.class, null);
+		return CollectionUtils.isNotEmpty(templateListQueries)? templateListQueries.get(0): null;
+	}
 }

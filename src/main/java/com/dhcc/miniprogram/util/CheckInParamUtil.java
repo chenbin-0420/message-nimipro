@@ -34,7 +34,7 @@ public class CheckInParamUtil {
         if (request.getData() == null) {
             reason += "data为空，";
         }
-        if(SendMsgTypeEnum.SINGLE.getCode().equals(msgTypeEnum.getCode())){
+        if(SendMsgTypeEnum.SINGLE.equals(msgTypeEnum)){
             if(StringUtils.isEmpty(request.getPhoneNumber())){
                 reason += "phoneNumber为空,";
             }
@@ -53,7 +53,7 @@ public class CheckInParamUtil {
             request.setMiniprogram_state(MpStatusEnum.FORMAL.getCode());
         }
         if (StringUtils.isNotEmpty(reason)) {
-            if(SendMsgTypeEnum.SINGLE.getCode().equals(msgTypeEnum.getCode())){
+            if(SendMsgTypeEnum.SINGLE.equals(msgTypeEnum)){
                 reason = BusinessCodeEnum.SEND_SINGLE_MESSAGE_PARAM_EMPTY.getMsg() + reason;
                 dtoBasicResult.setErrcode(BusinessCodeEnum.SEND_SINGLE_MESSAGE_PARAM_EMPTY.getCode());
             } else {
@@ -157,7 +157,7 @@ public class CheckInParamUtil {
      * @param templateAuthResult 模板授权结果
      * @param dtoTemplateAuthRequest 模板授权请求体
      */
-    public static void checkInParam(DtoTemplateAuthResult templateAuthResult,DtoTemplateAuthRequest dtoTemplateAuthRequest){
+    public static void checkInParam(DtoTemplateAuthResult templateAuthResult,DtoUpdateTemplateAuthRequest dtoTemplateAuthRequest){
         String reason = "";
         String phone = dtoTemplateAuthRequest.getPhone();
         if(StringUtils.isEmpty(phone) || UNDEFINED.equals(phone)){
@@ -166,8 +166,8 @@ public class CheckInParamUtil {
         if(StringUtils.isEmpty(dtoTemplateAuthRequest.getOpenId())){
             reason += "openId为空,";
         }
-        if(dtoTemplateAuthRequest.getTemplateIds() == null){
-            reason += "templateIds为空,";
+        if(dtoTemplateAuthRequest.getTemplates() == null){
+            reason += "templates为空,";
         }
         if(StringUtils.isNotEmpty(reason)){
             // 模板授权入参为空

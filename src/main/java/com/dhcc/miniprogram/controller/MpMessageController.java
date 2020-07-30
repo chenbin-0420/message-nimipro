@@ -49,7 +49,6 @@ public class MpMessageController extends BaseController implements MpMessageApi 
     @GetMapping("/verifyMsgFromWechat.do")
     @ApiOperation(value = "验证消息来自微信服务器",notes = "验证消息来自微信服务器")
     public void verifyMsgFromWechat() {
-
         HttpServletResponse response = getResponse();
         String echostr = messageService.verifyMsgFromWechat(getRequest());
         // 打印字符流
@@ -112,15 +111,15 @@ public class MpMessageController extends BaseController implements MpMessageApi 
 
     @Override
     @PostMapping(value = "/getTemplateAuthResult.do")
-    @ApiOperation(value = "获取用户模板授权列表",notes = "获取用户模板授权列表")
+    @ApiOperation(value = "获取用户可授权模板列表",notes = "获取用户可授权模板列表")
     public Message<DtoTemplateAuthResult> getTemplateAuthResult(DtoTemplateAuthRequest getTemplateAuthRequest) {
         return new Message<DtoTemplateAuthResult>().setData(templateAuthService.getTemplateAuthResult());
     }
 
     @Override
     @PostMapping(value = "/insertTemplateAuth.do")
-    @ApiOperation(value = "用户模板授权",notes = "用户模板授权")
-    public Message<DtoTemplateAuthResult> insertTemplateAuth(DtoTemplateAuthRequest templateAuthRequest) {
+    @ApiOperation(value = "用户授权模板",notes = "用户授权模板")
+    public Message<DtoTemplateAuthResult> insertTemplateAuth(@RequestBody DtoUpdateTemplateAuthRequest templateAuthRequest) {
         return new Message<DtoTemplateAuthResult>().setData(templateAuthService.insertTemplateAuth(templateAuthRequest));
     }
 
@@ -140,15 +139,15 @@ public class MpMessageController extends BaseController implements MpMessageApi 
 
     @Override
     @PostMapping(value = "/getTemplateAuthByPhoneList.do")
-    @ApiOperation(value = "根据手机号列表获取用户模板授权列表",notes = "根据手机号列表获用户模板授权列表")
+    @ApiOperation(value = "根据手机号列表获取用户授权模板列表",notes = "根据手机号列表获取用户授权模板列表")
     public DtoTemplateAuthPhoneResult getTemplateAuthByPhoneList(@RequestBody DtoTemplateAuthPhoneRequest templateAuthPhoneRequest) {
         return templateAuthService.getTemplateAuthByPhoneList(templateAuthPhoneRequest);
     }
 
     @Override
     @PostMapping(value = "/getTemplateAuthByCondition.do")
-    @ApiOperation(value = "根据手机号和模板ID查询用户模板授权",notes = "根据手机号和模板ID查询用户模板授权")
-    public DtoBasicResult getTemplateAuthByCondition(@RequestBody  DtoTemplateAuthPhoneCondRequest request) {
+    @ApiOperation(value = "根据手机号和模板ID查询用户授权模板",notes = "根据手机号和模板ID查询用户授权模板")
+    public DtoBasicResult getTemplateAuthByCondition(@RequestBody DtoTemplateAuthPhoneCondRequest request) {
         return templateAuthService.getTemplateAuthByCondition(request);
     }
 }

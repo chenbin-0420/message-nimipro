@@ -9,19 +9,19 @@ public enum SendMsgTypeEnum {
      * SINGLE 发送指定人消息
      * MASS 群发消息
      */
-    SINGLE("single","发送指定人消息"),
-    MASS("mass","群发消息");
+    SINGLE(1,"single"),
+    MASS(2,"mass");
 
-    private String Code;
+    private Integer code;
     private String name;
 
-    SendMsgTypeEnum(String code, String name) {
-        Code = code;
+    SendMsgTypeEnum(Integer code, String name) {
+        this.code = code;
         this.name = name;
     }
 
-    public String getCode() {
-        return Code;
+    public Integer getCode() {
+        return code;
     }
 
     public String getName() {

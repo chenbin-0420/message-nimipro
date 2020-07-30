@@ -11,11 +11,11 @@ import com.dhcc.miniprogram.model.MpTemplateAuth;
  */
 public interface MpTemplateAuthService extends BaseService<MpTemplateAuth, String> {
     /**
-     * 用户模板授权
-     * @param dtoTemplateAuthRequest 模板授权请求
+     * 更新用户模板授权状态
+     * @param dtoTemplateAuthRequest 更新用户模板授权请求
      * @return 返回模板授权结果
      */
-    DtoTemplateAuthResult insertTemplateAuth(DtoTemplateAuthRequest dtoTemplateAuthRequest);
+    DtoTemplateAuthResult insertTemplateAuth(DtoUpdateTemplateAuthRequest dtoTemplateAuthRequest);
 
     /**
      * 获取有效模板

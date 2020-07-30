@@ -53,10 +53,10 @@ public interface MpMessageApi {
 
     /**
      * 用户模板授权
-     * @param getTemplateAuthRequest 模板授权请求体
+     * @param templateAuthRequest 更新模板授权请求体
      * @return 返回模板授权结果
      */
-    Message<DtoTemplateAuthResult> insertTemplateAuth(DtoTemplateAuthRequest getTemplateAuthRequest);
+    Message<DtoTemplateAuthResult> insertTemplateAuth(DtoUpdateTemplateAuthRequest templateAuthRequest);
 
     /**
      * 更新模板信息
