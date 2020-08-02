@@ -94,3 +94,8 @@ wechat:
     - Xcy9aujnpioqs00JC/kCVjiecMXO3wuZQr+AhoYc57Q1QF/HDMtH5o26IpYKDEcD0BhHWvjLdr2P0zyXDePivw==
     - j1lMmWQnMomva48sHvf126qzdx8/yt9v1P5xdVZkecrzkQUDFYee6mx7T0WXF6z9WcpbkN02SGDABIiRZktnjQ==
     - EKRYFTTqEnsyB279lXm/ADBZhiBg/4UqkyCyimWkgUwKUC5/QxDjPN69J9mD5w6kl/adz+hdnuftcIOkN7cljQ==
+  # 访问腾讯接口
+  userLoginUrl: https://api.weixin.qq.com/sns/jscode2session
+  accessTokenUrl: https://api.weixin.qq.com/cgi-bin/token
+  sendSubscribeUrl: https://api.weixin.qq.com/cgi-bin/message/subscribe/send
+  templateListUrl: https://api.weixin.qq.com/wxaapi/newtmpl/gettemplate

@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.dhcc.basic.dao.query.SimpleCondition;
 import com.dhcc.basic.service.BaseServiceImpl;
 import com.dhcc.basic.util.HttpClientUtil;
-import com.dhcc.miniprogram.config.MiniproUrlConfig;
 import com.dhcc.miniprogram.config.WechatConfig;
 import com.dhcc.miniprogram.dao.MpUserDao;
 import com.dhcc.miniprogram.dto.*;
@@ -131,11 +130,13 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
         // 设置请求体参数
         Map<String, String> headerMap = new HashMap<>(1);
         try {
-            log.info("接口名称：" + MiniproUrlConfig.GET_CODE2SESSION_URL.getName());
-            log.info("接口参数：" + MiniproUrlConfig.GET_CODE2SESSION_URL.getUrl());
-            log.info("接口参数：" + paramMap);
+            // 获取用户登录接口Url
+            String userLoginUrl = wechatConfig.getUserLoginUrl();
+            log.info("接口名称：小程序登录");
+            log.info(String.format("接口参数：%s", userLoginUrl));
+            log.info(String.format("接口参数：%s",paramMap));
             // 发送Get请求，并接收字符串的结果
-            String result = HttpClientUtil.doGet(httpClient, MiniproUrlConfig.GET_CODE2SESSION_URL.getUrl(), paramMap, headerMap);
+            String result = HttpClientUtil.doGet(httpClient, userLoginUrl, paramMap, headerMap);
             // 字符串转化为唯一信息类
             DtoIdenInfo idenInfo = JSON.parseObject(result, DtoIdenInfo.class);
             // 获取对象成功
@@ -209,7 +210,7 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
             // 获取 sessionKey
             String sessionKey = user.getSessionKey();
             log.info("接口名称：获取手机号");
-            log.info("接口参数：" + JSON.toJSONString(new String[]{sessionKey, phoneNumberRequest.getIv(), phoneNumberRequest.getEncryptedData()}));
+            log.info(String.format("接口参数：%s",JSON.toJSONString(new String[]{sessionKey, phoneNumberRequest.getIv(), phoneNumberRequest.getEncryptedData()})));
             decrypt = AESUtil.pkcs7PaddingDecrypt(sessionKey, phoneNumberRequest.getIv(), phoneNumberRequest.getEncryptedData());
         } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidAlgorithmParameterException | InvalidKeyException |
                 BadPaddingException | IllegalBlockSizeException | UnsupportedEncodingException | NoSuchProviderException e) {
@@ -275,7 +276,7 @@ public class MpUserServiceImpl extends BaseServiceImpl<MpUserDao, MpUser, String
         try {
             String sessionKey = user.getSessionKey();
             log.info("接口名称：换绑手机号");
-            log.info("接口参数：" + JSON.toJSONString(new String[]{sessionKey, phoneNumberRequest.getIv(), phoneNumberRequest.getEncryptedData()}));
+            log.info(String.format("接口参数：%s",JSON.toJSONString(new String[]{sessionKey, phoneNumberRequest.getIv(), phoneNumberRequest.getEncryptedData()})));
             decrypt = AESUtil.pkcs7PaddingDecrypt(sessionKey, phoneNumberRequest.getIv(), phoneNumberRequest.getEncryptedData());
         } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidAlgorithmParameterException | InvalidKeyException |
                 BadPaddingException | IllegalBlockSizeException | UnsupportedEncodingException | NoSuchProviderException e) {

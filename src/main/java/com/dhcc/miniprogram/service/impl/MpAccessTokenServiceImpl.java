@@ -3,7 +3,6 @@ package com.dhcc.miniprogram.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.dhcc.basic.service.BaseServiceImpl;
 import com.dhcc.basic.util.HttpClientUtil;
-import com.dhcc.miniprogram.config.MiniproUrlConfig;
 import com.dhcc.miniprogram.config.WechatConfig;
 import com.dhcc.miniprogram.dao.MpAccessTokenDao;
 import com.dhcc.miniprogram.dto.DtoAccessTokenResult;
@@ -107,11 +106,13 @@ public class MpAccessTokenServiceImpl extends BaseServiceImpl<MpAccessTokenDao, 
 		// 设置请求体参数
 		HashMap<String, String> headerMap = new HashMap<>(1);
 		try {
-			log.info("接口名称：" + MiniproUrlConfig.GET_ACCESS_TOKEN_URL.getName());
-			log.info("接口参数：" + MiniproUrlConfig.GET_ACCESS_TOKEN_URL.getUrl());
-			log.info("接口参数：" + paramMap);
+			// 获取 accessTokenUrl 接口Url
+			String accessTokenUrl = wechatConfig.getAccessTokenUrl();
+			log.info("接口名称：获取AccessToken");
+			log.info(String.format("接口Url：%s", accessTokenUrl));
+			log.info(String.format("接口参数：%s", paramMap));
 			// 发送Get请求，并接收字符串的结果
-			String result = HttpClientUtil.doGet(httpClient, MiniproUrlConfig.GET_ACCESS_TOKEN_URL.getUrl(), paramMap, headerMap);
+			String result = HttpClientUtil.doGet(httpClient, accessTokenUrl, paramMap, headerMap);
 			// 解析字符串为 DtoAccessTokenResult 对象
 			dtoAccessTokenResult = JSON.parseObject(result, DtoAccessTokenResult.class);
 			// 访问令牌

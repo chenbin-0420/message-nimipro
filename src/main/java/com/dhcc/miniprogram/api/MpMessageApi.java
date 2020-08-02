@@ -35,7 +35,7 @@ public interface MpMessageApi {
      * @param dtoSubscribeMessageRequest 小程序订阅消息请求类
      * @return 基础返回结果类
      */
-    DtoBasicResult sendSubscribeMessageByPhone(DtoSubscribeMessageRequest dtoSubscribeMessageRequest);
+    Message<DtoBasicResult> sendSubscribeMessageByPhone(DtoSubscribeMessageRequest dtoSubscribeMessageRequest);
 
     /**
      * 获取手机号
@@ -62,14 +62,14 @@ public interface MpMessageApi {
      * 更新模板信息
      * @return 返回基础结果
      */
-    DtoBasicResult updateTemplateList();
+    Message<DtoBasicResult> updateTemplateList();
 
     /**
      * 群发订阅消息
      * @param request 群发消息请求类
      * @return DtoBasicResult
      */
-    DtoBasicResult sendMassMessageByPhoneList(DtoSubscribeMessageRequest request);
+    Message<DtoBasicResult> sendMassMessageByPhoneList(DtoSubscribeMessageRequest request);
 
     /**
      * 换绑手机号
@@ -83,12 +83,12 @@ public interface MpMessageApi {
      * @param templateAuthAbbrRequests 模板授权用户请求
      * @return 模板授权用户列表
      */
-    DtoTemplateAuthPhoneResult getTemplateAuthByPhoneList(DtoTemplateAuthPhoneRequest templateAuthAbbrRequests);
+    Message<DtoTemplateAuthPhoneResult> getTemplateAuthByPhoneList(DtoTemplateAuthPhoneRequest templateAuthAbbrRequests);
 
     /**
      * 通过手机号和模板ID获取模板授权用户列表
      * @param request 模板授权用户请求
      * @return 返回基础类
      */
-    DtoBasicResult getTemplateAuthByCondition(DtoTemplateAuthPhoneCondRequest request);
+    Message<DtoBasicResult> getTemplateAuthByCondition(DtoTemplateAuthPhoneCondRequest request);
 }

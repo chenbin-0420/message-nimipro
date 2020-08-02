@@ -79,6 +79,10 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	@FieldDefine(title = "发送类型 1-发送指定人消息 2-群发消息", number = 14)
 	@Column(name = "send_type", length = 10, unique = false, nullable = true)
 	private Integer sendType;
+
+	@FieldDefine(title = "群发日志ID", number = 15)
+	@Column(name = "mass_journal_id", length = 32, unique = false, nullable = true)
+	private String massJournalId;
 	
 	public MpMessage() {
 	}
@@ -289,5 +293,21 @@ public class MpMessage extends IdentifiedPo implements Serializable {
 	 */
 	public void setSendType(Integer sendType) {
 		this.sendType = sendType;
+	}
+
+	/**
+	 * 读取属性：群发日志ID
+	 * @return
+	 */
+	public String getMassJournalId() {
+		return massJournalId;
+	}
+
+	/**
+	 * 设置属性：群发日志ID
+	 * @param massJournalId
+	 */
+	public void setMassJournalId(String massJournalId) {
+		this.massJournalId = massJournalId;
 	}
 }

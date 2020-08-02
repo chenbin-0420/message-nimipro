@@ -88,3 +88,8 @@ wechat:
   - Xcy9aujnpioqs00JC/kCVjiecMXO3wuZQr+AhoYc57Q1QF/HDMtH5o26IpYKDEcD0BhHWvjLdr2P0zyXDePivw==
   - j1lMmWQnMomva48sHvf126qzdx8/yt9v1P5xdVZkecrzkQUDFYee6mx7T0WXF6z9WcpbkN02SGDABIiRZktnjQ==
   - EKRYFTTqEnsyB279lXm/ADBZhiBg/4UqkyCyimWkgUwKUC5/QxDjPN69J9mD5w6kl/adz+hdnuftcIOkN7cljQ==
+  # 访问腾讯接口
+  userLoginUrl: http://10.254.35.100:14443/sns/jscode2session
+  accessTokenUrl: http://10.254.35.100:14443/cgi-bin/token
+  sendSubscribeUrl: http://10.254.35.100:14443/cgi-bin/message/subscribe/send
+  templateListUrl: http://10.254.35.100:14443/wxaapi/newtmpl/gettemplate

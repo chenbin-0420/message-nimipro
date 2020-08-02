@@ -87,7 +87,7 @@ public enum BusinessCodeEnum {
     // 群发消息
     SEND_MASS_MESSAGE_PARAM_EMPTY(671,"群发订阅消息参数"),
     SEND_MASS_MESSAGE_PRAT_FAIL(672,"群发订阅消息发送成功手机号：%s，失败手机号：%s"),
-    SEND_MASS_MESSAGE_ALL_FAIL(673,"群发订阅消息发送全部失败"),
+    SEND_MASS_MESSAGE_INSERT_JOURNAL_FAIL(673,"群发订阅消息添加群发日志失败"),
     SEND_MASS_MESSAGE_NOT_EXISTS_PHONE(674,"接收群发订阅消息手机号用户不存在"),
     SEND_MASS_MESSAGE_SINGLE_MESSAGE_EXCEPTION(675,"群发单条消息异常"),
     SEND_MASS_MESSAGE_SINGLE_MESSAGE_SERVER(676,"群发单条消息服务器异常"),

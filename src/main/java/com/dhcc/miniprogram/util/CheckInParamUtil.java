@@ -19,6 +19,10 @@ import java.util.List;
 public class CheckInParamUtil {
 
     /**
+     * 群发最大总数为 1000
+     */
+    private static final int MASS_MAX_COUNT = 1000;
+    /**
      * 检查小程序订阅消息业务的入参
      * @param token 访问token
      * @param request 小程序订阅消息请求体
@@ -42,6 +46,9 @@ public class CheckInParamUtil {
             List<String> numberList = request.getPhoneNumberList();
             if(CollectionUtils.isEmpty(numberList)){
                 reason += "phoneNumberList为空,";
+            }
+            if(numberList.size() > MASS_MAX_COUNT){
+                reason += "phoneNumberList的长度不超过1000个手机号,";
             }
         }
         if(StringUtils.isEmpty(request.getLang())){

@@ -91,8 +91,8 @@ public class MpMessageController extends BaseController implements MpMessageApi 
     @Override
     @PostMapping(value="/sendNimiProSubMsg.do")
     @ApiOperation(value = "指定人发送订阅消息",notes = "指定人发送订阅消息")
-    public DtoBasicResult sendSubscribeMessageByPhone(@RequestBody DtoSubscribeMessageRequest request) {
-        return messageService.sendSubscribeMessageByPhone(request);
+    public Message<DtoBasicResult> sendSubscribeMessageByPhone(@RequestBody DtoSubscribeMessageRequest request) {
+        return new Message<DtoBasicResult>().setData(messageService.sendSubscribeMessageByPhone(request));
     }
 
     @Override
@@ -126,28 +126,28 @@ public class MpMessageController extends BaseController implements MpMessageApi 
     @Override
     @PostMapping("/updateTemplateList.do")
     @ApiOperation(value = "更新模板列表",notes = "更新模板列表")
-    public DtoBasicResult updateTemplateList() {
-        return templateListService.updateTemplateList();
+    public Message<DtoBasicResult> updateTemplateList() {
+        return new Message<DtoBasicResult>().setData(templateListService.updateTemplateList());
     }
 
     @Override
     @PostMapping(value = "/sendMassMessageByPhoneList.do")
     @ApiOperation(value = "发送群发消息",notes = "发送群发消息")
-    public DtoBasicResult sendMassMessageByPhoneList(@RequestBody DtoSubscribeMessageRequest request) {
-        return messageService.sendMassMessageByPhoneList(request);
+    public Message<DtoBasicResult> sendMassMessageByPhoneList(@RequestBody DtoSubscribeMessageRequest request) {
+        return new Message<DtoBasicResult>().setData(messageService.sendMassMessageByPhoneList(request));
     }
 
     @Override
     @PostMapping(value = "/getTemplateAuthByPhoneList.do")
     @ApiOperation(value = "根据手机号列表获取用户授权模板列表",notes = "根据手机号列表获取用户授权模板列表")
-    public DtoTemplateAuthPhoneResult getTemplateAuthByPhoneList(@RequestBody DtoTemplateAuthPhoneRequest templateAuthPhoneRequest) {
-        return templateAuthService.getTemplateAuthByPhoneList(templateAuthPhoneRequest);
+    public Message<DtoTemplateAuthPhoneResult> getTemplateAuthByPhoneList(@RequestBody DtoTemplateAuthPhoneRequest templateAuthPhoneRequest) {
+        return new Message<DtoTemplateAuthPhoneResult>().setData(templateAuthService.getTemplateAuthByPhoneList(templateAuthPhoneRequest));
     }
 
     @Override
     @PostMapping(value = "/getTemplateAuthByCondition.do")
     @ApiOperation(value = "根据手机号和模板ID查询用户授权模板",notes = "根据手机号和模板ID查询用户授权模板")
-    public DtoBasicResult getTemplateAuthByCondition(@RequestBody DtoTemplateAuthPhoneCondRequest request) {
-        return templateAuthService.getTemplateAuthByCondition(request);
+    public Message<DtoBasicResult> getTemplateAuthByCondition(@RequestBody DtoTemplateAuthPhoneCondRequest request) {
+        return new Message<DtoBasicResult>().setData(templateAuthService.getTemplateAuthByCondition(request));
     }
 }

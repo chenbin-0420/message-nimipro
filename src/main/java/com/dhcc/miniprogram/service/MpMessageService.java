@@ -2,8 +2,10 @@ package com.dhcc.miniprogram.service;
 
 import com.dhcc.miniprogram.dto.DtoBasicResult;
 import com.dhcc.miniprogram.dto.DtoSubscribeMessageRequest;
+import com.dhcc.miniprogram.dto.DtoUser;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.concurrent.Future;
 
 /**
  * @author cb
@@ -32,4 +34,13 @@ public interface MpMessageService {
      * @return DtoBasicResult
      */
     DtoBasicResult sendMassMessageByPhoneList(DtoSubscribeMessageRequest request);
+
+    /**
+     * 异步 - 发送订阅消息
+     * @param request 群发消息请求类
+     * @param user 用户
+     * @param massJournalId 群发日志ID
+     * @return Future<DtoBasicResult>
+     */
+    Future<DtoBasicResult> sendMessage(DtoSubscribeMessageRequest request, DtoUser user,String massJournalId);
 }

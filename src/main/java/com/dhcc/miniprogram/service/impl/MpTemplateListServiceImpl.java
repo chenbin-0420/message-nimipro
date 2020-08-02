@@ -3,7 +3,7 @@ package com.dhcc.miniprogram.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.dhcc.basic.service.BaseServiceImpl;
 import com.dhcc.basic.util.HttpClientUtil;
-import com.dhcc.miniprogram.config.MiniproUrlConfig;
+import com.dhcc.miniprogram.config.WechatConfig;
 import com.dhcc.miniprogram.dao.MpTemplateListDao;
 import com.dhcc.miniprogram.dto.DtoBasicResult;
 import com.dhcc.miniprogram.dto.DtoTemplateList;
@@ -85,6 +85,9 @@ public class MpTemplateListServiceImpl extends BaseServiceImpl<MpTemplateListDao
 	@Autowired
 	private AccessTokenUtil accessTokenUtil;
 
+	@Autowired
+	private WechatConfig wechatConfig;
+
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public DtoBasicResult updateTemplateList() {
@@ -102,15 +105,15 @@ public class MpTemplateListServiceImpl extends BaseServiceImpl<MpTemplateListDao
 		// Get请求
 		try {
 			// 获取模板列表Url配置
-			MiniproUrlConfig urlConfig = MiniproUrlConfig.GET_TEMPLATE_LIST;
+			String templateListUrl = wechatConfig.getTemplateListUrl();
 			// 记录接口信息日志
-			log.info("接口名称："+urlConfig.getName());
-			log.info("接口Url："+urlConfig.getUrl());
-			log.info("接口参数："+ JSON.toJSONString(paramMap));
+			log.info("接口名称：获取当前帐号下的个人模板列表");
+			log.info(String.format("接口Url：%s", templateListUrl));
+			log.info(String.format("接口参数：%s",paramMap));
 			// 发送Get请求并接收响应体
-			String result = HttpClientUtil.doGet(httpClient, urlConfig.getUrl(), paramMap, headersMap);
+			String result = HttpClientUtil.doGet(httpClient, templateListUrl, paramMap, headersMap);
 			// 记录获取模板列表日志
-			log.info("获取模板列表结果："+result);
+			log.info(String.format("获取模板列表结果：%s",result));
 			// 解析字符串并返回模板列表结果
 			templateListResult = JSON.parseObject(result, DtoTemplateListResult.class);
 			// errCode 为 0，表示成功
