@@ -52,7 +52,7 @@ public class MpTemplateAuth extends IdentifiedPo implements Serializable {
 	@Column(name = "tmpl_order", length = 3, unique = false, nullable = true)
 	private Integer tmplOrder;
 
-	@FieldDefine(title = "是否订阅: 0-未订阅、1-已订阅", number = 8)
+	@FieldDefine(title = "是否订阅: 1-订阅、2-取消、3-禁止", number = 8)
 	@Column(name = "is_sub", length = 3, unique = false, nullable = true)
 	private Integer isSub;
 
@@ -173,7 +173,7 @@ public class MpTemplateAuth extends IdentifiedPo implements Serializable {
 	}
 
 	/**
-	 * 读取属性：是否订阅: 0-未订阅、1-已订阅
+	 * 读取属性：是否订阅: 1-订阅、2-取消、3-禁止
 	 * @return
 	 */
 	public Integer getIsSub() {
@@ -181,7 +181,7 @@ public class MpTemplateAuth extends IdentifiedPo implements Serializable {
 	}
 
 	/**
-	 * 设置属性：是否订阅: 0-未订阅、1-已订阅
+	 * 设置属性：是否订阅: 1-订阅、2-取消、3-禁止
 	 * @param isSub
 	 */
 	public void setIsSub(Integer isSub) {

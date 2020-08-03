@@ -271,10 +271,10 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
                 // accessToken 失效,刷新 accessToken 值
                 if( dtoBasicResult.getErrcode() == ACCESS_TOKEN_INVALID && StringUtils.isNotEmpty(dtoBasicResult.getErrmsg())
                         && StringUtils.contains(dtoBasicResult.getErrmsg(),ACCESS_TOKEN_MARK) ){
-                    accessTokenUtil.getAccessToken();;
+                    accessTokenUtil.getAccessToken();
                 } else if(ACCESS_TOKEN_EXPIRED == dtoBasicResult.getErrcode()){
                     // accessToken 过期,刷新 accessToken 值
-                    accessTokenUtil.getAccessToken();;
+                    accessTokenUtil.getAccessToken();
                 }
             }
         } catch (Exception e) {
@@ -319,6 +319,7 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
             LinkedList<String> sendSuccessPhoneList = new LinkedList<>();
             // 需要发送的手机号列表
             List<String> phoneNumberList = request.getPhoneNumberList();
+            request.setPhoneNumberList(null);
             // 根据手机号集合查询用户集合
             List<DtoUser> userList = userService.getDtoUserList(phoneNumberList);
             // 打印用户信息日志

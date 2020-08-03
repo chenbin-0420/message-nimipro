@@ -46,9 +46,10 @@ public class CheckInParamUtil {
             List<String> numberList = request.getPhoneNumberList();
             if(CollectionUtils.isEmpty(numberList)){
                 reason += "phoneNumberList为空,";
-            }
-            if(numberList.size() > MASS_MAX_COUNT){
-                reason += "phoneNumberList的长度不超过1000个手机号,";
+            } else {
+                if(numberList.size() > MASS_MAX_COUNT){
+                    reason += "phoneNumberList的长度不超过1000个手机号,";
+                }
             }
         }
         if(StringUtils.isEmpty(request.getLang())){
