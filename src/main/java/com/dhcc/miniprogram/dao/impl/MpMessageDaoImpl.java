@@ -23,5 +23,5 @@ dao层一般情况下与model是一对一的关系！【只负责】这一个mod
  */
 @Repository
 public class MpMessageDaoImpl extends BaseDaoHibImpl<MpMessage, String> implements MpMessageDao {
-	
+
 }

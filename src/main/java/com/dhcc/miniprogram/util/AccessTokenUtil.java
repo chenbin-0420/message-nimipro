@@ -35,7 +35,7 @@ public class AccessTokenUtil {
     /**
      * 获取 accessToken 开关，默认是关着的 true：开 ，false：关
      */
-    private static boolean accessTokenSwitch = false;
+    private boolean accessTokenSwitch = false;
 
     /**
      * accessToken : 访问令牌
@@ -57,7 +57,7 @@ public class AccessTokenUtil {
         return accessToken;
     }
 
-    public void setAccessToken(String accessToken) {
+    private void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
 
@@ -76,28 +76,25 @@ public class AccessTokenUtil {
      * 同步获取AccessToken
      * @return accessToken
      */
-    public String synchronizedAccessToken(){
-        // 同步
-        synchronized(this) {
-            // 循环3次
-            for (int i = 0; i < MAX_COUNT; i++) {
-                // accessTokenSwitch 开启,获取 accessToken
-                if(accessTokenSwitch){
-                    // 获取accessToken
-                    String accessTokenLasted = accessTokenService.getAccessToken(wechatConfig.getAppId(), wechatConfig.getSecret()).getAccess_token();
-                    // 不为 null , 返回 accessToken
-                    if (StringUtils.isNotEmpty(accessTokenLasted)) {
-                        // 打印info日志
-                        log.info(String.format("#AccessTokenUtil #synchronizedAccessToken 旧accessToken={old:%s},新accessToken={new:%s}",this.accessToken,accessTokenLasted));
-                        // 设置accessToken
-                        setAccessToken(accessTokenLasted);
-                        // 获取 accessTokenSwitch ：关闭
-                        accessTokenSwitch = false;
-                        return accessTokenLasted;
-                    }
+    private synchronized String synchronizedAccessToken(){
+        // 循环3次
+        for (int i = 0; i < MAX_COUNT; i++) {
+            // accessTokenSwitch 开启,获取 accessToken
+            if(accessTokenSwitch){
+                // 获取accessToken
+                String accessTokenLasted = accessTokenService.getAccessToken(wechatConfig.getAppId(), wechatConfig.getSecret()).getAccess_token();
+                // 不为 null , 返回 accessToken
+                if (StringUtils.isNotEmpty(accessTokenLasted)) {
+                    // 打印info日志
+                    log.info(String.format("#AccessTokenUtil #synchronizedAccessToken 旧accessToken={old:%s},新accessToken={new:%s}",this.accessToken,accessTokenLasted));
+                    // 设置accessToken
+                    setAccessToken(accessTokenLasted);
+                    // 获取 accessTokenSwitch ：关闭
+                    accessTokenSwitch = false;
+                    return accessTokenLasted;
                 }
             }
-            return this.accessToken;
         }
+        return this.accessToken;
     }
 }

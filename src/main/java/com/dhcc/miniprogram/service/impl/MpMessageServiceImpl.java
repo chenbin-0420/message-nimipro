@@ -176,6 +176,11 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
             // result 中包含<html>，那是腾讯接口服务器错误500
             if(StringUtils.contains(result,ERROR_MARK)){
                 dtoBasicResult.setErrcode(BusinessCodeEnum.SEND_SINGLE_MESSAGE_SERVER.getCode()).setErrmsg(BusinessCodeEnum.SEND_SINGLE_MESSAGE_SERVER.getMsg());
+                // 记录发送时间并添加对象，并记录结果编码、结果消息
+                mpMessage.setSendTmplTime(DateUtil.getCurrentDate());
+                mpMessage.setErrcode(dtoBasicResult.getErrcode());
+                mpMessage.setErrmsg(dtoBasicResult.getErrmsg());
+                dao.save(mpMessage);
                 log.error("发送订阅消息："+JSON.toJSONString(dtoBasicResult)+",手机号："+ phoneNumber);
                 return dtoBasicResult;
             }
@@ -205,7 +210,12 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
         } catch (Exception e) {
             // 记录日志和抛异常
             log.error(BusinessCodeEnum.SEND_SINGLE_MESSAGE_EXCEPTION.getMsg()+"-手机号："+phoneNumber, e);
-            return dtoBasicResult.setErrcode(BusinessCodeEnum.SEND_SINGLE_MESSAGE_EXCEPTION.getCode()).setErrmsg(BusinessCodeEnum.SEND_SINGLE_MESSAGE_EXCEPTION.getMsg());
+            dtoBasicResult.setErrcode(BusinessCodeEnum.SEND_SINGLE_MESSAGE_EXCEPTION.getCode()).setErrmsg(BusinessCodeEnum.SEND_SINGLE_MESSAGE_EXCEPTION.getMsg());
+            mpMessage.setSendTmplTime(DateUtil.getCurrentDate());
+            mpMessage.setErrcode(dtoBasicResult.getErrcode());
+            mpMessage.setErrmsg(dtoBasicResult.getErrmsg());
+            dao.save(mpMessage);
+            return dtoBasicResult;
         }
     }
 
@@ -257,7 +267,12 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
                 // 群发单条消息服务器异常
                 BusinessCodeEnum messageSingleMessageServer = BusinessCodeEnum.SEND_MASS_MESSAGE_SINGLE_MESSAGE_SERVER;
                 dtoBasicResult.setErrcode(messageSingleMessageServer.getCode()).setErrmsg(messageSingleMessageServer.getMsg());
+                mpMessage.setSendTmplTime(DateUtil.getCurrentDate());
+                mpMessage.setErrcode(dtoBasicResult.getErrcode());
+                mpMessage.setErrmsg(dtoBasicResult.getErrmsg());
+                dao.save(mpMessage);
                 log.error("群发订阅消息："+JSON.toJSONString(dtoBasicResult));
+                return new AsyncResult<>(dtoBasicResult);
             }
             // 解析字符串并转为 DtoBasicResult 对象
             dtoBasicResult = JSON.parseObject(result, DtoBasicResult.class);
@@ -278,8 +293,6 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
                 }
             }
         } catch (Exception e) {
-            // 记录日志和抛异常
-            log.error("群发消息异常", e);
             // 记录群发单条消息异常
             BusinessCodeEnum singleMessageException = BusinessCodeEnum.SEND_MASS_MESSAGE_SINGLE_MESSAGE_EXCEPTION;
             dtoBasicResult.setErrcode(singleMessageException.getCode()).setErrmsg(singleMessageException.getMsg());
@@ -374,7 +387,7 @@ public class MpMessageServiceImpl extends BaseServiceImpl<MpMessageDao, MpMessag
             massJournal.setModifyTime(DateUtil.getCurrentDate());
             massJournalService.update(massJournal);
             // 设置返回消息结果
-            dtoBasicResult.setErrcode(CollectionUtils.isNotEmpty(collection) ?BusinessCodeEnum.SEND_MASS_MESSAGE_PRAT_FAIL.getCode() :BusinessCodeEnum.REQUEST_SUCCESS.getCode())
+            dtoBasicResult.setErrcode(BusinessCodeEnum.REQUEST_SUCCESS.getCode())
                     .setErrmsg(String.format("群发消息结果：成功手机号列表-%s,失败手机号列表-%s",sendSuccessPhoneList,collection));
             log.info(String.format("群发消息结果：成功手机号列表-%s,失败手机号列表-%s",sendSuccessPhoneList,collection));
         }

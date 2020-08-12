@@ -83,19 +83,18 @@ public enum BusinessCodeEnum {
     SEND_SINGLE_MESSAGE_NOT_EXISTS_PHONE(662,"接收单条订阅手机号不存在"),
     SEND_SINGLE_MESSAGE_EXCEPTION(663,"单条订阅消息发送异常"),
     SEND_SINGLE_MESSAGE_FAIL(664,"单条订阅消息发送失败"),
-    SEND_SINGLE_MESSAGE_SERVER(665,"单条订阅消息发送服务器异常"),
+    SEND_SINGLE_MESSAGE_SERVER(665,"单条订阅消息发送微信小程序服务器异常"),
     // 群发消息
     SEND_MASS_MESSAGE_PARAM_EMPTY(671,"群发订阅消息参数"),
-    SEND_MASS_MESSAGE_PRAT_FAIL(672,"群发订阅消息发送成功手机号：%s，失败手机号：%s"),
     SEND_MASS_MESSAGE_INSERT_JOURNAL_FAIL(673,"群发订阅消息添加群发日志失败"),
     SEND_MASS_MESSAGE_NOT_EXISTS_PHONE(674,"接收群发订阅消息手机号用户不存在"),
     SEND_MASS_MESSAGE_SINGLE_MESSAGE_EXCEPTION(675,"群发单条消息异常"),
-    SEND_MASS_MESSAGE_SINGLE_MESSAGE_SERVER(676,"群发单条消息服务器异常"),
+    SEND_MASS_MESSAGE_SINGLE_MESSAGE_SERVER(676,"群发单条消息发送微信小程序服务器异常"),
     SEND_MASS_ASYNC_SINGLE_MESSAGE_EXCEPTION(678,"群发消息-异步发送异常"),
     // 用户授权模板
     USER_AUTH_PHONE_PARAM_EMPTY(681,"用户授权模板请求参数 phoneNumberList为空"),
     USER_AUTH_TEMPLATE_EMPTY(682,"用户无授权模板"),
-    USER_AUTH_TEMPLATE_IN_PARAM(682,"用户模板授权入参 "),
+    USER_AUTH_TEMPLATE_IN_PARAM(683,"用户模板授权入参 "),
     USER_AUTH_PHONE_EXCEPTION(689,"用户模板授权失败")
     ;
 

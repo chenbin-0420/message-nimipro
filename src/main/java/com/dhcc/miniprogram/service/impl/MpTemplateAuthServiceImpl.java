@@ -176,7 +176,7 @@ public class MpTemplateAuthServiceImpl extends BaseServiceImpl<MpTemplateAuthDao
 			tmplIdList.add(templateListQuery.getTemplateId());
 		}
 		// 设置模板ID、标题、描述
-		DtoTemplateAuth dtoTemplateAuth = new DtoTemplateAuth(wechatConfig.getExternalTitle(),wechatConfig.getExternalDesc(),tmplIdList.toArray(new String[0]));
+		DtoTemplateAuth dtoTemplateAuth = new DtoTemplateAuth(wechatConfig.getExternalTitle(),wechatConfig.getExternalDesc(),tmplIdList);
 		// authLinkedList 添加 dtoTemplateAuth
 		authLinkedList.add(dtoTemplateAuth);
 		return templateAuthResult.setData(authLinkedList);

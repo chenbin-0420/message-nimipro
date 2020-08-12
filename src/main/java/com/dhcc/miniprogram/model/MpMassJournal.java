@@ -153,7 +153,7 @@ public class MpMassJournal extends IdentifiedPo implements Serializable {
 	 * @param createTime
 	 */
 	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
+		this.createTime = createTime != null ? (Date) createTime.clone() : null;
 	}
 	
 	/**
@@ -169,7 +169,7 @@ public class MpMassJournal extends IdentifiedPo implements Serializable {
 	 * @param modifyTime
 	 */
 	public void setModifyTime(Date modifyTime) {
-		this.modifyTime = modifyTime;
+		this.modifyTime = modifyTime != null ? (Date) modifyTime.clone() : null;
 	}
 	
 }

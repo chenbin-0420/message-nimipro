@@ -1,5 +1,6 @@
 package com.dhcc.miniprogram.dto;
 
+import java.util.List;
 /**
  * @author cb
  * @date 2020/7/1
@@ -9,7 +10,7 @@ public class DtoTemplateAuth {
     /**
      * 模板ID集合
      */
-    private String[] templateIds;
+    private List<String> templateIds;
     /**
      * 标题
      */
@@ -22,17 +23,17 @@ public class DtoTemplateAuth {
     public DtoTemplateAuth() {
     }
 
-    public DtoTemplateAuth(String title, String desc,String[] templateIds) {
+    public DtoTemplateAuth(String title, String desc,List<String> templateIds) {
         this.templateIds = templateIds;
         this.title = title;
         this.desc = desc;
     }
 
-    public String[] getTemplateIds() {
+    public List<String> getTemplateIds() {
         return templateIds;
     }
 
-    public void setTemplateIds(String[] templateIds) {
+    public void setTemplateIds(List<String> templateIds) {
         this.templateIds = templateIds;
     }
 

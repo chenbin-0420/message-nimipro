@@ -4,6 +4,8 @@ import com.dhcc.miniprogram.enums.IsSubEnum;
 import com.dhcc.miniprogram.model.MpTemplateAuth;
 import com.dhcc.miniprogram.util.DateUtil;
 
+import java.util.List;
+
 /**
  * @author cb
  * @date 2020/7/1
@@ -21,7 +23,7 @@ public class DtoTemplateAuthRequest {
     /**
      * 小程序模板ID
      */
-    private String[] templateIds;
+    private List<String> templateIds;
 
     public String getPhone() {
         return phone;
@@ -39,11 +41,11 @@ public class DtoTemplateAuthRequest {
         this.openId = openId;
     }
 
-    public String[] getTemplateIds() {
+    public List<String> getTemplateIds() {
         return templateIds;
     }
 
-    public void setTemplateIds(String[] templateIds) {
+    public void setTemplateIds(List<String> templateIds) {
         this.templateIds = templateIds;
     }
 

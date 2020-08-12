@@ -52,11 +52,11 @@ public class AESUtil {
         // 创建密码
         Cipher cipher = Cipher.getInstance(TRANSFORMATION_PKCS5);
         // 向量参数规范
-        IvParameterSpec ips = new IvParameterSpec(secretIv.getBytes());
+        IvParameterSpec ips = new IvParameterSpec(secretIv.getBytes(CHARSET_NAME));
         // 初始化密码
         cipher.init(Cipher.ENCRYPT_MODE,secretKeySpec,ips);
         // 加密内容
-        byte[] encrypted = cipher.doFinal(content.getBytes());
+        byte[] encrypted = cipher.doFinal(content.getBytes(CHARSET_NAME));
         // 返回Base64加密字符串
         return Base64.encodeBase64String(encrypted);
     }
@@ -83,7 +83,7 @@ public class AESUtil {
         // 秘钥规范
         SecretKeySpec secretKeySpec = new SecretKeySpec(raw, ALGORITHM);
         // 向量参数规范
-        IvParameterSpec ips = new IvParameterSpec(secretIv.getBytes());
+        IvParameterSpec ips = new IvParameterSpec(secretIv.getBytes(CHARSET_NAME));
         // 密码初始化
         cipher.init(Cipher.DECRYPT_MODE,secretKeySpec,ips);
         // Base64解码
@@ -91,7 +91,7 @@ public class AESUtil {
         // 解除密码
         byte[] original = cipher.doFinal(decrypted);
         // 返回原文
-        return new String(original);
+        return new String(original,CHARSET_NAME);
     }
 
     /**
@@ -120,7 +120,7 @@ public class AESUtil {
         // 初始化密码
         cipher.init(Cipher.ENCRYPT_MODE,secretKeySpec,ips);
         // 加密内容
-        byte[] encrypted = cipher.doFinal(content.getBytes());
+        byte[] encrypted = cipher.doFinal(content.getBytes(CHARSET_NAME));
         // 返回Base64加密字符串
         return Base64.encodeBase64String(encrypted);
     }
