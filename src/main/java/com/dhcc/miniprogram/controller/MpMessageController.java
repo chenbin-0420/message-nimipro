@@ -104,7 +104,7 @@ public class MpMessageController extends BaseController implements MpMessageApi 
 
     @Override
     @PostMapping(value = "/changePhone.do")
-    @ApiOperation(value = "换绑手机号",notes = "换绑手机号")
+    @ApiOperation(value = "更换手机号",notes = "更换手机号")
     public Message<DtoPhoneNumberResult> changePhone(DtoPhoneNumberRequest dtoPhoneNumberRequest) {
         return new Message<DtoPhoneNumberResult>().setData(userService.changePhone(dtoPhoneNumberRequest));
     }

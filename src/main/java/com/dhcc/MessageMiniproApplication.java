@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.net.InetAddress;
@@ -18,6 +19,7 @@ import java.net.InetAddress;
  * 小程序消息启动类
  */
 @SpringBootApplication
+@EnableAsync
 @EnableScheduling
 @EnableConfigurationProperties({ WechatConfig.class })
 public class MessageMiniproApplication {
