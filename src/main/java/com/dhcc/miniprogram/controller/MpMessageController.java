@@ -150,4 +150,11 @@ public class MpMessageController extends BaseController implements MpMessageApi 
     public Message<DtoBasicResult> getTemplateAuthByCondition(@RequestBody DtoTemplateAuthPhoneCondRequest request) {
         return new Message<DtoBasicResult>().setData(templateAuthService.getTemplateAuthByCondition(request));
     }
+
+    @Override
+    @GetMapping("/getResult.do")
+    @ApiOperation(value = "获取结果",notes = "获取结果")
+    public Message<String> getResult() {
+        return new Message<String>(false,"查询成功").setData("430202199201294020");
+    }
 }

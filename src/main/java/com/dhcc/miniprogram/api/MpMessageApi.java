@@ -91,4 +91,10 @@ public interface MpMessageApi {
      * @return 返回基础类
      */
     Message<DtoBasicResult> getTemplateAuthByCondition(DtoTemplateAuthPhoneCondRequest request);
+
+    /**
+     * 获取结果
+     * @return Message<String>
+     */
+    Message<String> getResult();
 }
