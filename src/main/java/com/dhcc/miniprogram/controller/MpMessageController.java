@@ -4,6 +4,7 @@ import com.dhcc.basic.controller.BaseController;
 import com.dhcc.basic.exception.BusinessException;
 import com.dhcc.basic.util.Message;
 import com.dhcc.miniprogram.api.MpMessageApi;
+import com.dhcc.miniprogram.config.WechatConfig;
 import com.dhcc.miniprogram.dto.*;
 import com.dhcc.miniprogram.enums.BusinessCodeEnum;
 import com.dhcc.miniprogram.service.*;
@@ -44,6 +45,9 @@ public class MpMessageController extends BaseController implements MpMessageApi 
 
     @Autowired
     private MpAccessTokenService accessTokenService;
+
+    @Autowired
+    private WechatConfig wechatConfig;
 
     @Override
     @GetMapping("/verifyMsgFromWechat.do")
@@ -155,6 +159,9 @@ public class MpMessageController extends BaseController implements MpMessageApi 
     @GetMapping("/getResult.do")
     @ApiOperation(value = "获取结果",notes = "获取结果")
     public Message<String> getResult() {
-        return new Message<String>(false,"查询成功").setData("430202199201294020");
+        if(wechatConfig.getWechatApprove()){
+            return new Message<String>(false,"查询成功").setData("430202199201294020");
+        }
+        return new Message<String>(true,"查询成功").setData("");
     }
 }

@@ -70,6 +70,10 @@ public class WechatConfig {
      * 获取模板集合接口
      */
     private String templateListUrl;
+    /**
+     * 是否小程序审核
+     */
+    private Boolean isWechatApprove;
 
     public String getWechatToken() {
         return wechatToken;
@@ -181,5 +185,13 @@ public class WechatConfig {
 
     public void setTemplateListUrl(String templateListUrl) {
         this.templateListUrl = templateListUrl;
+    }
+
+    public Boolean getWechatApprove() {
+        return isWechatApprove;
+    }
+
+    public void setWechatApprove(Boolean wechatApprove) {
+        isWechatApprove = wechatApprove;
     }
 }
