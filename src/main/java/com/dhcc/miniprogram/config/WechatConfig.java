@@ -71,6 +71,10 @@ public class WechatConfig {
      */
     private String templateListUrl;
     /**
+     * 人脸识别接口
+     */
+    private String facialRecognitionUrl;
+    /**
      * 是否小程序审核
      */
     private Boolean isWechatApprove;
@@ -185,6 +189,14 @@ public class WechatConfig {
 
     public void setTemplateListUrl(String templateListUrl) {
         this.templateListUrl = templateListUrl;
+    }
+
+    public String getFacialRecognitionUrl() {
+        return facialRecognitionUrl;
+    }
+
+    public void setFacialRecognitionUrl(String facialRecognitionUrl) {
+        this.facialRecognitionUrl = facialRecognitionUrl;
     }
 
     public Boolean getWechatApprove() {

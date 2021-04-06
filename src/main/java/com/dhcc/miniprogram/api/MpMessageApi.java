@@ -97,4 +97,11 @@ public interface MpMessageApi {
      * @return Message<String>
      */
     Message<String> getResult();
+
+    /**
+     * 人脸识别
+     * @param verifyResult
+     * @return
+     */
+    Message<DtoFacialRecognitionResult> facialRecognition(String verifyResult);
 }

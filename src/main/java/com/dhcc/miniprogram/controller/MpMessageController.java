@@ -10,6 +10,7 @@ import com.dhcc.miniprogram.enums.BusinessCodeEnum;
 import com.dhcc.miniprogram.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,9 @@ public class MpMessageController extends BaseController implements MpMessageApi 
 
     @Autowired
     private MpAccessTokenService accessTokenService;
+
+    @Autowired
+    private MpFacialRecognitionService facialRecognService;
 
     @Autowired
     private WechatConfig wechatConfig;
@@ -163,5 +167,14 @@ public class MpMessageController extends BaseController implements MpMessageApi 
             return new Message<String>(false,"查询成功").setData("430202199201294020");
         }
         return new Message<String>(true,"查询成功").setData("");
+    }
+
+    @Override
+    @GetMapping("/facialRecognition.do")
+    @ApiOperation(value = "人脸识别",notes = "人脸识别")
+    public Message<DtoFacialRecognitionResult> facialRecognition(
+            @ApiParam(name = "verifyResult",value = "验证结果",required = true)
+            @RequestParam(value="verifyResult",defaultValue = "") String verifyResult ) {
+        return new Message<DtoFacialRecognitionResult>().setData(facialRecognService.facialRecognition(verifyResult));
     }
 }

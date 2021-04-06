@@ -1,5 +1,8 @@
 server:
   port: 14443
+  tomcat:
+    max-connections: 500
+  max-http-header-size: 8192
 
 info:
   app.name: message-nimipro
@@ -93,3 +96,5 @@ wechat:
   accessTokenUrl: http://10.254.35.100:14443/cgi-bin/token
   sendSubscribeUrl: http://10.254.35.100:14443/cgi-bin/message/subscribe/send
   templateListUrl: http://10.254.35.100:14443/wxaapi/newtmpl/gettemplate
+  facial-recognition-url: http://10.254.35.100:14443/cityservice/face/identify/getinfo
+  wechat-approve: false
