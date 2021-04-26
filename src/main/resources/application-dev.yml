@@ -1,6 +1,9 @@
 ﻿server:
   # 服务器http端口
   port: 14443
+  tomcat:
+    max-connections: 500
+  max-http-header-size: 8192
 #  # tomcat 配置
 #  tomcat:
 #    # 最大线程数
@@ -32,6 +35,9 @@ spring:
     password: admin
     sqlSchema:
       plat: dhcplat_zjzwfwzx
+#    url: jdbc:mysql://106.53.77.17:3306/dhcplat?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false
+#    username: root
+#    password: dh888888
   jpa:
     database-platform: org.hibernate.dialect.MySQLInnoDBDialect
     show-sql: true
@@ -64,7 +70,7 @@ endpoints:
     sensitive: false
 
 cors:
-# origins: http://10.254.1.106:14445,http://10.254.35.100:14445
+# origins: http://10.254.1.106:14445,http://10.254.35.100:14445,https://servicewechat.com
 # 允许所有域使用
   origins: '*'
 
@@ -99,3 +105,4 @@ wechat:
   accessTokenUrl: https://api.weixin.qq.com/cgi-bin/token
   sendSubscribeUrl: https://api.weixin.qq.com/cgi-bin/message/subscribe/send
   templateListUrl: https://api.weixin.qq.com/wxaapi/newtmpl/gettemplate
+  facial-recognition-url: https://api.weixin.qq.com/cityservice/face/identify/getinfo
